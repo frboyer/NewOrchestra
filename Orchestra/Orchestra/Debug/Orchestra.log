@@ -1,0 +1,24 @@
+﻿Build started 03/03/2014 3:00:49 PM.
+     1>Project "C:\Users\alexarse\Desktop\New Orchestra\Orchestra\Orchestra\Orchestra.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\wxWidgets-3.0.0\include\\" /I"C:\wxWidgets-3.0.0\lib\vc_lib\mswud" /I"..\vlc-2.0.4\sdk\include\vlc" /I"..\vlc-2.0.4\sdk\include" /I"C:\irrlicht-1.8\include" /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CRT_SECURE_NO_DEPRECATE=1 /D _CRT_NON_CONFORMING_SWPRINTFS=1 /D _SCL_SECURE_NO_WARNINGS=1 /D __WXMSW__ /D _UNICODE /D _WINDOWS /D NOPCH /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Panel3D.cpp
+         Panel3D.cpp
+     1>c:\users\alexarse\desktop\new orchestra\orchestra\orchestra\panel3d.cpp(61): warning C4305: 'argument' : truncation from 'double' to 'irr::f32'
+     1>c:\users\alexarse\desktop\new orchestra\orchestra\orchestra\panel3d.cpp(67): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\alexarse\desktop\new orchestra\orchestra\orchestra\panel3d.cpp(155): error C2665: 'clamp' : none of the 2 overloads could convert all the argument types
+                 c:\users\alexarse\desktop\new orchestra\orchestra\orchestra\panel3d.cpp(140): could be 'void clamp<irr_Vector3D>(T &,T,T)'
+                 with
+                 [
+                     T=irr_Vector3D
+                 ]
+                 c:\irrlicht-1.8\include\irrmath.h(166): or       'const T irr::core::clamp<irr_Vector3D>(const T &,const T &,const T &)' [found using argument-dependent lookup]
+                 with
+                 [
+                     T=irr_Vector3D
+                 ]
+                 while trying to match the argument list '(irr::f32, irr::core::vector3d<irr::f32>, irr::core::vector3d<irr::f32>)'
+     1>Done Building Project "C:\Users\alexarse\Desktop\New Orchestra\Orchestra\Orchestra\Orchestra.vcxproj" (Build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:04.07
