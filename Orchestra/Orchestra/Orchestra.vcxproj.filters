@@ -56,10 +56,10 @@
     <ClInclude Include="VlcPlayer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Partition.h">
+    <ClInclude Include="Panel3D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Panel3D.h">
+    <ClInclude Include="Partition.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
