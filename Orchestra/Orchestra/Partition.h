@@ -23,6 +23,7 @@ class Partition : public wxPanel
 public:
 	Partition(wxWindow* win, wxWindowID id, 
 			  const wxPoint& pos, const wxSize& size);
+	~Partition();
 
 	bool loadInfo(const wxString& data_path, const vector<wxString>& list);
 	bool loadMarkerInfo(wxString path);

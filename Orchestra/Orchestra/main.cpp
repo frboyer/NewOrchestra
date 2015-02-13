@@ -31,8 +31,8 @@ BEGIN_EVENT_TABLE(MainFrame, wxFrame)
 	EVT_SIZE(MainFrame::OnSize)
 	EVT_TIMER(EVENT_PARTITION_TIMER_ID, MainFrame::OnPartitionTimer)
 	EVT_BUTTON(PLAY_BTN, MainFrame::OnStartTimer)
-	EVT_BUTTON(STOP_BTN, MainFrame::OnPauseStopTimer)
-	EVT_BUTTON(PAUSE_BTN, MainFrame::OnPauseStopTimer)
+	//EVT_BUTTON(STOP_BTN, MainFrame::OnPauseStopTimer)
+	//EVT_BUTTON(PAUSE_BTN, MainFrame::OnPauseStopTimer)
 END_EVENT_TABLE()
 
 // My frame constructor
@@ -104,7 +104,7 @@ void MainFrame::OnSize(wxSizeEvent& event)
 // Intercept menu commands
 void MainFrame::OnExit(wxCommandEvent& WXUNUSED(event))
 {
-	Destroy();
+	Close(true);
 }
 
 void MainFrame::OnCloseWindow(wxCloseEvent& WXUNUSED(event))
@@ -115,30 +115,36 @@ void MainFrame::OnCloseWindow(wxCloseEvent& WXUNUSED(event))
 	{
 		return;
 	}
-		
+	
+	delete _partitionTimer; _partitionTimer = nullptr;
 	Destroy();
 	destroyed = true;
 }
 
 void MainFrame::OnPartitionTimer(wxTimerEvent& event)
 {
+	UNREFERENCED_PARAMETER(event);
+	// DEBUG_STREAM << "clock " << VlcVideoPlayer::getClockTime() << endl;
 	double ms = _mediaPanel->getVideoTimeMs();
 	_partition->changeTime(ms);
+	_mediaPanel->_device3D->timerEvent(ms);
 }
 
 void MainFrame::OnStartTimer(wxCommandEvent& event)
 {
+	UNREFERENCED_PARAMETER(event);
 	/// @todo Make sure play and pause are sync with control bar from media player.
 	if (!_partitionTimer->IsRunning())
 	{
 		//DEBUG_STREAM << "Start Timer" << endl;
-		_partitionTimer->Start(500);
+		_partitionTimer->Start(16);
 		_partition->setPlaying(true);
 	}
 }
 
 void MainFrame::OnPauseStopTimer(wxCommandEvent& event)
 {
+	UNREFERENCED_PARAMETER(event);
 	if (_partitionTimer->IsRunning())
 	{
 		_partitionTimer->Stop();

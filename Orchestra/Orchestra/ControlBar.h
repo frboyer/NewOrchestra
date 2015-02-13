@@ -4,6 +4,7 @@
 #include "wx/timectrl.h"
 #include "wx/spinctrl.h"
 #include "wx/slider.h"
+#include <array>
 
 enum ControlBarID
 {
@@ -31,10 +32,18 @@ public:
 	double GetSliderValue();
 
 private:
-	wxBitmapButton *_backBtn, *_forwBtn, *_stopBtn, *_pauseBtn, *_playBtn;
+	static const wxSize buttonsSize;
+	static const int N_BUTTONS = 5;
+	struct Button {
+		wxBitmapButton*& buttonPointer; wxWindowID id; const char* pngFileName;
+	};
+	std::array<Button, N_BUTTONS> buttons; // VisualStudio 2013 does not support "explicit initializer for arrays" in the constructor, but it does for std::array.
+	wxBitmapButton *_backBtn, *_forwBtn, *_stopBtn, *_pauseBtn, *_playBtn;  // The N_BUTTONS buttons.
 	wxSlider* _slider;
 	wxSpinCtrl *_timeMin, *_timeSec;
 	wxStaticText *_txtMin, *_txtSec;
+
+	void updateWidgetsPositions(const wxSize& size);
 
 	void OnSize(wxSizeEvent& event);
 	void OnBackBtn(wxCommandEvent& event);
