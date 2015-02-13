@@ -21,77 +21,59 @@ typedef irr::s32							irr_S32;
 typedef irr::scene::IAnimatedMesh			irr_Mesh;
 typedef irr::scene::IAnimatedMeshSceneNode	irr_SceneMesh;
 typedef irr::scene::IBoneSceneNode			irr_Bone;
-typedef irr::core::quaternion				irr_quatornion;
+typedef irr::core::quaternion				irr_quaternion;
 
-enum BonesList
+enum class BoneSide
 {
-	NONE = -1,
-	SHOULDER = 0,
+	LEFT,  _FIRST = LEFT,
+	RIGHT, _LAST = RIGHT
+};
+enum class BoneNumber
+{
+	SHOULDER, _FIRST = SHOULDER,
 	UPPER_ARM,
 	FOREARM,
-	HAND,
-	PALM,
-	FINGER_INDEX_01,
-	FINGER_INDEX_02,
-	FINGER_INDEX_03,
-	THUMB_01,
-	THUMB_02,
-	THUMB_03,
-	PALM_02,
-	FINGER_MIDDLE_01,
-	FINGER_MIDDLE_02,
-	FINGER_MIDDLE_03,
-	PALM_03,
-	FINGER_RING_01,
-	FINGER_RING_02,
-	FINGER_RING_03,
-	PALM_04,
-	FINGER_PINKY_01,
-	FINGER_PINKY_02,
-	FINGER_PINKY_03,
 	FOREARM_TWIST1,
 	FOREARM_TWIST2,
-	END_BONES
+	HAND, _LAST = HAND
 };
 
 /// @todo Needs Documentation.
 class Device3D : public wxWindow
 {
 public:
-	Device3D(wxWindow* win, wxPoint point, 
-			 wxSize size, 
-			 irr_DriverType type = irr::video::EDT_OPENGL, 
+	Device3D(wxWindow* win, const wxWindowID& id,
+			 wxPoint point, wxSize size,
+			 irr_DriverType type = irr::video::EDT_DIRECT3D9,  //FIXME: We should have the choice between D3D/OpenGL (EDT_DIRECT3D9/EDT_OPENGL); my current configuration has problems with OpenGL>1.4.
 			 bool bResizeable = true);
 
 	~Device3D();
 
 	/// @todo Needs Documentation.
-	inline irr_SceneManager *GetSceneManager()	
-	{ 
-		return irrDevice ? irrDevice->getSceneManager() : NULL; 
+	irr_Camera* addCamera(irr_Node* parent = 0,
+						  const irr_Vector3D& position = irr_Vector3D(0.0f, 0.0f, 0.0f),
+						  const irr_Vector3D& lookat = irr_Vector3D(0.0f, 0.0f, 1.0f),
+						  irr_S32 id = 1)
+	{
+		/*UNREFERENCED_PARAMETER*/ (id);
+		return irrSceneManager_->addCameraSceneNode(parent, position, lookat);
 	}
-
-	/// @todo Needs Documentation.
-	inline irr_VideoDriver	*GetVideoDriver()	
-	{ 
-		return irrDevice ? irrDevice->getVideoDriver() : NULL; 
-	}
-
-	/// @todo Needs Documentation.
-	irr_Camera* AddCamera(irr_Node* parent = 0,
-						  irr_Vector3D& position = irr_Vector3D(0.0f, 0.0f, 0.0f),
-						  irr_Vector3D& lookat = irr_Vector3D(0.0f, 0.0f, 1.0f),
-						  irr_S32 id = 1);
 
 	void mSize(const wxSize& newSize);
+	void timerEvent(double ms);
 
 protected:
-	irr_Device *irrDevice;
-	irr_Bone *hand_, *hips_, *forearm_L, *upper_arm_L;
-	BonesList bonesList;
-	irr_Camera *camera_;
-	irr_SceneMesh *m_node;
-	irr_Bone *getBone(const int& side, const BonesList& bones);
+	irr_Device* irrDevice_;
+	irr::video::IVideoDriver* irrVideoDriver_;
+	irr_SceneManager* irrSceneManager_;
+	irr_Camera* camera_;
+	irr_SceneMesh* m_node;
+	irr_Bone* bones_[int(BoneSide::_LAST) + 1][int(BoneNumber::_LAST) + 1];
+	irr_Bone*& Device3D::getBone(BoneSide side, BoneNumber bone)
+	{
+		return bones_[int(side)][int(bone)];
+	}
+
 	double theta;
 	wxPoint clickPt;
 
@@ -101,6 +83,7 @@ protected:
 	void OnMouseLeftDown(wxMouseEvent& event);
 	void OnMouseMotion(wxMouseEvent& event);
 	void OnMouseLeftUp(wxMouseEvent& event);
+	void OnChar(wxKeyEvent& event);
 	void OnSize(wxSizeEvent& event);
 
 	DECLARE_EVENT_TABLE()

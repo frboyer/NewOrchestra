@@ -1,49 +1,66 @@
 #include "VlcPlayer.h"
 #include "Debug.h"
+#define DO_EVENTS_TRACE
+#ifdef DO_EVENTS_TRACE
+	#define IF_EVENTS_TRACE(x) x
+#else
+	#define IF_EVENTS_TRACE(x)
+#endif
+
+IF_EVENTS_TRACE(
+	static VlcVideoPlayer::Time timeDifference() {
+		static VlcVideoPlayer::Time last = 0;
+		VlcVideoPlayer::Time current = VlcVideoPlayer::getClockTime();
+		VlcVideoPlayer::Time difference = current - last;
+		last = current;
+		return difference;
+	}
+)
 
 VlcVideoPlayer::VlcVideoPlayer(wxWindow* win, const wxWindowID& id, wxPoint pt, wxSize size) :
 				// Heritage
 				wxPanel(win, id, pt, size), 
 				// Members
 				_lastPos(0.0),
+				_isPlaying(false),
 				_vlcMedia(nullptr),
 				_vlcInstance(nullptr),
 				_vlcPlayer(nullptr)
 {
 	SetBackgroundColour(wxColor(0, 0, 0));
 
-	// Hide filename.
-	char const* vlcOptions[] = { "--no-video-title-show" }; 
+	
+	char const* vlcOptions[] = {
+		"--no-video-title-show", // Hide filename.
+		"--clock-source=perf" // Possible clock sources are (and their resolution on my Win8 system): interrupt (not working), tick (16ms), multimedia (1ms), perf (1us), wall (1ms)
+	}; 
 
+	assert(true);
 	// Create new VLC instance.
-	if (_vlcInstance = libvlc_new(1, vlcOptions) )
-	{
-		// Create VLC player.
-		if (_vlcPlayer = libvlc_media_player_new(_vlcInstance)) 
-		{
-			// Create VLC EventManager.
-			if (!(_vlcEventManager = libvlc_media_player_event_manager(_vlcPlayer)))
-				DEBUG_STREAM << "Can't create VLC Event Manager" << endl;
-
-		}
-
-		else DEBUG_STREAM << "Can't create player from vlcMedia" << endl;
-	}
-	else DEBUG_STREAM << "Can't Open VLC instance" << endl;
+	(_vlcInstance = libvlc_new(ARRAYSIZE(vlcOptions), vlcOptions))     != nullptr || fatalVlc("Can't open VLC instance");
+	// Create VLC player.
+	(_vlcPlayer = libvlc_media_player_new(_vlcInstance))               != nullptr || fatalVlc("Can't create VLC player");
+	// Create VLC EventManager.
+	(_vlcEventManager = libvlc_media_player_event_manager(_vlcPlayer)) != nullptr || fatalVlc("Can't create VLC event manager");
 
 	// libVLC events and callback.
-	if (_vlcInstance && _vlcPlayer && _vlcEventManager)
-	{
-		libvlc_event_attach(_vlcEventManager,
-							libvlc_MediaPlayerPositionChanged,
-							VlcVideoPlayer::vlcPositionChanged,
-							this);
+	struct { libvlc_event_type_t eventType; libvlc_callback_t function; }
+	eventCallbacks[] = {
+		{ libvlc_MediaPlayerPositionChanged, _positionChangedCallback },
+		{ libvlc_MediaPlayerTimeChanged,     _timeChangedCallback },
+		{ libvlc_MediaPlayerPlaying,         _playingCallback },
+		{ libvlc_MediaPlayerPaused,          _pausedCallback },
+		{ libvlc_MediaPlayerStopped,         _stoppedCallback },
+	};
+	for (auto& callback : eventCallbacks)
+		libvlc_event_attach(_vlcEventManager, callback.eventType, callback.function, this);
 
-		libvlc_event_attach(_vlcEventManager,
-							libvlc_MediaPlayerTimeChanged,
-							VlcVideoPlayer::vlcTimeChanged,
-							this);
-	}
+	IF_EVENTS_TRACE(
+		Time startTime = getClockTime();
+		Time currentTime;
+		while ((currentTime = getClockTime()) == startTime) { }
+		DEBUG_STREAM << "Clock resolution: " << currentTime - startTime << endl;
+	)
 }
 
 VlcVideoPlayer::~VlcVideoPlayer()
@@ -61,72 +78,19 @@ VlcVideoPlayer::~VlcVideoPlayer()
 	}
 }
 
-double VlcVideoPlayer::getPosition() const
-{
-	return double(libvlc_media_player_get_position(_vlcPlayer));
-}
-
-long VlcVideoPlayer::getTimeMs()
-{
-	return libvlc_media_player_get_time(_vlcPlayer);
-}
-
-long VlcVideoPlayer::getTotalTimeMs()
-{
-	return libvlc_media_player_get_length(_vlcPlayer);
-}
-
-void VlcVideoPlayer::backward()
-{
-	// Backward 10%
-	libvlc_media_player_set_position(_vlcPlayer, 
-									 libvlc_media_player_get_position(_vlcPlayer) - 0.1); 
-}
-
-void VlcVideoPlayer::stop()
-{
-	libvlc_media_player_stop(_vlcPlayer);
-}
-
-void VlcVideoPlayer::pause()
-{
-	libvlc_media_player_set_pause(_vlcPlayer, 
-								  libvlc_media_player_is_playing(_vlcPlayer));
-}
-
-void VlcVideoPlayer::play()
-{
-	libvlc_media_player_play(_vlcPlayer);
-}
-
-void VlcVideoPlayer::forward()
-{
-	// Forward 10%
-	libvlc_media_player_set_position(_vlcPlayer, 
-									 libvlc_media_player_get_position(_vlcPlayer) + 0.1); 
-}
-
-void VlcVideoPlayer::mute()
-{
-	libvlc_audio_set_mute(_vlcPlayer, true);
-}
-
-void VlcVideoPlayer::unMute()
-{
-	libvlc_audio_set_mute(_vlcPlayer, false);
-}
-
 void VlcVideoPlayer::navigate(double pos)
 {
-	libvlc_media_player_set_position(_vlcPlayer, float(pos));
+	_lastEvent = { libvlc_clock(), int64_t(libvlc_media_player_get_length(_vlcPlayer)*pos * 1000) };
+	setPosition(pos);
+	//libvlc_media_player_set_position(_vlcPlayer, float(pos));
 }
 
 bool VlcVideoPlayer::loadVideo(const char* path)
 {
 //TOCHANGE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	char t[] = "Ressources\\test.mp4";
+	char t[] = "Ressources\\Lesson1\\die.wav"; //"test.mp4";
 	
-	if (_vlcMedia = libvlc_media_new_path(_vlcInstance, t))
+	if ((_vlcMedia = libvlc_media_new_path(_vlcInstance, t)) != nullptr)
 	{
 		libvlc_media_player_set_media(_vlcPlayer, _vlcMedia);
 		libvlc_media_release(_vlcMedia);
@@ -149,42 +113,58 @@ bool VlcVideoPlayer::loadVideo(const char* path)
 	return true; // Didn't fails loading.
 }
 
-void VlcVideoPlayer::vlcPositionChanged(const libvlc_event_t *event, void* data)
+void VlcVideoPlayer::positionChangedCallback(float newPosition)
 {
-	((VlcVideoPlayer*)data)->videoMovedCallback();
-}
+	// From experience, this callback is called approximately each 300ms.  It is called at the same time as timeChangedCallback.
+	IF_EVENTS_TRACE(
+		DEBUG_STREAM << "positionChanged " << timeDifference() << " " << int64_t(getChunkPlaybackTime()) << " " << newPosition << endl;
+	)
 
-void VlcVideoPlayer::vlcTimeChanged(const libvlc_event_t *event, void* data)
-{
-	((VlcVideoPlayer*)data)->videoTimeCallback();
-}
-
-void VlcVideoPlayer::videoMovedCallback()
-{
 	float vMax = 100;
 
-	if (_vlcInstance != nullptr)
+	float pos = libvlc_media_player_get_position(_vlcPlayer);
+
+	if (_lastPos != int(pos * vMax))
 	{
-		float pos = libvlc_media_player_get_position(_vlcPlayer);
+		_lastPos = int(pos * vMax);
 
-		if (_lastPos != int(pos * vMax))
-		{
-			_lastPos = int(pos * vMax);
-
-			// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-			// BUG with wxCommandEvent and wxPostEvent.
-			// Too much data in event queue when is called too often.
-			// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-			if (GetId())
-			{
-				wxCommandEvent btnEvent(wxEVT_COMMAND_BUTTON_CLICKED, GetId());
-				wxPostEvent(this, btnEvent);
-			}
-		}
+		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		// BUG with wxCommandEvent and wxPostEvent.
+		// Too much data in event queue when is called too often.
+		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		wxPostEvent(this, wxCommandEvent(wxEVT_COMMAND_BUTTON_CLICKED, GetId()));
 	}
 }
 
-void VlcVideoPlayer::videoTimeCallback()
+void VlcVideoPlayer::timeChangedCallback(libvlc_time_t newTime)
 {
-	//DEBUG_STREAM << "VIDEO TIME CALLBACK" << endl;
+	// From experience, this callback is called approximately each 300ms.
+	// While playing, libvlc_media_player_get_time increments by exactly 1000 * newTime.
+	IF_EVENTS_TRACE( DEBUG_STREAM << "videoTime " << timeDifference() << " " << getChunkPlaybackTime() << " " << newTime << endl; )
+
+	_lastEvent = { libvlc_clock(), newTime * millisecondsToTime };
+}
+
+void VlcVideoPlayer::playingCallback()
+{
+	IF_EVENTS_TRACE( DEBUG_STREAM << "playing " << timeDifference() << " " << getChunkPlaybackTime() << endl; )
+
+	_lastEvent = { libvlc_clock(), getChunkPlaybackTime() };
+	_isPlaying = true;
+}
+
+void VlcVideoPlayer::pausedCallback()
+{
+	IF_EVENTS_TRACE( DEBUG_STREAM << "paused " << timeDifference() << " " << getChunkPlaybackTime() << endl; )
+
+	_lastEvent = getCurrentTimePoint();
+	_isPlaying = false;
+}
+
+void VlcVideoPlayer::stoppedCallback()
+{
+	IF_EVENTS_TRACE( DEBUG_STREAM << "stopped " << timeDifference() << " " << getChunkPlaybackTime() << endl; )
+
+	_lastEvent = getCurrentTimePoint();
+	_isPlaying = false;
 }

@@ -1,6 +1,7 @@
 #include "Partition.h"
 #include <fstream>
 #include <iostream>
+#include <algorithm>
 #include "Debug.h"
 
 BEGIN_EVENT_TABLE(Partition, wxPanel)
@@ -32,6 +33,11 @@ Partition::Partition(wxWindow* win, wxWindowID id,
 	wxImage::AddHandler(new wxPNGHandler);
 	
 	DEBUG_STREAM << "Init Partition" << endl;
+}
+
+Partition::~Partition()
+{
+	delete _markerData; _markerData = nullptr;
 }
 
 void Partition::setPlaying(const bool& playing)
@@ -85,7 +91,7 @@ void Partition::setImageList(const vector<wxString>& list)
 	//scaleImage(0);
 
 	int height = 0;
-	for (int i = 0; i < _imgList.size(); ++i)
+	for (unsigned i = 0; i < _imgList.size(); ++i)
 	{
 		height += wxImage(_imgList[i]).GetHeight();
 	}
@@ -96,42 +102,32 @@ void Partition::setImageList(const vector<wxString>& list)
 	Refresh();
 }
 
+bool compareMarkerTime(double a, const t_data& b)
+{
+	return a < b.time;
+}
+
 bool Partition::changeTime(double timeMs)
 {
 	timeMs /= 1000.0;
+	// Fast test for when time is still in same region.
+	if (_markerData[_selectedMarker].time <= timeMs && timeMs <= _markerData[_selectedMarker + 1].time)
+		return true;
 
-	if (timeMs > _markerData[_nbMarker - 1].time)
+	int i = std::upper_bound(_markerData, _markerData + _nbMarker, timeMs, compareMarkerTime) - _markerData - 1;
+	if (i >= 0)
 	{
-		_selectedMarker = _nbMarker - 1;
-		scaleImage(_markerData[_nbMarker - 1].numImg);
+		if (_markerData[i].numImg != _markerData[_selectedMarker].numImg)
+		{
+			scaleImage(_markerData[i].numImg);
+		}
+
+		_selectedMarker = i;
 		_currentMarkerImg = createSelectedMarkerImage(_selectedMarker, wxColor(180, 180, 180));
 		Refresh();
 
-		// Scrollbar.
-		//_scrollBar->setInputTopDelta(markerData[selectedMarker].numImg * m_totalHeightOfAllImages / imgList.size());
-
+		//m_scrollBar->setSliderPositionZeroToOne(markerData[selectedMarker].numImg / (imgList.size() * 1.0));
 		return true;
-	}
-
-	for (int i = 0; i < _nbMarker - 1; ++i)
-	{
-		if (_markerData[i].time <= timeMs && _markerData[i + 1].time >= timeMs)
-		{
-			if (_markerData[i].numImg != _markerData[_selectedMarker].numImg)
-			{
-				scaleImage(_markerData[i].numImg);
-			}
-
-			if (_selectedMarker != i)
-			{
-				_selectedMarker = i;
-				_currentMarkerImg = createSelectedMarkerImage(_selectedMarker, wxColor(180, 180, 180));
-				Refresh();
-			}
-
-			//m_scrollBar->setSliderPositionZeroToOne(markerData[selectedMarker].numImg / (imgList.size() * 1.0));
-			return true;
-		}
 	}
 
 	return false;
@@ -245,6 +241,7 @@ void Partition::OnMouseMotion(wxMouseEvent& event)
 	wxPoint pt = event.GetPosition();
 	int i = findFirstMarkerOfImage(_markerData[_selectedMarker].numImg);
 
+	bool mouseHover = false;
 	while (_markerData[i].numImg == _markerData[_selectedMarker].numImg)
 	{
 		int pos_x = _markerData[i].point.x * _resizeRatio_x,
@@ -255,25 +252,26 @@ void Partition::OnMouseMotion(wxMouseEvent& event)
 		if (pt.x >= BORDER + pos_x && pt.x < BORDER + pos_x + size_x &&
 			pt.y >= BORDER + pos_y && pt.y < BORDER + pos_y + size_y)
 		{
-			_mouseHoverMarker = i;
-			_mouseHoverImage = createSelectedMarkerImage(i, wxColor(220, 220, 220), 80);
-			_mouseHover = true;
-			Refresh();
+			mouseHover = true;
 			break;
 		}
-		else _mouseHover = false;
-
 		++i;
 	}
+	if (!mouseHover)
+		i = -1;
 	if (i != _mouseHoverMarker)
 	{
-		_mouseHover = false;
+		_mouseHoverMarker = i;
+		if (mouseHover)
+			_mouseHoverImage = createSelectedMarkerImage(i, wxColor(220, 220, 220), 80);
+		_mouseHover = mouseHover;
 		Refresh();
 	}
 }
 
 void Partition::OnPaint(wxPaintEvent& event)
 {
+	/*UNREFERENCED_PARAMETER*/ (event);
 	wxAutoBufferedPaintDC dc(this);
 	wxSize size = this->GetSize();
 

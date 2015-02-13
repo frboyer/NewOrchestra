@@ -9,14 +9,19 @@ public:
 	MediaPlayer(wxWindow* win, const wxWindowID& id, const wxPoint& pos, const wxSize& size);
 
 	bool loadMedia(const char* videoPath);
-	double getVideoTimeMs() { return _videoPlayer->getTimeMs(); }
+	double getVideoTimeMs() {
+		return _videoPlayer->getPlaybackTime() / 1000.0;
+	}
 
-private:
+public: //TODO: should not be public 
 	ControlBar* _ctrlBar;
 	VlcVideoPlayer* _videoPlayer;
-	Device3D *_device3D;
+	Device3D* _device3D;
+	libvlc_time_t _lastTime;
+	static const int _maxTimeJumpForInterpolation = 1000; // in milliseconds
 
-	static const int CTRL_BAR_SIZE = 120;
+private:
+	static const int CTRL_BAR_HEIGHT = 120;
 
 	void OnSize(wxSizeEvent& event);
 	void OnBackBtn(wxCommandEvent& event);

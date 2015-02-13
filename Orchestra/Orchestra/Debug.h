@@ -5,6 +5,8 @@
 #include <iomanip>
 #include <string> 
 
+#define new new(_NORMAL_BLOCK, __FILE__, __LINE__)
+
 using namespace std;
 
 template <class CharT, class TraitsT = std::char_traits<CharT> >

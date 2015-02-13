@@ -14,39 +14,46 @@ BEGIN_EVENT_TABLE(ControlBar, wxPanel)
 	EVT_SLIDER(SLIDER_MOTION, ControlBar::OnSliderMotion)
 END_EVENT_TABLE()
 
+const wxSize ControlBar::buttonsSize(40, 28);
+
 ControlBar::ControlBar(wxWindow* win,
 					   const wxWindowID& id,
 					   const wxPoint& pos,
-					   const wxSize& size):
-					   // Heritage
-					   wxPanel(win, id, pos, size)
+					   const wxSize& size) :
+	// Heritage
+	wxPanel(win, id, pos, size),
+	// Members
+	buttons({ // This seems to be the only syntax supported by VisualStudio 2013; it compiles even though IntelliSense reports an error.  Without "Button" there is an "internal error".
+		Button{ _backBtn,  BACK_BTN,  "Ressources/backward.png" },
+		Button{ _pauseBtn, PAUSE_BTN, "Ressources/pause.png" },
+		Button{ _playBtn,  PLAY_BTN,  "Ressources/play.png" },
+		Button{ _stopBtn,  STOP_BTN,  "Ressources/stop.png" },
+		Button{ _forwBtn,  FWRD_BTN,  "Ressources/forward.png" }
+	})
 {
 	wxImage::AddHandler(new wxPNGHandler);
 
 	SetBackgroundColour(wxColor(240, 240, 240));
 
-	_slider = new wxSlider(this, SLIDER_MOTION, 0, 0, 1000, wxPoint(4, 2), wxSize(size.x - 8, 25));
+	_slider = new wxSlider(this, SLIDER_MOTION, 0, 0, 1000);
 
-	int y = 30, x = (size.x - 150) * 0.5;
-	_backBtn = new wxBitmapButton(this, BACK_BTN,
-								  wxBitmap("Ressources/backward.png", wxBITMAP_TYPE_PNG),
-								  wxPoint(x+=25, y), wxSize(25, 25));// , wxBORDER_NONE);
+	for (auto& button : buttons)
+		button.buttonPointer = new wxBitmapButton(this,
+			button.id, wxBitmap(button.pngFileName, wxBITMAP_TYPE_PNG),
+			wxPoint(), buttonsSize
+			);
+	updateWidgetsPositions(size);
+}
 
-	_pauseBtn = new wxBitmapButton(this, PAUSE_BTN,
-							       wxBitmap("Ressources/pause.png", wxBITMAP_TYPE_PNG),
-							       wxPoint(x += 25, y), wxSize(25, 25));
-
-	_playBtn = new wxBitmapButton(this, PLAY_BTN,
-							      wxBitmap("Ressources/play.png", wxBITMAP_TYPE_PNG),
-							      wxPoint(x += 25, y), wxSize(25, 25));
-
-	_stopBtn = new wxBitmapButton(this, STOP_BTN,
-								  wxBitmap("Ressources/stop.png", wxBITMAP_TYPE_PNG),
-								  wxPoint(x += 25, y), wxSize(25, 25));// , wxBORDER_NONE);
-
-	_forwBtn = new wxBitmapButton(this, FWRD_BTN,
-								  wxBitmap("Ressources/forward.png", wxBITMAP_TYPE_PNG),
-								  wxPoint(x += 25, y), wxSize(25, 25));// , wxBORDER_NONE);
+void ControlBar::updateWidgetsPositions(const wxSize& size)
+{
+	_slider->SetPosition(wxPoint(4, 2));
+	_slider->SetSize(wxSize(size.x - 8, 25));
+	
+	int totalButtonsWidth = buttonsSize.GetWidth() * N_BUTTONS;
+	int y = 26, x = (size.GetWidth() - totalButtonsWidth) / 2;
+	for (auto& button : buttons)
+		button.buttonPointer->SetPosition(wxPoint(x += buttonsSize.GetWidth(), y));
 }
 
 double ControlBar::GetSliderValue()
@@ -58,16 +65,7 @@ void ControlBar::OnSize(wxSizeEvent& event)
 {
 	wxSize size(event.GetSize());
 	SetSize(size);
-
-	_slider->SetPosition(wxPoint(4, 2));
-	_slider->SetSize(wxSize(size.x - 8, 25));
-	
-	int y = 30, x = (size.x - 150) * 0.5;
-	_backBtn->SetPosition(wxPoint(x += 25, y));
-	_pauseBtn->SetPosition(wxPoint(x += 25, y));
-	_playBtn->SetPosition(wxPoint(x += 25, y));
-	_stopBtn->SetPosition(wxPoint(x += 25, y));
-	_forwBtn->SetPosition(wxPoint(x += 25, y));
+	updateWidgetsPositions(size);
 }
 
 void ControlBar::OnBackBtn(wxCommandEvent& event)
