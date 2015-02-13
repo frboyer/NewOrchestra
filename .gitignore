@@ -1,3 +1,17 @@
+# VisualStudio generated files
+*.sdf
+*.opensdf
+*.ilk
+*.pdb
+*.idb
+*.log
+*.tlog
+*.lastbuildstate
+
+# VisualStudio user options
+*.suo
+*.vcxproj.user
+
 # Compiled Object files
 *.slo
 *.lo
