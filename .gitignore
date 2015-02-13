@@ -1,3 +1,10 @@
+# Symlink directories (incorrectly supported by windows hg-git)
+/Orchestra/irrlicht/
+/Orchestra/vlc/
+/Orchestra/wxWidgets/
+/Orchestra/Debug/plugins/
+/Orchestra/Debug/Ressources/
+
 # VisualStudio generated files
 *.sdf
 *.opensdf
@@ -7,15 +14,20 @@
 *.log
 *.tlog
 *.lastbuildstate
+*.pch
 
 # VisualStudio user options
 *.suo
 *.vcxproj.user
 
+# Executable files
+*.exe
+
 # Compiled Object files
 *.slo
 *.lo
 *.o
+*.obj
 
 # Compiled Dynamic libraries
 *.so
