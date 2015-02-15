@@ -88,7 +88,7 @@ void VlcVideoPlayer::navigate(double pos)
 bool VlcVideoPlayer::loadVideo(const char* path)
 {
 //TOCHANGE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	char t[] = "Ressources\\Lesson1\\die.wav"; //"test.mp4";
+	char t[] = /*"Ressources\\Lesson1\\die.wav";*/ "Ressources\\test.mp4";
 	
 	if ((_vlcMedia = libvlc_media_new_path(_vlcInstance, t)) != nullptr)
 	{
