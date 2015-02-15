@@ -1,311 +1,130 @@
 #include "Partition.h"
-#include <fstream>
-#include <iostream>
-#include <algorithm>
-#include "Debug.h"
 
-BEGIN_EVENT_TABLE(Partition, wxPanel)
-	EVT_SIZE(Partition::OnSize)
-	//EVT_LEFT_DOWN(Partition::OnMouseLeftDown)
-	//EVT_LEFT_UP(Partition::OnMouseLeftUp)
-	EVT_MOTION(Partition::OnMouseMotion)
-	//EVT_BUTTON(PARTITION_SCROLL_BAR_ID, Partition::OnScrollBar)
-	//EVT_MOUSE_CAPTURE_LOST(Partition::OnMouseCaptureLost)
-	//EVT_LEFT_DCLICK(Partition::OnMouseDClick)
-	//EVT_ENTER_WINDOW(Partition::OnMouseMotion)
-	EVT_PAINT(Partition::OnPaint)
-	//EVT_MOUSE_EVENTS(Partition::OnMouseMotion)
+BEGIN_EVENT_TABLE(BasicGLPane, wxGLCanvas)
+EVT_MOTION(BasicGLPane::mouseMoved)
+EVT_LEFT_DOWN(BasicGLPane::mouseDown)
+EVT_LEFT_UP(BasicGLPane::mouseReleased)
+EVT_RIGHT_DOWN(BasicGLPane::rightClick)
+EVT_LEAVE_WINDOW(BasicGLPane::mouseLeftWindow)
+EVT_SIZE(BasicGLPane::resized)
+EVT_KEY_DOWN(BasicGLPane::keyPressed)
+EVT_KEY_UP(BasicGLPane::keyReleased)
+EVT_MOUSEWHEEL(BasicGLPane::mouseWheelMoved)
+EVT_PAINT(BasicGLPane::render)
+EVT_BUTTON(1000, BasicGLPane::OnEvent)
 END_EVENT_TABLE()
 
-Partition::Partition(wxWindow* win, wxWindowID id, 
-					 const wxPoint& pos, const wxSize& size) : 
-		   // Heritage
-		   wxPanel(win, id, pos, size),
-		   // Members
-		   //m_id(id), 
-		   _mouseHover(false), 
-		   _selectedMarker(false), 
-		   _markerData(nullptr),
-		   //pastResizeTick(0), 
-		   _isPlaying(false)
+
+// some useful events to use
+void BasicGLPane::mouseMoved(wxMouseEvent& event)
 {
-	SetBackgroundStyle(wxBG_STYLE_CUSTOM);
-	wxImage::AddHandler(new wxPNGHandler);
+	axPoint pos(event.GetPosition().x, event.GetPosition().y);
+
+	//std::cout << "Mouse pos : " << pos.x << " " << pos.y << std::endl;
+	axApp::MainInstance->GetWindowManager()->OnMouseMotion(pos);
+}
+
+void BasicGLPane::mouseDown(wxMouseEvent& event)
+{
+	axPoint pos(event.GetPosition().x, event.GetPosition().y);
+
+	if (event.LeftDown())
+	{
+		axApp::MainInstance->GetWindowManager()->OnMouseLeftDown(pos);
+	}
+}
+
+void BasicGLPane::mouseWheelMoved(wxMouseEvent& event)
+{
+
+}
+
+void BasicGLPane::mouseReleased(wxMouseEvent& event)
+{
+	axPoint pos(event.GetPosition().x, event.GetPosition().y);
+
+	if (event.LeftUp())
+	{
+		axApp::MainInstance->GetWindowManager()->OnMouseLeftUp(pos);
+	}
+}
+
+void BasicGLPane::rightClick(wxMouseEvent& event)
+{
+}
+
+void BasicGLPane::mouseLeftWindow(wxMouseEvent& event)
+{
+}
+
+void BasicGLPane::keyPressed(wxKeyEvent& event)
+{
+}
+
+void BasicGLPane::keyReleased(wxKeyEvent& event)
+{
+}
+
+void BasicGLPane::OnEvent(wxCommandEvent& event)
+{
+	std::cout << "Event" << std::endl;
+	axEventManager::GetInstance()->CallNext();
+}
+
+BasicGLPane::BasicGLPane(wxPanel* parent, 
+						 const wxPoint& pos, 
+						 const wxSize& size, 
+						 int* args) :
+wxGLCanvas(parent, wxID_ANY, args, pos, size, wxFULL_REPAINT_ON_RESIZE)
+{
+	m_context = new wxGLContext(this);
+	wxGLCanvas::SetCurrent(*m_context);
 	
-	DEBUG_STREAM << "Init Partition" << endl;
+	axEventManager::GetInstance();
+	axApp* app = axApp::CreateApp(axSize(size.x, size.y));
+	static_cast<axCoreWxWidgets*>(app->GetCore())->SetWxGlCanvas(this);
+
+	// To avoid flashing on MSW
+	SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 }
 
-Partition::~Partition()
+BasicGLPane::~BasicGLPane()
 {
-	delete _markerData; _markerData = nullptr;
+	delete m_context;
 }
 
-void Partition::setPlaying(const bool& playing)
+void BasicGLPane::resized(wxSizeEvent& evt)
 {
-	_isPlaying = playing;
 	Refresh();
 }
 
-bool Partition::loadInfo(const wxString& data_path, const vector<wxString>& list)
+int BasicGLPane::getWidth()
 {
-	if (!loadMarkerInfo(data_path))
-	{
-		return false;
-	}
-
-	setImageList(list);
-
-	return true;
+	return GetSize().x;
 }
 
-bool Partition::loadMarkerInfo(wxString path)
+int BasicGLPane::getHeight()
 {
-	ifstream data(path.char_str(), ios::binary);
-
-	if (data.fail())
-	{
-		DEBUG_STREAM << "ERROR : Load data in Partition" << endl;
-		return false;
-	}
-
-	else
-	{
-		data.seekg(0);
-		_nbMarker = 0;
-		data.read((char*)&_nbMarker, sizeof(int));
-		_markerData = new t_data[_nbMarker];
-
-		DEBUG_STREAM << "NB CUE : " << _nbMarker << endl;
-
-		data.read((char*)_markerData, sizeof(t_data)* _nbMarker);
-		data.close();
-	}
-
-	return true;
+	return GetSize().y;
 }
 
-void Partition::setImageList(const vector<wxString>& list)
+void BasicGLPane::render(wxPaintEvent& evt)
 {
-	_imgList = list;
-	_currentImg = wxImage(_imgList[0]);
-	//scaleImage(0);
-
-	int height = 0;
-	for (unsigned i = 0; i < _imgList.size(); ++i)
+	if (!IsShown())
 	{
-		height += wxImage(_imgList[i]).GetHeight();
+		return;
 	}
 
-	//m_totalHeightOfAllImages = height;
-	//m_scrollBar->setInputInfo(size.y, m_totalHeightOfAllImages, 0);
+	wxGLCanvas::SetCurrent(*m_context);
+	wxPaintDC(this); // only to be used in paint events. use wxClientDC to paint outside the paint event
 
-	Refresh();
-}
+	axCore* core = axApp::MainInstance->GetCore();
 
-bool compareMarkerTime(double a, const t_data& b)
-{
-	return a < b.time;
-}
+	wxSize size(GetSize());
+	core->ResizeGLScene(size.x, size.y, 0);
+	
+	core->DrawGLScene();
 
-bool Partition::changeTime(double timeMs)
-{
-	timeMs /= 1000.0;
-	// Fast test for when time is still in same region.
-	if (_markerData[_selectedMarker].time <= timeMs && timeMs <= _markerData[_selectedMarker + 1].time)
-		return true;
-
-	int i = std::upper_bound(_markerData, _markerData + _nbMarker, timeMs, compareMarkerTime) - _markerData - 1;
-	if (i >= 0)
-	{
-		if (_markerData[i].numImg != _markerData[_selectedMarker].numImg)
-		{
-			scaleImage(_markerData[i].numImg);
-		}
-
-		_selectedMarker = i;
-		_currentMarkerImg = createSelectedMarkerImage(_selectedMarker, wxColor(180, 180, 180));
-		Refresh();
-
-		//m_scrollBar->setSliderPositionZeroToOne(markerData[selectedMarker].numImg / (imgList.size() * 1.0));
-		return true;
-	}
-
-	return false;
-}
-
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-// Too slow.
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-wxImage Partition::createSelectedMarkerImage(const int& selected_marker, const wxColor& color, const int& alpha)
-{
-	t_size size = _markerData[selected_marker].size;
-
-	int x = size.x * _resizeRatio_x;
-	int y = size.y * _resizeRatio_y;
-
-	wxImage img(x, y);
-	img.InitAlpha();
-
-	for (int i = 0; i < x; ++i)
-	{
-		for (int j = 0; j < y; ++j)
-		{
-			img.SetAlpha(i, j, alpha);
-		}	
-	}
-
-	img.SetRGB(wxRect(0, 0, x, y), color.Red(), color.Green(), color.Blue());
-
-	return img;
-}
-
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-// Too slow.
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-void Partition::scaleImage(const int& imagelistPosition)
-{
-	DEBUG_STREAM << "Image scaling" << endl;
-	int x = GetSize().x - 100, y = GetSize().y - 100;
-	_currentImg = wxImage(_imgList[imagelistPosition]);
-
-	_resizeRatio_x = double(x) / double(_currentImg.GetWidth());
-	_resizeRatio_y = double(y) / double(_currentImg.GetHeight());
-
-	//wxIMAGE_QUALITY_NORMAL
-	//wxIMAGE_QUALITY_HIGH
-	_currentImg.Rescale(x, y, wxIMAGE_QUALITY_HIGH);
-}
-
-int Partition::findFirstMarkerOfImage(const int& imgNum)
-{
-	for (int i = 0; i < _nbMarker; ++i)
-	{
-		if (_markerData[i].numImg == imgNum)
-			return i;
-	}
-
-	return -1;
-}
-
-double Partition::getSelectedMarkerTimeMs()
-{
-	return _markerData[_selectedMarker].time * 1000.0;
-}
-
-void Partition::OnSize(wxSizeEvent& event)
-{
-	wxSize size(event.GetSize());
-	SetSize(size);
-
-	scaleImage(_markerData[_selectedMarker].numImg);
-	_currentMarkerImg = createSelectedMarkerImage(_selectedMarker, 
-												  wxColor(180, 180, 180));
-	Refresh();
-}
-
-void Partition::OnMouseDClick(wxMouseEvent& event)
-{
-	wxPoint pt = event.GetPosition();
-	int i = findFirstMarkerOfImage(_markerData[_selectedMarker].numImg);
-
-	while (_markerData[i].numImg == _markerData[_selectedMarker].numImg)
-	{
-		int pos_x = _markerData[i].point.x * _resizeRatio_x,
-			size_x = _markerData[i].size.x * _resizeRatio_x,
-			pos_y = _markerData[i].point.y * _resizeRatio_y,
-			size_y = _markerData[i].size.y * _resizeRatio_y;
-
-		if (pt.x >= BORDER + pos_x && pt.x < BORDER + pos_x + size_x &&
-			pt.y >= BORDER + pos_y && pt.y < BORDER + pos_y + size_y)
-		{
-			//changeTime( markerData[i].time );
-			_selectedMarker = i;
-			_currentMarkerImg = createSelectedMarkerImage(_selectedMarker, 
-														  wxColor(180, 180, 180));
-			Refresh();
-
-			//if (m_id != wxID_ANY)
-			//{
-			//	wxCommandEvent btnEvent(wxEVT_COMMAND_BUTTON_CLICKED, m_id);
-			//	wxPostEvent(this, btnEvent);
-			//}
-			break;
-		}
-		++i;
-	}
-}
-
-void Partition::OnMouseMotion(wxMouseEvent& event)
-{
-	//DEBUG_STREAM << "MOUSE MOTION" << endl;
-	wxPoint pt = event.GetPosition();
-	int i = findFirstMarkerOfImage(_markerData[_selectedMarker].numImg);
-
-	bool mouseHover = false;
-	while (_markerData[i].numImg == _markerData[_selectedMarker].numImg)
-	{
-		int pos_x = _markerData[i].point.x * _resizeRatio_x,
-			size_x = _markerData[i].size.x * _resizeRatio_x,
-			pos_y = _markerData[i].point.y * _resizeRatio_y,
-			size_y = _markerData[i].size.y * _resizeRatio_y;
-
-		if (pt.x >= BORDER + pos_x && pt.x < BORDER + pos_x + size_x &&
-			pt.y >= BORDER + pos_y && pt.y < BORDER + pos_y + size_y)
-		{
-			mouseHover = true;
-			break;
-		}
-		++i;
-	}
-	if (!mouseHover)
-		i = -1;
-	if (i != _mouseHoverMarker)
-	{
-		_mouseHoverMarker = i;
-		if (mouseHover)
-			_mouseHoverImage = createSelectedMarkerImage(i, wxColor(220, 220, 220), 80);
-		_mouseHover = mouseHover;
-		Refresh();
-	}
-}
-
-void Partition::OnPaint(wxPaintEvent& event)
-{
-	/*UNREFERENCED_PARAMETER*/ (event);
-	wxAutoBufferedPaintDC dc(this);
-	wxSize size = this->GetSize();
-
-	dc.SetPen(wxPen(wxColor(0, 0, 0), 2, wxSOLID));
-	dc.SetBrush(wxBrush(wxColor(250, 250, 250)));
-	//dc.SetBrush(wxBrush(wxColor(0, 0, 0)));
-	dc.DrawRectangle(wxRect(0, 0, size.x, size.y));
-
-	// Partition images.
-	if (_currentImg.IsOk())
-	{
-		wxBitmap img(_currentImg);
-		dc.DrawBitmap(img, 50, 50);
-	}
-
-	// Selected Bar.
-	if (_currentMarkerImg.IsOk())// && markerData[selectedMarker].numImg ==  )
-	{
-		//_DEBUG_ DSTREAM << "MARKER IMG EXIST (OnPaint)" << endl;
-		wxBitmap img(_currentMarkerImg);
-
-		t_point pt = _markerData[_selectedMarker].point;
-		dc.DrawBitmap(_currentMarkerImg, BORDER + pt.x * _resizeRatio_x, 
-					  BORDER + pt.y * _resizeRatio_y);
-	}
-
-	// Mouse Hover.
-	if (_mouseHover && _mouseHoverImage.IsOk())
-	{
-		DEBUG_STREAM << "MOUSE OVER ON PAINT" << endl;
-		wxBitmap img(_mouseHoverImage);
-
-		t_point pt = _markerData[_mouseHoverMarker].point;
-		dc.DrawBitmap(_mouseHoverImage, BORDER + pt.x * _resizeRatio_x, 
-					  BORDER + pt.y * _resizeRatio_y);
-	}
+	glFlush();
+	SwapBuffers();
 }

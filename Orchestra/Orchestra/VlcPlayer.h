@@ -1,3 +1,6 @@
+#ifndef __VLC_VIDEO_PLAYER__
+#define __VLC_VIDEO_PLAYER__
+
 #include "vlc.h"
 #include "wx/wx.h"
 
@@ -100,3 +103,5 @@ private:
 
 	//DECLARE_EVENT_TABLE()
 };
+
+#endif // __VLC_VIDEO_PLAYER__

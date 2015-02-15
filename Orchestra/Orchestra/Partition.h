@@ -1,62 +1,49 @@
 #include "wx/wx.h"
 #include "wx/dcbuffer.h"
 #include <vector>
+#include "wx/glcanvas.h"
 
-using namespace std;
+#include <fstream>
+#include <iostream>
+#include <algorithm>
+#include <functional>
 
-struct t_point { short x, y; };
-struct t_size { short x, y; };
+#include "axLib.h"
 
-// Is use for markers data info.
-struct t_data
-{
-	int posInFile;
-	t_point point;
-	t_size size;
-	short numImg;
-	double time;
-};
-
-/// @todo Change to GL Canvas to make resizeing faster.
-class Partition : public wxPanel
+class BasicGLPane : public wxGLCanvas, public axObject
 {
 public:
-	Partition(wxWindow* win, wxWindowID id, 
-			  const wxPoint& pos, const wxSize& size);
-	~Partition();
+	/***************************************************************************
+	* BasicGLPane::BasicGLPane.
+	**************************************************************************/
+	BasicGLPane(wxPanel* parent,
+		const wxPoint& pos,
+		const wxSize& size,
+		int* args);
 
-	bool loadInfo(const wxString& data_path, const vector<wxString>& list);
-	bool loadMarkerInfo(wxString path);
-	void setImageList(const vector<wxString>& list);
-	bool changeTime(double timeMs);
-	void setPlaying(const bool& playing);
-	int findFirstMarkerOfImage(const int& imgNum);
-	double getSelectedMarkerTimeMs();
+	virtual ~BasicGLPane();
 
-private:
-	vector<wxString> _imgList;
-	wxImage _currentImg, _currentMarkerImg, _mouseHoverImage;
-	t_data* _markerData;
-	bool _isPlaying, _mouseHover;
-	int _nbMarker, _selectedMarker, _mouseHoverMarker;
-	//int m_id, m_totalHeightOfAllImages;
-	double _resizeRatio_x, _resizeRatio_y;
-	static const int BORDER = 50;
+	void resized(wxSizeEvent& evt);
 
-	// Create and resize a transparent image for the selected marker.
-	wxImage createSelectedMarkerImage(const int& selected_marker, 
-								      const wxColor& color, const int& alpha = 110);
+	int getWidth();
+	int getHeight();
 
-	void scaleImage(const int& imagelistPosition);
+	void render(wxPaintEvent& evt);
 
-	// Events.
-	void OnSize(wxSizeEvent& event);
-	void OnMouseLeftDown(wxMouseEvent& event);
-	void OnMouseLeftUp(wxMouseEvent& event);
-	void OnMouseMotion(wxMouseEvent& event);
-	void OnMouseCaptureLost(wxMouseCaptureLostEvent& event);
-	void OnPaint(wxPaintEvent& event);
-	void OnMouseDClick(wxMouseEvent& event);
+	// events
+	void mouseMoved(wxMouseEvent& event);
+	void mouseDown(wxMouseEvent& event);
+	void mouseWheelMoved(wxMouseEvent& event);
+	void mouseReleased(wxMouseEvent& event);
+	void rightClick(wxMouseEvent& event);
+	void mouseLeftWindow(wxMouseEvent& event);
+	void keyPressed(wxKeyEvent& event);
+	void keyReleased(wxKeyEvent& event);
+
+	void OnEvent(wxCommandEvent& event);
 
 	DECLARE_EVENT_TABLE()
+
+private:
+	wxGLContext* m_context;
 };

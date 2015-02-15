@@ -44,13 +44,16 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>VCN\;..\wxWidgets\include\;..\wxWidgets\lib\vc_lib\mswud;..\vlc\sdk\include\vlc;..\vlc\sdk\include;..\irrlicht\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>VCN\;..\wxWidgets-3.0.2\include\;..\wxWidgets-3.0.2\lib\vc_lib\mswud;..\vlc-2.1.3\sdk\include\vlc;..\vlc-2.1.3\sdk\include;..\irrlicht-1.8.1\include\;..\axLib\;..\axLib\include\;..\axLib\source\;..\axLib\axWidgets\;..\freetype-2.5.3\include\;..\lpng1610\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>VCNFloat=double;VCNBool=bool;WIN32;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;_UNICODE;_WINDOWS;NOPCH;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalOptions>/bigobj</AdditionalOptions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>libvlc.lib;irrlicht.lib;wxbase30ud.lib;wxbase30ud_net.lib;wxbase30ud_xml.lib;wxexpatd.lib;wxjpegd.lib;wxmsw30ud_adv.lib;wxmsw30ud_aui.lib;wxmsw30ud_core.lib;wxmsw30ud_gl.lib;wxmsw30ud_html.lib;wxmsw30ud_media.lib;wxmsw30ud_propgrid.lib;wxmsw30ud_qa.lib;wxmsw30ud_ribbon.lib;wxmsw30ud_richtext.lib;wxmsw30ud_stc.lib;wxmsw30ud_webview.lib;wxmsw30ud_xrc.lib;wxpngd.lib;wxregexud.lib;wxscintillad.lib;wxtiffd.lib;wxzlibd.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\wxWidgets\lib\vc_lib;..\vlc\sdk\lib;..\irrlicht\lib\Win32-visualstudio;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libpng16.lib;zlib.lib;freetype253_D.lib;libvlc.lib;irrlicht.lib;wxbase30ud.lib;wxbase30ud_net.lib;wxbase30ud_xml.lib;wxexpatd.lib;wxjpegd.lib;wxmsw30ud_adv.lib;wxmsw30ud_aui.lib;wxmsw30ud_core.lib;wxmsw30ud_gl.lib;wxmsw30ud_html.lib;wxmsw30ud_media.lib;wxmsw30ud_propgrid.lib;wxmsw30ud_qa.lib;wxmsw30ud_ribbon.lib;wxmsw30ud_richtext.lib;wxmsw30ud_stc.lib;wxmsw30ud_webview.lib;wxmsw30ud_xrc.lib;wxpngd.lib;wxregexud.lib;wxscintillad.lib;wxtiffd.lib;wxzlibd.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\wxWidgets-3.0.2\lib\vc_lib;..\vlc-2.1.3\sdk\lib;..\irrlicht-1.8.1\lib\Win32-visualstudio;..\freetype-2.5.3\objs\win32\vc2010\;..\lpng1610\projects\vstudio\Debug\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>
+      </AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -73,22 +76,115 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ControlBar.cpp" />
+    <ClCompile Include="..\axLib\axCoreWxWidgets.cpp" />
+    <ClCompile Include="..\axLib\axWidgets\axAnimatedButton.cpp" />
+    <ClCompile Include="..\axLib\axWidgets\axButton.cpp" />
+    <ClCompile Include="..\axLib\axWidgets\axDebugButton.cpp" />
+    <ClCompile Include="..\axLib\axWidgets\axDropMenu.cpp" />
+    <ClCompile Include="..\axLib\axWidgets\axGrid.cpp" />
+    <ClCompile Include="..\axLib\axWidgets\axKnob.cpp" />
+    <ClCompile Include="..\axLib\axWidgets\axLabel.cpp" />
+    <ClCompile Include="..\axLib\axWidgets\axMenu.cpp" />
+    <ClCompile Include="..\axLib\axWidgets\axNumberBox.cpp" />
+    <ClCompile Include="..\axLib\axWidgets\axPlot.cpp" />
+    <ClCompile Include="..\axLib\axWidgets\axPopupMenu.cpp" />
+    <ClCompile Include="..\axLib\axWidgets\axScrollBar.cpp" />
+    <ClCompile Include="..\axLib\axWidgets\axSlider.cpp" />
+    <ClCompile Include="..\axLib\axWidgets\axStaticImage.cpp" />
+    <ClCompile Include="..\axLib\axWidgets\axTextBox.cpp" />
+    <ClCompile Include="..\axLib\axWidgets\axTextControl.cpp" />
+    <ClCompile Include="..\axLib\axWidgets\axToggle.cpp" />
+    <ClCompile Include="..\axLib\source\axApp.cpp" />
+    <ClCompile Include="..\axLib\source\axC++.cpp" />
+    <ClCompile Include="..\axLib\source\axColor.cpp" />
+    <ClCompile Include="..\axLib\source\axConfig.cpp" />
+    <ClCompile Include="..\axLib\source\axCore.cpp" />
+    <ClCompile Include="..\axLib\source\axDefaultFontBuffer.cpp" />
+    <ClCompile Include="..\axLib\source\axEvent.cpp" />
+    <ClCompile Include="..\axLib\source\axEventManager.cpp" />
+    <ClCompile Include="..\axLib\source\axFont.cpp" />
+    <ClCompile Include="..\axLib\source\axGC.cpp" />
+    <ClCompile Include="..\axLib\source\axImage.cpp" />
+    <ClCompile Include="..\axLib\source\axKeyboardManager.cpp" />
+    <ClCompile Include="..\axLib\source\axMain.cpp" />
+    <ClCompile Include="..\axLib\source\axManager.cpp" />
+    <ClCompile Include="..\axLib\source\axMath.cpp" />
+    <ClCompile Include="..\axLib\source\axMouseManager.cpp" />
+    <ClCompile Include="..\axLib\source\axMsg.cpp" />
+    <ClCompile Include="..\axLib\source\axObject.cpp" />
+    <ClCompile Include="..\axLib\source\axObjectLoader.cpp" />
+    <ClCompile Include="..\axLib\source\axPanel.cpp" />
+    <ClCompile Include="..\axLib\source\axResourceManager.cpp" />
+    <ClCompile Include="..\axLib\source\axTimer.cpp" />
+    <ClCompile Include="..\axLib\source\axUtils.cpp" />
+    <ClCompile Include="..\axLib\source\axVar.cpp" />
+    <ClCompile Include="..\axLib\source\axWidget.cpp" />
+    <ClCompile Include="..\axLib\source\axWidgetBuilder.cpp" />
+    <ClCompile Include="..\axLib\source\axWindow.cpp" />
+    <ClCompile Include="..\axLib\source\axWindowTree.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="MediaPlayer.cpp" />
-    <ClCompile Include="menuPanel.cpp" />
+    <ClCompile Include="OrchestraConstValue.cpp" />
     <ClCompile Include="Panel3D.cpp" />
     <ClCompile Include="Partition.cpp" />
+    <ClCompile Include="PlayerBarGL.cpp" />
+    <ClCompile Include="ScoreGL.cpp" />
     <ClCompile Include="VlcPlayer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ControlBar.h" />
+    <ClInclude Include="..\axLib\axCoreWxWidgets.h" />
+    <ClInclude Include="..\axLib\axWidgets\axAnimatedButton.h" />
+    <ClInclude Include="..\axLib\axWidgets\axButton.h" />
+    <ClInclude Include="..\axLib\axWidgets\axDebugButton.h" />
+    <ClInclude Include="..\axLib\axWidgets\axDropMenu.h" />
+    <ClInclude Include="..\axLib\axWidgets\axGrid.h" />
+    <ClInclude Include="..\axLib\axWidgets\axKnob.h" />
+    <ClInclude Include="..\axLib\axWidgets\axLabel.h" />
+    <ClInclude Include="..\axLib\axWidgets\axMenu.h" />
+    <ClInclude Include="..\axLib\axWidgets\axNumberBox.h" />
+    <ClInclude Include="..\axLib\axWidgets\axPlot.h" />
+    <ClInclude Include="..\axLib\axWidgets\axPopupMenu.h" />
+    <ClInclude Include="..\axLib\axWidgets\axScrollBar.h" />
+    <ClInclude Include="..\axLib\axWidgets\axSlider.h" />
+    <ClInclude Include="..\axLib\axWidgets\axStaticImage.h" />
+    <ClInclude Include="..\axLib\axWidgets\axTextBox.h" />
+    <ClInclude Include="..\axLib\axWidgets\axTextControl.h" />
+    <ClInclude Include="..\axLib\axWidgets\axToggle.h" />
+    <ClInclude Include="..\axLib\include\axApp.h" />
+    <ClInclude Include="..\axLib\include\axC++.h" />
+    <ClInclude Include="..\axLib\include\axColor.h" />
+    <ClInclude Include="..\axLib\include\axConfig.h" />
+    <ClInclude Include="..\axLib\include\axCore.h" />
+    <ClInclude Include="..\axLib\include\axEvent.h" />
+    <ClInclude Include="..\axLib\include\axEventManager.h" />
+    <ClInclude Include="..\axLib\include\axFont.h" />
+    <ClInclude Include="..\axLib\include\axGC.h" />
+    <ClInclude Include="..\axLib\include\axImage.h" />
+    <ClInclude Include="..\axLib\include\axKeyboardManager.h" />
+    <ClInclude Include="..\axLib\include\axLib.h" />
+    <ClInclude Include="..\axLib\include\axMain.h" />
+    <ClInclude Include="..\axLib\include\axManager.h" />
+    <ClInclude Include="..\axLib\include\axMath.h" />
+    <ClInclude Include="..\axLib\include\axMouseManager.h" />
+    <ClInclude Include="..\axLib\include\axMsg.h" />
+    <ClInclude Include="..\axLib\include\axObject.h" />
+    <ClInclude Include="..\axLib\include\axObjectLoader.h" />
+    <ClInclude Include="..\axLib\include\axPanel.h" />
+    <ClInclude Include="..\axLib\include\axResourceManager.h" />
+    <ClInclude Include="..\axLib\include\axTimer.h" />
+    <ClInclude Include="..\axLib\include\axUtils.h" />
+    <ClInclude Include="..\axLib\include\axVar.h" />
+    <ClInclude Include="..\axLib\include\axWidget.h" />
+    <ClInclude Include="..\axLib\include\axWidgetBuilder.h" />
+    <ClInclude Include="..\axLib\include\axWindow.h" />
+    <ClInclude Include="..\axLib\include\axWindowTree.h" />
+    <ClInclude Include="..\axLib\include\rapidxml.hpp" />
     <ClInclude Include="Debug.h" />
+    <ClInclude Include="OrchestraConstValue.h" />
+    <ClInclude Include="PlayerBarGL.h" />
     <ClInclude Include="main.h" />
-    <ClInclude Include="MediaPLayer.h" />
-    <ClInclude Include="menuPanel.h" />
     <ClInclude Include="Panel3D.h" />
     <ClInclude Include="Partition.h" />
+    <ClInclude Include="ScoreGL.h" />
     <ClInclude Include="VlcPlayer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
