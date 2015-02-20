@@ -65,7 +65,7 @@ public:
     
     axMsg* GetCopy()
     {
-        return new axPlotMsg(*this);
+        return new_ axPlotMsg(*this);
     }
 
 private:

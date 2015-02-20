@@ -25,7 +25,7 @@
 #include "axPanel.h"
 #include "axToggle.h"
 
-axApp* axApp::MainInstance = nullptr;
+std::unique_ptr<axApp> axApp::MainInstance = nullptr;
 
 axResourceManager* axApp::_resourceManager = nullptr;
 
@@ -33,14 +33,14 @@ axApp::axApp():
 _debugEditorActive(false)
 {
 #ifdef __linux__
-	_core = new axCoreX11(this);
+	_core = toUnique(new_ axCoreX11(this));
 	_core->Init(axSize(0, 0));
 #endif //__linux__
 
 
 #ifdef _MSC_VER
-	//_core = new axCoreWin32();
-	_core = new axCoreWxWidgets();
+	//_core = toUnique(new_ axCoreWin32());
+	_core = toUnique(new_ axCoreWxWidgets());
 	//axCORE = _core;
 	_core->Init(axSize(0, 0));
 #endif //_MSC_VER
@@ -49,10 +49,10 @@ _debugEditorActive(false)
 #ifdef __APPLE__
     
 #ifdef _AX_VST_APP_
-    _core = new axVstCoreMac();
+    _core = toUnique(new_ axVstCoreMac());
     _core->Init(axSize(800, 273));
 #else
-    _core = new axCoreMac();
+    _core = toUnique(new_ axCoreMac());
 //    _core->Init(axSize(500, 500));
 #endif // _AX_VST_APP_
     
@@ -66,7 +66,7 @@ _debugEditorActive(false)
     MainInstance = this;
 
     /// @todo Change debugPanel position.
-    axPanel* debugPanel = new axPanel(3, nullptr,
+    axPanel* debugPanel = new_ axPanel(3, nullptr,
                                       axRect(500 - 20, 500 - 20, 20, 20));
     
     axToggle::Info btn_info;
@@ -84,7 +84,7 @@ _debugEditorActive(false)
     btn_info.img = "settings.png";
     btn_info.single_img = true;
     
-    axToggle* tog = new axToggle(debugPanel,
+    axToggle* tog = new_ axToggle(debugPanel,
                                  axRect(axPoint(0, 0), axSize(20, 20)),
                                  axToggle::Events(GetOnDebugEditor()),
                                  btn_info,
@@ -101,13 +101,13 @@ axApp::axApp(const axSize& frame_size):
 _debugEditorActive(false)
 {
 #ifdef __linux__
-	_core = new axCoreX11(this);
+	_core = toUnique(new_ axCoreX11(this));
 	_core->Init(frame_size);
 #endif //__linux__
 
 #ifdef _MSC_VER
-	_core = new axCoreWxWidgets();
-	//_core = new axCoreWin32();
+	_core = toUnique(new_ axCoreWxWidgets());
+	//_core = toUnique(new_ axCoreWin32());
 	//axCORE = _core;
 	_core->Init(frame_size);
 #endif // _MSC_VER
@@ -115,20 +115,23 @@ _debugEditorActive(false)
 #ifdef __APPLE__
     
 #ifdef _AX_VST_APP_
-    _core = new axVstCoreMac();
+    _core = toUnique(new_ axVstCoreMac());
     _core->Init(frame_size);
 #else
-    _core = new axCoreMac();
+    _core = toUnique(new_ axCoreMac());
     //_core->Init(frame_size);
 #endif // _AX_VST_APP_
     
 #endif // __APPLE__
 }
 
+axApp::~axApp() {
+}
+
 void axApp::CreatePopupWindow(const axSize& size)
 {
 #ifdef __linux__
-	axCore* c = new axCoreX11(this);
+	axCore* c = new_ axCoreX11(this);
 	c->Init(size);
 #endif //__linux__
 }
@@ -251,13 +254,13 @@ bool axApp::IsDebugEditorActive() const
 
 axCore* axApp::GetCore()
 {
-	return _core;
+	return _core.get();
 }
 
 axResourceManager* axApp::GetResourceManager() const
 {
     return _resourceManager == nullptr ?
-           _resourceManager = new axResourceManager() : _resourceManager;
+           _resourceManager = new_ axResourceManager() : _resourceManager;
 }
 
 void axApp::AddAfterGUILoadFunction(std::function<void()> fct)

@@ -167,6 +167,8 @@ public:
     std::string GetLabel() const;
     
     void SetMaximumChar(const unsigned int& max_number_of_char);
+
+	Info* GetInfo() { return static_cast<Info*>(_info.get()); }
     
 protected:
     axTextBox::Events _events;

@@ -38,6 +38,7 @@ class axWindow : public axObject
 {
 public:
 	axWindow(axWindow* parent, const axRect& rect);
+	virtual ~axWindow();
 
 	axWindow* GetParent() const;
 
@@ -162,7 +163,7 @@ private:
 	axWindow* _parent;
 	axRect _rect;
 	axPoint _absolutePosition;
-	axGC* _gc;
+	std::unique_ptr<axGC> _gc;
 	bool _isHidden, _isBlockDrawing;
 	axPoint _scrollDecay;
     axRect _shownRect;

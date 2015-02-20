@@ -12,7 +12,7 @@ _hasVideoLenght(false)
 	labelInfo.font_name = "";
 	labelInfo._alignement = axAlignement::axALIGN_CENTER;
 
-	_timeLabel = new axLabel(this,
+	_timeLabel = new_ axLabel(this,
 		axRect(axPoint(5, 10),
 		axSize(50, 15)), labelInfo, "00:00");
 
@@ -35,18 +35,18 @@ _hasVideoLenght(false)
 	sld_info.backSliderColor = axColor(0.7, 0.7, 0.7);
 	sld_info.backSliderContourColor = axColor(0.2, 0.2, 0.2);
 
-	_scrollSlider = new axSlider(this, 
+	_scrollSlider = new_ axSlider(this, 
 								 axRect(_timeLabel->GetNextPosRight(5), axSize(500, 15)),
 								 axSliderEvents(), 
 								 sld_info);
 
 
-	_videoLengthLabel = new axLabel(this,
+	_videoLengthLabel = new_ axLabel(this,
 		axRect(_scrollSlider->GetNextPosRight(5),
 		axSize(50, 15)), labelInfo, "00:00");
 
 	// Backward button.
-	axButton* back = new axButton(this,
+	axButton* back = new_ axButton(this,
 		axRect(_videoLengthLabel->GetNextPosRight(20) - axPoint(0, 5), axSize(25, 25)),
 		axButton::Events(events.backward_click),
 		axBUTTON_TRANSPARENT,
@@ -64,20 +64,20 @@ _hasVideoLenght(false)
 	togInfo.img = "playPauseBtn.png";
 	togInfo.single_img = false;
 
-	axToggle* _play = new axToggle(this,
+	axToggle* _play = new_ axToggle(this,
 		axRect(back->GetNextPosRight(5), axSize(25, 25)),
 		axToggle::Events(events.play_pause_click),
 		togInfo);
 
 	// Stop button.
-	axButton* stop = new axButton(this,
+	axButton* stop = new_ axButton(this,
 		axRect(_play->GetNextPosRight(5), axSize(25, 25)),
 		axButton::Events(events.stop_click),
 		axBUTTON_TRANSPARENT,
 		"stopBtn.png");
 
 	// Forward button.
-	axButton* forw = new axButton(this,
+	axButton* forw = new_ axButton(this,
 		axRect(stop->GetNextPosRight(5), axSize(25, 25)),
 		axButton::Events(events.forward_click),
 		axBUTTON_TRANSPARENT,
@@ -96,20 +96,20 @@ _hasVideoLenght(false)
 	togShowSelectionInfo.img = "3DToggle.png";
 	togShowSelectionInfo.single_img = false;
 
-	_animToggle = new axToggle(this,
+	_animToggle = new_ axToggle(this,
 		axRect(forw->GetNextPosRight(25), axSize(25, 25)),
 		axToggle::Events(events.toggle_animation),
 		togShowSelectionInfo);
 
 	togShowSelectionInfo.img = "VideoToggle.png";
-	_videoToggle = new axToggle(this,
+	_videoToggle = new_ axToggle(this,
 		axRect(_animToggle->GetNextPosRight(5), axSize(25, 25)),
 		axToggle::Events(events.toggle_video),
 		togShowSelectionInfo);
 
 	//togShowSelectionInfo.single_img = true;
 	togShowSelectionInfo.img = "NoteToggle.png";
-	_scoreToggle = new axToggle(this,
+	_scoreToggle = new_ axToggle(this,
 		axRect(_videoToggle->GetNextPosRight(5), axSize(25, 25)),
 		axToggle::Events(events.toggle_score),
 		togShowSelectionInfo);
@@ -118,7 +118,7 @@ _hasVideoLenght(false)
 	_videoToggle->SetSelected(true);
 	_scoreToggle->SetSelected(true);
 
-	axLabel* pageLabel = new axLabel(this,
+	axLabel* pageLabel = new_ axLabel(this,
 		axRect(_scoreToggle->GetNextPosRight(15) + axPoint(0, 5),
 		axSize(50, 15)), labelInfo, "Page");
 
@@ -131,30 +131,30 @@ _hasVideoLenght(false)
 		axColor(0.0, 0.0, 0.0, 1.0),
 		"", false);
 
-	_pageBox = new axNumberBox(this,
+	_pageBox = new_ axNumberBox(this,
 		axRect(pageLabel->GetNextPosRight(5), axSize(40, 20)),
 		axNumberBox::Events(),
 		box_info, axNO_FLAG, 1,
 		axFloatRange(1.0, 50), axCTRL_INT);
 
-	axLabel* mesureLabel = new axLabel(this,
+	axLabel* mesureLabel = new_ axLabel(this,
 		axRect(_pageBox->GetNextPosRight(10),
 		axSize(50, 15)), labelInfo, "Mesure");
 
-	_barBox = new axNumberBox(this,
+	_barBox = new_ axNumberBox(this,
 		axRect(mesureLabel->GetNextPosRight(5), axSize(40, 20)),
 		axNumberBox::Events(),
 		box_info, axNO_FLAG, 1,
 		axFloatRange(1.0, 50), axCTRL_INT);
 
 	// Volume label.
-	axLabel* volumeLabel = new axLabel(this,
+	axLabel* volumeLabel = new_ axLabel(this,
 		axRect(_barBox->GetNextPosRight(10),
 		axSize(50, 15)), labelInfo, "Volume");
 
 
 	// Volume slider.
-	axSlider* volume = new axSlider(this, axRect(volumeLabel->GetNextPosRight(5), axSize(80, 15)),
+	axSlider* volume = new_ axSlider(this, axRect(volumeLabel->GetNextPosRight(5), axSize(80, 15)),
 		axSliderEvents(), sld_info);
 
 

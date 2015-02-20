@@ -44,6 +44,7 @@
 #endif // _AX_VST_APP_
 #endif // __APPLE__
 
+#include <memory>
 #include "axC++.h"
 #include "axResourceManager.h"
 //#include "axToggle.h"
@@ -53,24 +54,25 @@ class axApp
 {
 public:
     #pragma message("WARNING: Should use GetInstance.")
-	static axApp* MainInstance;
+	static std::unique_ptr<axApp> MainInstance;
 	axApp();
+	~axApp();
 
 	inline static axApp* GetInstance()
 	{
-		return MainInstance;
+		return MainInstance.get();
 	}
 
 	inline static axApp* CreateApp()
 	{
-		return MainInstance == nullptr ?
-               MainInstance = new axApp() : MainInstance;
+		return (MainInstance == nullptr ?
+               MainInstance = toUnique(new_ axApp()) : MainInstance).get();
 	}
 
 	inline static axApp* CreateApp(const axSize& frame_size)
 	{
-		return MainInstance == nullptr ?
-               MainInstance = new axApp(frame_size) : MainInstance;
+		return (MainInstance == nullptr ?
+               MainInstance = toUnique(new_ axApp(frame_size)) : MainInstance).get();
 	}
     
     inline static std::string GetAppPath()
@@ -118,7 +120,7 @@ public:
     void CallAfterGUILoadFunction();
     
 private:
-	axCore* _core;
+	std::unique_ptr<axCore> _core;
     
     std::function<void()> _mainEntryFunction, _afterGuiLoadFunction;
     static axResourceManager* _resourceManager;

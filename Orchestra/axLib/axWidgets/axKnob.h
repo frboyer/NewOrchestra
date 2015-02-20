@@ -165,6 +165,8 @@ public:
     
     virtual void SetInfo(const axVectorPairString& attributes);
 
+	Info* GetInfo() { return static_cast<Info*>(_info.get()); }
+
 private:
     axKnob::Events _events;
 //    axKnob::Info _info;

@@ -225,7 +225,7 @@ axRect axPanel::GetWindowPixelData(unsigned char*& data) const
     rect.position.y -= 1;
     rect.size.y += 1;
     
-    data = new unsigned char[rect.size.x * rect.size.y * 4];
+    data = new_ unsigned char[rect.size.x * rect.size.y * 4];
     
     axSize globalSize(axApp::GetInstance()->GetCore()->GetGlobalSize());
 

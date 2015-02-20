@@ -105,7 +105,7 @@ MainFrame::MainFrame(wxFrame *frame,
 	playBarEvents.toggle_score = GetOnToggleScore();
 
 	_playerBar = new PlayerBarGL(_axMainPanel, 
-		axRect(0, size.y - PLAYER_BAR_HEIGHT, size.x * 0.5, PLAYER_BAR_HEIGHT),
+								 axRect(0, size.y - PLAYER_BAR_HEIGHT, size.x * 0.5, PLAYER_BAR_HEIGHT),
 								 playBarEvents);
 
 	

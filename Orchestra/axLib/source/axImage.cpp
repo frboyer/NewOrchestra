@@ -353,7 +353,7 @@ bool axImage::SaveImage(const std::string& path)
     // Get OpenGL texture data.
     glBindTexture(GL_TEXTURE_2D, _texture);
     
-    unsigned char* data = new unsigned char[_size.x * _size.y * 4];
+    unsigned char* data = new_ unsigned char[_size.x * _size.y * 4];
     glGetTexImage(GL_TEXTURE_2D,
                   0,
                   GL_RGBA, // Format.

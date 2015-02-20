@@ -46,6 +46,7 @@
 #include <map>
 #include <deque>
 #include <algorithm>
+#include <memory>
 
 #ifdef __linux__
 #include <unistd.h>
@@ -376,6 +377,9 @@ public:
                                   CPos(position.x + size.x, position.y + size.y));
     }
 };
+
+template<typename T>
+inline std::unique_ptr<T> toUnique(T* ptr) { return std::unique_ptr<T>(ptr); }
 
 /// @}
 #endif

@@ -82,7 +82,7 @@ public:
 
 		axMsg* GetCopy()
 		{
-			return new Msg(*this);
+			return new_ Msg(*this);
 		}
 
 	private:
@@ -118,7 +118,7 @@ public:
 
 private:
 	ScorePlayer _player;
-	std::vector<axImage*> _images;
+	std::vector<std::unique_ptr<axImage> > _images;
 	int _currentImageIndex;
 	bool _isPlaying, _mouseHover;
 	int _mouseHoverMarker;

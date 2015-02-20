@@ -71,7 +71,7 @@ public:
     
     axMsg* GetCopy()
     {
-        return new axTextControlMsg(*this);
+        return new_ axTextControlMsg(*this);
     }
     
 private:

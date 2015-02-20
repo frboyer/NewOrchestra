@@ -37,6 +37,7 @@
 #include <thread>
 #include <mutex>
 #include <vector>
+#include <memory>
 #include "axEvent.h"
 #include "axObject.h"
 
@@ -66,7 +67,7 @@ private:
     axEventManager();
     void AddFunction(axBindedEvent fct);
     
-    static axEventManager* _instance;
+    static std::unique_ptr<axEventManager> _instance;
     
     typedef std::multimap<axEventId, axEventFunction> axEventMultimap;
     typedef std::pair<const axEventId, axEventFunction> axEventMultimapPair;

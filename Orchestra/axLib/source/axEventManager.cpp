@@ -25,7 +25,7 @@
 
 std::mutex manager_mutex;
 
-axEventManager* axEventManager::_instance = nullptr;
+std::unique_ptr<axEventManager> axEventManager::_instance = nullptr;
 
 axEventManager::axEventManager()
 {
@@ -36,10 +36,10 @@ axEventManager* axEventManager::GetInstance()
 {
     if (_instance == nullptr)
     {
-        _instance = new axEventManager();
+        _instance = toUnique(new_ axEventManager());
     }
     
-    return _instance;
+    return _instance.get();
 }
 
 void axEventManager::AddFunction(axBindedEvent fct)

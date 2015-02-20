@@ -51,9 +51,13 @@ _needUpdate(true)
 		_absolutePosition = parent->_absolutePosition + rect.position;
 	}
     
-	_gc = new axGC(this);
+	_gc = toUnique(new_ axGC(this));
     
     InitGLWindowBackBufferDrawing();
+}
+
+axWindow::~axWindow()
+{
 }
 
 axWindow* axWindow::GetParent() const
@@ -206,7 +210,7 @@ axSize axWindow::GetSize() const
 
 axGC* axWindow::GetGC()
 {
-	return _gc;
+	return _gc.get();
 }
 
 void axWindow::SetSize(const axSize& size)

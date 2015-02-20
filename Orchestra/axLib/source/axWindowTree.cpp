@@ -37,7 +37,6 @@ axWindowNode::axWindowNode()
 
 axWindowNode::~axWindowNode()
 {
-    _childNodes.clear();
     for(axWindowNode* node : _childNodes)
     {
         delete node;
@@ -64,7 +63,7 @@ void axWindowNode::SetWindow(axWindow* win)
 
 void axWindowNode::AddWindow(axWindow* win)
 {
-	_childNodes.push_back(new axWindowNode(win));
+	_childNodes.push_back(new_ axWindowNode(win));
 }
 
 axWindowNode* axWindowNode::Get(axWindow* win)
@@ -202,6 +201,12 @@ axWindowTree::axWindowTree()
 {
 }
 
+axWindowTree::~axWindowTree()
+{
+	for (auto& node : _nodes)
+		delete node;
+}
+
 std::deque<axWindow*> axWindowTree::GetWindowParents(axWindow* win)
 {
     std::deque<axWindow*> windows;
@@ -263,12 +268,12 @@ void axWindowTree::AddWindow(axWindow* win)
 	if (_nodes.size() == 0 && windows.size() == 0)
 	{
         // First top level window.
-		_nodes.push_back(new axWindowNode(win));
+		_nodes.push_back(new_ axWindowNode(win));
 	}
 	else if (windows.size() == 0)
 	{
         // Second or more top level windows.
-		_nodes.push_back(new axWindowNode(win));
+		_nodes.push_back(new_ axWindowNode(win));
 	}
 	else
 	{

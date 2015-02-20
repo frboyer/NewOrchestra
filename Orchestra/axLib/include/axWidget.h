@@ -94,6 +94,7 @@ class axWidget : public axPanel
 public:
     axWidget(axWindow* parent, const axRect& rect, axInfo* info);
     axWidget(int f, axWindow* parent, const axRect& rect);
+    virtual ~axWidget();
     
     bool IsEditable() const;
     bool IsInfoEditable() const;
@@ -104,7 +105,7 @@ public:
     axInfo* GetInfo();
 
 protected:
-    axInfo* _info;
+    std::unique_ptr<axInfo> _info;
     
 private:
     bool _isEditable, _isInfoEditable, _acceptChild;

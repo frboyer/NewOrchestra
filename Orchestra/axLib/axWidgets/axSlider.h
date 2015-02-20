@@ -66,7 +66,7 @@ public:
     
     axMsg* GetCopy()
     {
-        return new axSliderMsg(*this);
+        return new_ axSliderMsg(*this);
     }
 
 private:

@@ -42,22 +42,26 @@ axCore::axCore():
     _y_test = 0.0;
 }
 
+axCore::~axCore()
+{
+}
+
 void axCore::InitManagers()
 {
-    _windowManager = new axManager();
+    _windowManager = toUnique(new_ axManager());
     _windowManager->_managerName = std::string("WindowManager");
-    _popupManager = new axManager();
+    _popupManager = toUnique(new_ axManager());
     _popupManager->_managerName = std::string("PopupManager");
 }
 
 axManager* axCore::GetWindowManager()
 {
-	return _windowManager;
+	return _windowManager.get();
 }
 
 axManager* axCore::GetPopupManager()
 {
-	 return _popupManager;
+	 return _popupManager.get();
 }
 
 void axCore::ResizeGLScene(const int& width, const int& height, double y)

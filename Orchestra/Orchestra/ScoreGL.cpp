@@ -52,7 +52,7 @@ bool ScorePlayer::loadMarkerInfo(std::string path)
 		// Number of Marker in file.
 		data.seekg(0);
 		data.read((char*)&_nMarker, sizeof(int));
-		_markerData = new ScoreMarkerInfo[_nMarker];
+		_markerData = new_ ScoreMarkerInfo[_nMarker];
 
 		// Read all markers data in one big chunk.
 		data.read((char*)_markerData, sizeof(ScoreMarkerInfo)* _nMarker);
@@ -219,19 +219,12 @@ bool ScoreGL::loadInfo(const std::string& data_path,
 		_player.setImageList(list);
 
 		// Delete images if not empty.
-		if (_images.size())
-		{
-			for (auto& n : _images)
-			{
-				delete n;
-			}
-			_images.empty();
-		}
+		_images.clear();
 
 		// Load all images in memory.
 		for (auto& path : list)
 		{
-			_images.push_back(new axImage(path));
+			_images.push_back(toUnique(new_ axImage(path)));
 		}
 
 		std::cout << "IMG index" << std::endl;
@@ -253,7 +246,7 @@ bool ScoreGL::changeTime(const double& timeMs)
 	if (need_to_refresh)
 	{
 		axObject::PushEvent(Events::BAR_CHANGE, 
-			new Msg(_player.getCurrentImageIndex() + 1, _player.getSelectedMarker()));
+			new_ Msg(_player.getCurrentImageIndex() + 1, _player.getSelectedMarker()));
 		Update();
 	}
 
@@ -362,7 +355,7 @@ void ScoreGL::OnPaint()
 	if (img_index != -1 &&
 		_images[img_index]->IsImageReady())
 	{
-		gc->DrawImageResize(_images[img_index],
+		gc->DrawImageResize(_images[img_index].get(),
 							axPoint(10, 10),
 							axSize(rect.size.x - 35, rect.size.y - 40));
 	}
