@@ -54,7 +54,7 @@ public:
     
     axMsg* GetCopy()
     {
-        return new axPopupMenuMsg(*this);
+        return new_ axPopupMenuMsg(*this);
     }
 
 private:

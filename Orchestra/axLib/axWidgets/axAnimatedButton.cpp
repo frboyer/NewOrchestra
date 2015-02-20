@@ -31,7 +31,7 @@ axButton(parent, rect, events, axBUTTON_TRANSPARENT, img_path, label)
     _fadeValue = 1.0;
     _nPastCurrentImg = _nCurrentImg;
     
-    _fadeTimer = new axTimer();
+    _fadeTimer = new_ axTimer();
     _fadeTimer->AddConnection(0, GetOnFadeTimer());
     _fadeTimeMs = 400.0;
 }
@@ -107,10 +107,10 @@ void axAnimatedButton::OnPaint()
     {
         _fadeValueMutex.lock();
         
-        gc->DrawPartOfImage(_btnImg, axPoint(0, _nPastCurrentImg * rect.size.y),
+        gc->DrawPartOfImage(_btnImg.get(), axPoint(0, _nPastCurrentImg * rect.size.y),
                             rect.size, axPoint(0, 0), (1.0 - _fadeValue));
         
-        gc->DrawPartOfImage(_btnImg, axPoint(0, _nCurrentImg * rect.size.y),
+        gc->DrawPartOfImage(_btnImg.get(), axPoint(0, _nCurrentImg * rect.size.y),
                             rect.size, axPoint(0, 0), _fadeValue);
         _fadeValueMutex.unlock();
         
@@ -119,13 +119,13 @@ void axAnimatedButton::OnPaint()
     // Draw Font.
     if_not_empty(_label)
     {
-        gc->SetColor(static_cast<axButton::Info*>(_info)->font_color);
+        gc->SetColor(GetInfo()->font_color);
 //        gc->SetFontSize(12);
         axFont font("FreeSans.ttf");
         gc->DrawStringAlignedCenter(font, _label, rect0);
     }
     
-    gc->SetColor(static_cast<axButton::Info*>(_info)->contour);
+    gc->SetColor(GetInfo()->contour);
     gc->DrawRectangleContour(axRect(axPoint(0, 0), rect.size));
 }
 

@@ -30,6 +30,7 @@
 #include <string>
 #include <cassert>
 
+#include "axC++.h"
 //using namespace std;
 
 //template<class T>
@@ -46,7 +47,7 @@ public:
     
     template<typename U>
     axVar(U&& value) :
-    ptr(new Derived<StorageType<U>>(std::forward<U>(value)))
+    ptr(new_ Derived<StorageType<U>>(std::forward<U>(value)))
     {
         
     }
@@ -174,7 +175,7 @@ private:
         
         Base* clone() const
         {
-            return new Derived<T>(value);
+            return new_ Derived<T>(value);
         }
     };
     

@@ -30,6 +30,7 @@
 #include <mutex>
 #include <string>
 
+#include "axC++.h"
 #include "axEventManager.h"
 #include "axObject.h"
 
@@ -49,7 +50,7 @@ public:
     
     virtual axMsg* GetCopy()
     {
-        return new axTimerMsg(*this);
+        return new_ axTimerMsg(*this);
     }
     
     

@@ -174,12 +174,14 @@ public:
 	}
 
     virtual void SetInfo(const axVectorPairString& attributes);
+
+	Info* GetInfo() { return static_cast<Info*>(_info.get()); }
     
 private:
     axNumberBox::Events _events;
     axFlag _flags;
-    axImage* _bgImg;
-    axFont* _font;
+    std::unique_ptr<axImage> _bgImg;
+    std::unique_ptr<axFont> _font;
 
     axControlType _type;
     axControlUnit _unit;

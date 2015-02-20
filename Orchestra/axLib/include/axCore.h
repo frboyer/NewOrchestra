@@ -33,6 +33,7 @@ class axCore
 {
 public:
 	axCore();
+	virtual ~axCore();
 	virtual void MainLoop() = 0;
 	virtual void Init(const axPoint& frame_size) = 0;
 
@@ -77,8 +78,8 @@ public:
     }
 
 protected:
-	axManager* _windowManager;
-	axManager* _popupManager;
+	std::unique_ptr<axManager> _windowManager;
+	std::unique_ptr<axManager> _popupManager;
 
 	bool _needToDraw, _popupNeedToDraw;
 	axSize _size, _popSize;

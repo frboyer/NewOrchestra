@@ -55,7 +55,7 @@ std::string axTextBox::Msg::GetMsg() const
 
 axMsg* axTextBox::Msg::GetCopy()
 {
-    return new axTextBox::Msg(*this);
+    return new_ axTextBox::Msg(*this);
 }
 
 /*******************************************************************************
@@ -251,7 +251,7 @@ axWidget* axTextBox::Builder::Create(const axVectorPairString& attributes)
         }
     }
     
-    axTextBox* btn = new axTextBox(parent, axRect(pos, _size), evts,
+    axTextBox* btn = new_ axTextBox(parent, axRect(pos, _size), evts,
                                    _info, _imgPath, _label, _flags);
     
     parent->GetResourceManager()->Add(name, btn);
@@ -269,7 +269,7 @@ axTextBox::axTextBox(axWindow* parent,
                      std::string label,
                      axFlag flags) :
 // Heritage.
-axWidget(parent, rect, new Info(info)),
+axWidget(parent, rect, new_ Info(info)),
 // Members.
 _events(events),
 //_info(info),
@@ -285,9 +285,9 @@ _findClickCursorIndex(false),
 _font(nullptr),
 _maxNumChar(10000000)
 {
-	_currentColor = &static_cast<Info*>(_info)->normal;
+    _currentColor = &GetInfo()->normal;
 
-    _btnImg = new axImage(img_path);
+    _btnImg = new_ axImage(img_path);
     
     if(_events.button_click)
     {
@@ -301,13 +301,13 @@ _maxNumChar(10000000)
     
     if(IsFlag(Flags::FLASHING_CURSOR, _flags))
     {
-        _flashingCursor = new axTimer();
+        _flashingCursor = new_ axTimer();
         _flashingCursor->AddConnection(0, GetOnFlashingCursorTimer());
     }
     
     _cursorIndex = (int)_label.size();
     
-    _font = new axFont(0);
+    _font = new_ axFont(0);
     
     SetShownRect(axRect(-5, -5, rect.size.x + 10, rect.size.y + 10));
 }
@@ -394,14 +394,14 @@ void axTextBox::OnWasKeyUnGrabbed()
         _flashingCursor->StopTimer();
     }
     
-    _currentColor = &static_cast<Info*>(_info)->normal;
+	_currentColor = &GetInfo()->normal;
     
     Update();
 }
 
 void axTextBox::OnWasKeyGrabbed()
 {
-    _currentColor = &static_cast<Info*>(_info)->selected;
+    _currentColor = &GetInfo()->selected;
     
     if(IsFlag(Flags::FLASHING_CURSOR, _flags))
     {
@@ -521,7 +521,7 @@ void axTextBox::OnRightArrowDown()
 
 void axTextBox::OnEnterDown()
 {
-    PushEvent(Events::ENTER_CLICK, new axTextBox::Msg(this, _label));
+    PushEvent(Events::ENTER_CLICK, new_ axTextBox::Msg(this, _label));
 //    UnGrabKey();
 }
 
@@ -535,13 +535,13 @@ void axTextBox::DrawContourRectangle(axGC* gc)
             
             if(IsFlag(Flags::CONTOUR_NO_FADE, _flags)) // Shadow fade.
             {
-                gc->SetColor(static_cast<Info*>(_info)->selected_shadow);
+                gc->SetColor(GetInfo()->selected_shadow);
                 gc->DrawRectangle(axRect(axPoint(-5, -5),
                                          axSize(rect.size + axSize(9, 9))));
             }
             else
             {
-                axColor col(static_cast<Info*>(_info)->selected_shadow);
+                axColor col(GetInfo()->selected_shadow);
                 gc->SetColor(col);
                 
                 int nRect = 5;
@@ -550,7 +550,7 @@ void axTextBox::DrawContourRectangle(axGC* gc)
                     gc->DrawRectangleContour(axRect(axPoint(-i, -i),
                                                     axSize(rect.size + axSize(2*i, 2*i))));
                     
-                    double alpha = static_cast<Info*>(_info)->selected_shadow.GetAlpha();
+                    double alpha = GetInfo()->selected_shadow.GetAlpha();
                     double mu = double(i) / double(nRect);
                     
                     col.SetAlpha(alpha - alpha * mu);
@@ -578,7 +578,7 @@ void axTextBox::OnPaint()
     {
         _cursorBarXPosition = 5;
         
-        gc->SetColor(static_cast<Info*>(_info)->font_color);
+        gc->SetColor(GetInfo()->font_color);
         
         // Start drawing label.
         for(int i = 0; i < _label.size(); i++)
@@ -588,7 +588,7 @@ void axTextBox::OnPaint()
             
             if(_isHightlight) // hightlight on.
             {
-                gc->SetColor(static_cast<Info*>(_info)->highlight);
+                gc->SetColor(GetInfo()->highlight);
                 gc->DrawRectangle(axRect(x_past_pos, 5,
                                          next_pos.x - x_past_pos, rect0.size.y - 10));
             }
@@ -627,12 +627,12 @@ void axTextBox::OnPaint()
 
     if(IsKeyGrab() && _cursorFlashActive)
     {
-        gc->SetColor(static_cast<Info*>(_info)->cursor);
+        gc->SetColor(GetInfo()->cursor);
   
         gc->DrawLine(axPoint(_cursorBarXPosition, 5),
                      axPoint(_cursorBarXPosition, rect0.size.y - 5));
     }
 
-	gc->SetColor(static_cast<Info*>(_info)->contour);
-	gc->DrawRectangleContour(axRect(axPoint(0, 0), rect.size));
+    gc->SetColor(GetInfo()->contour);
+    gc->DrawRectangleContour(axRect(axPoint(0, 0), rect.size));
 }

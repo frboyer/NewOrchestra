@@ -4211,17 +4211,17 @@ if ((digit = (*itr - '0')) < 10) { d = d * T(10) + digit; } else break; ++itr; \
         public:
             
             vector_holder(Type* vec, const std::size_t& vec_size)
-            : vector_holder_base_(new(buffer)array_vector_impl(vec,vec_size))
+            : vector_holder_base_(newp(buffer)array_vector_impl(vec,vec_size))
             {}
             
             template <typename Allocator>
             vector_holder(std::vector<Type,Allocator>& vec)
-            : vector_holder_base_(new(buffer)sequence_vector_impl<Allocator,std::vector>(vec))
+            : vector_holder_base_(newp(buffer)sequence_vector_impl<Allocator,std::vector>(vec))
             {}
             
             template <typename Allocator>
             vector_holder(std::deque<Type,Allocator>& deq)
-            : vector_holder_base_(new(buffer)sequence_vector_impl<Allocator,std::deque>(deq))
+            : vector_holder_base_(newp(buffer)sequence_vector_impl<Allocator,std::deque>(deq))
             {}
             
             inline value_ptr operator[](const std::size_t& index) const
@@ -8256,9 +8256,9 @@ static inline std::string id() { return OP1; }          \
                     vector_holder<T>& vec1 = vec1_node_ptr_->ref();
                     
                     vec_size_      = std::min(vec0.size(),vec1.size());
-                    data_          = new T[vec_size_];
-                    temp_          = new vector_holder<T>(data_,vec_size_);
-                    temp_vec_node_ = new vector_node<T>  (temp_);
+                    data_          = new_ T[vec_size_];
+                    temp_          = new_ vector_holder<T>(data_,vec_size_);
+                    temp_vec_node_ = new_ vector_node<T>  (temp_);
                 }
             }
             
@@ -8365,9 +8365,9 @@ static inline std::string id() { return OP1; }          \
                     vector_holder<T>& vec0 = vec0_node_ptr_->ref();
                     
                     vec_size_      = vec0.size();
-                    data_          = new T[vec_size_];
-                    temp_          = new vector_holder<T>(data_,vec_size_);
-                    temp_vec_node_ = new vector_node<T>  (temp_);
+                    data_          = new_ T[vec_size_];
+                    temp_          = new_ vector_holder<T>(data_,vec_size_);
+                    temp_vec_node_ = new_ vector_node<T>  (temp_);
                 }
             }
             
@@ -8470,9 +8470,9 @@ static inline std::string id() { return OP1; }          \
                     vector_holder<T>& vec0 = vec1_node_ptr_->ref();
                     
                     vec_size_      = vec0.size();
-                    data_          = new T[vec_size_];
-                    temp_          = new vector_holder<T>(data_,vec_size_);
-                    temp_vec_node_ = new vector_node<T>  (temp_);
+                    data_          = new_ T[vec_size_];
+                    temp_          = new_ vector_holder<T>(data_,vec_size_);
+                    temp_vec_node_ = new_ vector_node<T>  (temp_);
                 }
             }
             
@@ -8573,9 +8573,9 @@ static inline std::string id() { return OP1; }          \
                     vector_holder<T>& vec0 = vec0_node_ptr_->ref();
                     
                     vec_size_      = vec0.size();
-                    data_          = new T[vec_size_];
-                    temp_          = new vector_holder<T>(data_,vec_size_);
-                    temp_vec_node_ = new vector_node<T>  (temp_);
+                    data_          = new_ T[vec_size_];
+                    temp_          = new_ vector_holder<T>(data_,vec_size_);
+                    temp_vec_node_ = new_ vector_node<T>  (temp_);
                 }
             }
             
@@ -12652,7 +12652,7 @@ const typename expression_node<T>::node_type nodetype_T0oT1oT2oT3<T,T0_,T1_,T2_,
             template <typename node_type>
             inline expression_node<typename node_type::value_type>* allocate() const
             {
-                return new node_type();
+                return new_ node_type();
             }
             
             template <typename node_type,
@@ -12661,89 +12661,89 @@ const typename expression_node<T>::node_type nodetype_T0oT1oT2oT3<T,T0_,T1_,T2_,
             template <typename,typename> class Sequence>
             inline expression_node<typename node_type::value_type>* allocate(const Sequence<Type,Allocator>& seq) const
             {
-                return new node_type(seq);
+                return new_ node_type(seq);
             }
             
             template <typename node_type, typename T1>
             inline expression_node<typename node_type::value_type>* allocate(T1& t1) const
             {
-                return new node_type(t1);
+                return new_ node_type(t1);
             }
             
             template <typename node_type, typename T1>
             inline expression_node<typename node_type::value_type>* allocate_c(const T1& t1) const
             {
-                return new node_type(t1);
+                return new_ node_type(t1);
             }
             
             template <typename node_type,
             typename T1, typename T2>
             inline expression_node<typename node_type::value_type>* allocate(const T1& t1, const T2& t2) const
             {
-                return new node_type(t1,t2);
+                return new_ node_type(t1,t2);
             }
             
             template <typename node_type,
             typename T1, typename T2>
             inline expression_node<typename node_type::value_type>* allocate_cr(const T1& t1, T2& t2) const
             {
-                return new node_type(t1,t2);
+                return new_ node_type(t1,t2);
             }
             
             template <typename node_type,
             typename T1, typename T2>
             inline expression_node<typename node_type::value_type>* allocate_rc(T1& t1, const T2& t2) const
             {
-                return new node_type(t1,t2);
+                return new_ node_type(t1,t2);
             }
             
             template <typename node_type,
             typename T1, typename T2>
             inline expression_node<typename node_type::value_type>* allocate_rr(T1& t1, T2& t2) const
             {
-                return new node_type(t1,t2);
+                return new_ node_type(t1,t2);
             }
             
             template <typename node_type,
             typename T1, typename T2>
             inline expression_node<typename node_type::value_type>* allocate_tt(T1 t1, T2 t2) const
             {
-                return new node_type(t1,t2);
+                return new_ node_type(t1,t2);
             }
             
             template <typename node_type,
             typename T1, typename T2, typename T3>
             inline expression_node<typename node_type::value_type>* allocate_ttt(T1 t1, T2 t2, T3 t3) const
             {
-                return new node_type(t1,t2,t3);
+                return new_ node_type(t1,t2,t3);
             }
             
             template <typename node_type,
             typename T1, typename T2, typename T3, typename T4>
             inline expression_node<typename node_type::value_type>* allocate_tttt(T1 t1, T2 t2, T3 t3, T4 t4) const
             {
-                return new node_type(t1,t2,t3,t4);
+                return new_ node_type(t1,t2,t3,t4);
             }
             
             template <typename node_type,
             typename T1, typename T2, typename T3>
             inline expression_node<typename node_type::value_type>* allocate_rrr(T1& t1, T2& t2, T3& t3) const
             {
-                return new node_type(t1,t2,t3);
+                return new_ node_type(t1,t2,t3);
             }
             
             template <typename node_type,
             typename T1, typename T2, typename T3, typename T4>
             inline expression_node<typename node_type::value_type>* allocate_rrrr(T1& t1, T2& t2, T3& t3, T4& t4) const
             {
-                return new node_type(t1,t2,t3,t4);
+                return new_ node_type(t1,t2,t3,t4);
             }
             
             template <typename node_type,
             typename T1, typename T2, typename T3, typename T4, typename T5>
             inline expression_node<typename node_type::value_type>* allocate_rrrrr(T1& t1, T2& t2, T3& t3, T4& t4, T5& t5) const
             {
-                return new node_type(t1,t2,t3,t4,t5);
+                return new_ node_type(t1,t2,t3,t4,t5);
             }
             
             template <typename node_type,
@@ -12751,7 +12751,7 @@ const typename expression_node<T>::node_type nodetype_T0oT1oT2oT3<T,T0_,T1_,T2_,
             inline expression_node<typename node_type::value_type>* allocate(const T1& t1, const T2& t2,
                                                                              const T3& t3) const
             {
-                return new node_type(t1,t2,t3);
+                return new_ node_type(t1,t2,t3);
             }
             
             template <typename node_type,
@@ -12760,7 +12760,7 @@ const typename expression_node<T>::node_type nodetype_T0oT1oT2oT3<T,T0_,T1_,T2_,
             inline expression_node<typename node_type::value_type>* allocate(const T1& t1, const T2& t2,
                                                                              const T3& t3, const T4& t4) const
             {
-                return new node_type(t1,t2,t3,t4);
+                return new_ node_type(t1,t2,t3,t4);
             }
             
             template <typename node_type,
@@ -12770,7 +12770,7 @@ const typename expression_node<T>::node_type nodetype_T0oT1oT2oT3<T,T0_,T1_,T2_,
                                                                              const T3& t3, const T4& t4,
                                                                              const T5& t5) const
             {
-                return new node_type(t1,t2,t3,t4,t5);
+                return new_ node_type(t1,t2,t3,t4,t5);
             }
             
             template <typename node_type,
@@ -12780,7 +12780,7 @@ const typename expression_node<T>::node_type nodetype_T0oT1oT2oT3<T,T0_,T1_,T2_,
                                                                              const T3& t3, const T4& t4,
                                                                              const T5& t5, const T6& t6) const
             {
-                return new node_type(t1,t2,t3,t4,t5,t6);
+                return new_ node_type(t1,t2,t3,t4,t5,t6);
             }
             
             template <typename node_type,
@@ -12792,7 +12792,7 @@ const typename expression_node<T>::node_type nodetype_T0oT1oT2oT3<T,T0_,T1_,T2_,
                                                                              const T5& t5, const T6& t6,
                                                                              const T7& t7) const
             {
-                return new node_type(t1,t2,t3,t4,t5,t6,t7);
+                return new_ node_type(t1,t2,t3,t4,t5,t6,t7);
             }
             
             template <typename node_type,
@@ -12805,7 +12805,7 @@ const typename expression_node<T>::node_type nodetype_T0oT1oT2oT3<T,T0_,T1_,T2_,
                                                                              const T5& t5, const T6& t6,
                                                                              const T7& t7, const T8& t8) const
             {
-                return new node_type(t1,t2,t3,t4,t5,t6,t7,t8);
+                return new_ node_type(t1,t2,t3,t4,t5,t6,t7,t8);
             }
             
             template <typename node_type,
@@ -12819,7 +12819,7 @@ const typename expression_node<T>::node_type nodetype_T0oT1oT2oT3<T,T0_,T1_,T2_,
                                                                              const T7& t7, const T8& t8,
                                                                              const T9& t9) const
             {
-                return new node_type(t1,t2,t3,t4,t5,t6,t7,t8,t9);
+                return new_ node_type(t1,t2,t3,t4,t5,t6,t7,t8,t9);
             }
             
             template <typename node_type,
@@ -12834,14 +12834,14 @@ const typename expression_node<T>::node_type nodetype_T0oT1oT2oT3<T,T0_,T1_,T2_,
                                                                              const T7& t7, const  T8&  t8,
                                                                              const T9& t9, const T10& t10) const
             {
-                return new node_type(t1,t2,t3,t4,t5,t6,t7,t8,t9,t10);
+                return new_ node_type(t1,t2,t3,t4,t5,t6,t7,t8,t9,t10);
             }
             
             template <typename node_type,
             typename T1, typename T2, typename T3>
             inline expression_node<typename node_type::value_type>* allocate_type(T1 t1, T2 t2, T3 t3) const
             {
-                return new node_type(t1,t2,t3);
+                return new_ node_type(t1,t2,t3);
             }
             
             template <typename node_type,
@@ -12850,7 +12850,7 @@ const typename expression_node<T>::node_type nodetype_T0oT1oT2oT3<T,T0_,T1_,T2_,
             inline expression_node<typename node_type::value_type>* allocate_type(T1 t1, T2 t2,
                                                                                   T3 t3, T4 t4) const
             {
-                return new node_type(t1,t2,t3,t4);
+                return new_ node_type(t1,t2,t3,t4);
             }
             
             template <typename node_type,
@@ -12861,7 +12861,7 @@ const typename expression_node<T>::node_type nodetype_T0oT1oT2oT3<T,T0_,T1_,T2_,
                                                                                   T3 t3, T4 t4,
                                                                                   T5 t5) const
             {
-                return new node_type(t1,t2,t3,t4,t5);
+                return new_ node_type(t1,t2,t3,t4,t5);
             }
             
             template <typename node_type,
@@ -12873,7 +12873,7 @@ const typename expression_node<T>::node_type nodetype_T0oT1oT2oT3<T,T0_,T1_,T2_,
                                                                                   T5 t5, T6 t6,
                                                                                   T7 t7) const
             {
-                return new node_type(t1,t2,t3,t4,t5,t6,t7);
+                return new_ node_type(t1,t2,t3,t4,t5,t6,t7);
             }
             
             template <typename T>
@@ -13265,7 +13265,7 @@ m.insert(std::make_pair(std::string(Symbol),details::base_operation_t(Type,Args)
             {
                 static inline std::pair<bool,vector_t*> make(std::pair<T*,std::size_t> v, const bool is_const = false)
                 {
-                    return std::make_pair(is_const,new vector_t(v.first,v.second));
+                    return std::make_pair(is_const,new_ vector_t(v.first,v.second));
                 }
             };
             
@@ -13274,7 +13274,7 @@ m.insert(std::make_pair(std::string(Symbol),details::base_operation_t(Type,Args)
                 template <typename Allocator>
                 static inline std::pair<bool,vector_t*> make(std::vector<T,Allocator>& v, const bool is_const = false)
                 {
-                    return std::make_pair(is_const,new vector_t(v));
+                    return std::make_pair(is_const,new_ vector_t(v));
                 }
             };
             
@@ -13283,7 +13283,7 @@ m.insert(std::make_pair(std::string(Symbol),details::base_operation_t(Type,Args)
                 template <typename Allocator>
                 static inline std::pair<bool,vector_t*> make(std::deque<T,Allocator>& v, const bool is_const = false)
                 {
-                    return std::make_pair(is_const,new vector_t(v));
+                    return std::make_pair(is_const,new_ vector_t(v));
                 }
             };
             
@@ -13316,13 +13316,13 @@ m.insert(std::make_pair(std::string(Symbol),details::base_operation_t(Type,Args)
                 {
                     static inline std::pair<bool,variable_node_t*> make(T& t,const bool is_const = false)
                     {
-                        return std::make_pair(is_const,new variable_node_t(t));
+                        return std::make_pair(is_const,new_ variable_node_t(t));
                     }
                     
 #ifndef exprtk_disable_string_capabilities
                     static inline std::pair<bool,stringvar_node_t*> make(std::string& t,const bool is_const = false)
                     {
-                        return std::make_pair(is_const,new stringvar_node_t(t));
+                        return std::make_pair(is_const,new_ stringvar_node_t(t));
                     }
 #endif
                     
@@ -13595,7 +13595,7 @@ m.insert(std::make_pair(std::string(Symbol),details::base_operation_t(Type,Args)
             
             st_holder()
             : ref_count(1),
-            data_(new st_data)
+            data_(new_ st_data)
             {}
             
             st_holder(st_data* data)
@@ -13619,7 +13619,7 @@ m.insert(std::make_pair(std::string(Symbol),details::base_operation_t(Type,Args)
     public:
         
         symbol_table()
-        : holder_(new st_holder)
+        : holder_(new_ st_holder)
         {
             clear();
         }
@@ -14462,7 +14462,7 @@ m.insert(std::make_pair(std::string(Symbol),details::base_operation_t(Type,Args)
         expression()
         : expression_holder_(0)
         {
-            set_expression(new details::null_node<T>());
+            set_expression(new_ details::null_node<T>());
         }
         
         expression(const expression<T>& e)
@@ -14582,7 +14582,7 @@ m.insert(std::make_pair(std::string(Symbol),details::base_operation_t(Type,Args)
                     }
                 }
                 
-                expression_holder_ = new expression_holder(expr);
+                expression_holder_ = new_ expression_holder(expr);
             }
         }
         
@@ -17095,8 +17095,8 @@ return expression_generator_(operation.type,pl##N);\
                             nse.name     = loop_counter_symbol;
                             nse.type     = scope_element::e_variable;
                             nse.depth    = scope_depth_;
-                            nse.data     = new T(T(0));
-                            nse.var_node = new variable_node_t(*(T*)(nse.data));
+                            nse.data     = new_ T(T(0));
+                            nse.var_node = new_ variable_node_t(*(T*)(nse.data));
                             
                             if (!sem_.add_element(nse))
                             {
@@ -18850,8 +18850,8 @@ return expression_generator_(operation.type,pl##N);\
                 nse.type     = scope_element::e_vector;
                 nse.depth    = scope_depth_;
                 nse.size     = vec_size;
-                nse.data     = new T[vec_size];
-                nse.vec_node = new typename scope_element::vector_holder_t((T*)(nse.data),nse.size);
+                nse.data     = new_ T[vec_size];
+                nse.vec_node = new_ typename scope_element::vector_holder_t((T*)(nse.data),nse.size);
                 
                 if (!sem_.add_element(nse))
                 {
@@ -19022,8 +19022,8 @@ return expression_generator_(operation.type,pl##N);\
                 nse.ref_count = 1;
                 nse.type      = scope_element::e_variable;
                 nse.depth     = scope_depth_;
-                nse.data      = new T(T(0));
-                nse.var_node  = new variable_node_t(*(T*)(nse.data));
+                nse.data      = new_ T(T(0));
+                nse.var_node  = new_ variable_node_t(*(T*)(nse.data));
                 
                 if (!sem_.add_element(nse))
                 {
@@ -19108,8 +19108,8 @@ return expression_generator_(operation.type,pl##N);\
                 nse.type      = scope_element::e_variable;
                 nse.depth     = scope_depth_;
                 nse.ip_index  = sem_.next_ip_index();
-                nse.data      = new T(T(0));
-                nse.var_node  = new variable_node_t(*(T*)(nse.data));
+                nse.data      = new_ T(T(0));
+                nse.var_node  = new_ variable_node_t(*(T*)(nse.data));
                 
                 if (!sem_.add_element(nse))
                 {
@@ -21566,7 +21566,7 @@ allocate<details::vararg_node<Type,op1<Type> > >(arg_list); \
                         nse.index    = i;
                         nse.depth    = parser_->scope_depth_;
                         nse.data     = 0;
-                        nse.var_node = new variable_node_t((*v));
+                        nse.var_node = new_ variable_node_t((*v));
                         
                         if (!parser_->sem_.add_element(nse))
                         {
@@ -29278,13 +29278,13 @@ sf4_map[details::sfext##Op##_op<T>::id()] = pair_t(details::sfext##Op##_op<T>::p
                 
                 switch (arg_count)
                 {
-                    case 0  : (fp_map_[arg_count])[name] = new func_0param(); break;
-                    case 1  : (fp_map_[arg_count])[name] = new func_1param(); break;
-                    case 2  : (fp_map_[arg_count])[name] = new func_2param(); break;
-                    case 3  : (fp_map_[arg_count])[name] = new func_3param(); break;
-                    case 4  : (fp_map_[arg_count])[name] = new func_4param(); break;
-                    case 5  : (fp_map_[arg_count])[name] = new func_5param(); break;
-                    case 6  : (fp_map_[arg_count])[name] = new func_6param(); break;
+                    case 0  : (fp_map_[arg_count])[name] = new_ func_0param(); break;
+                    case 1  : (fp_map_[arg_count])[name] = new_ func_1param(); break;
+                    case 2  : (fp_map_[arg_count])[name] = new_ func_2param(); break;
+                    case 3  : (fp_map_[arg_count])[name] = new_ func_3param(); break;
+                    case 4  : (fp_map_[arg_count])[name] = new_ func_4param(); break;
+                    case 5  : (fp_map_[arg_count])[name] = new_ func_5param(); break;
+                    case 6  : (fp_map_[arg_count])[name] = new_ func_6param(); break;
                 }
                 
                 exprtk::ifunction<T>& ifunc = (*(fp_map_[arg_count])[name]);

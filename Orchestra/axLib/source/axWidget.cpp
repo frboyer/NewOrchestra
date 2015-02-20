@@ -25,10 +25,10 @@
 
 axWidget::axWidget(axWindow* parent, const axRect& rect, axInfo* info):
 axPanel(parent, rect),
-_info(info)
+_info(toUnique(info))
 {
     #ifdef _axDebugEditor_
-    axDebugButton* dbgBtn = new axDebugButton(this);
+    axDebugButton* dbgBtn = new_ axDebugButton(this);
     #endif // _axDebugEditor_
 }
 
@@ -37,8 +37,12 @@ axPanel(f, parent, rect),
 _info(nullptr)
 {
     #ifdef _axDebugEditor_
-    axDebugButton* dbgBtn = new axDebugButton(this);
+    axDebugButton* dbgBtn = new_ axDebugButton(this);
     #endif // _axDebugEditor_
+}
+
+axWidget::~axWidget()
+{
 }
 
 void axWidget::SetInfo(const axVectorPairString& attributes)
@@ -49,6 +53,6 @@ void axWidget::SetInfo(const axVectorPairString& attributes)
 
 axInfo* axWidget::GetInfo()
 {
-    return _info;
+    return _info.get();
 }
 

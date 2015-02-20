@@ -61,6 +61,16 @@
 #define axREMOVE_ON_RELEASE(x) 
 #endif
 
+#if axDEBUG_LEVEL > 0 && !defined(new) && defined(_MSC_VER)
+#include <crtdbg.h>
+inline void * __CRTDECL operator new(size_t size, int blockType, const char* fileName, int lineNumber, void* placement) { return placement; } // Placement new does not allocate, so we simply return the pointer without using the crtdbg version.
+#define newp(...) new(_NORMAL_BLOCK, __FILE__, __LINE__, __VA_ARGS__)
+#define new_ new(_NORMAL_BLOCK, __FILE__, __LINE__)
+#else
+#define newp new
+#define new_ new
+#endif
+
 //#define DSTREAM cout
 #define DSTREAM(x) if(x <= axDEBUG_LEVEL) cout 
 

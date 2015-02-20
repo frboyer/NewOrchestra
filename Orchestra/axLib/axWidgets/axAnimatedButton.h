@@ -52,6 +52,8 @@ public:
                      string label = "");
     
     axEVENT_ACCESSOR(axTimerMsg, OnFadeTimer);
+
+    Info* GetInfo() { return static_cast<Info*>(_info.get()); }
     
 private:
     axTimer* _fadeTimer;

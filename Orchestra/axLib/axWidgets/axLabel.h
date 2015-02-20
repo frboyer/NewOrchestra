@@ -109,10 +109,12 @@ public:
     
     void SetLabel(const std::string& label);
 
+	Info* GetInfo() { return static_cast<Info*>(_info.get()); }
+
 private:
 //    axLabel::Info _info;
     std::string _label;
-    axFont* _font;
+    std::unique_ptr<axFont> _font;
     
     // Events.
     virtual void OnPaint();

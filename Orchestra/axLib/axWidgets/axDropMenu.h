@@ -81,7 +81,7 @@ public:
     
     axMsg* GetCopy()
     {
-        return new axDropMenuMsg(*this);
+        return new_ axDropMenuMsg(*this);
     }
     
 private:
@@ -162,7 +162,7 @@ private:
     axImage* _bgImg;
     string _label;
     string _msg;
-    axFont* _font;
+    std::unique_ptr<axFont> _font;
     
     bool _selected;
     axFlag _flags;

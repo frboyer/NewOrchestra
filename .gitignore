@@ -23,6 +23,9 @@
 # Executable files
 *.exe
 
+# Cache files
+plugins.dat
+
 # Compiled Object files
 *.slo
 *.lo

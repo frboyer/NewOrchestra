@@ -72,7 +72,7 @@ public:
     
     axMsg* GetCopy()
     {
-        return new axScrollBarMsg(*this);
+        return new_ axScrollBarMsg(*this);
     }
 
 private:

@@ -166,13 +166,15 @@ public:
 	void SetSelected(const bool& selected);
     
     void SetLabel(const std::string& label);
+
+	Info* GetInfo() { return static_cast<Info*>(_info.get()); }
     
 protected:
     axButton::Events _events;
-    axImage* _btnImg;
+    std::unique_ptr<axImage> _btnImg;
     axFlag _flags;
     std::string _label, _msg;
-    axFont* _font;
+    std::unique_ptr<axFont> _font;
     
     axColor* _currentColor;
     bool _selected;
