@@ -13,7 +13,6 @@
 #include "Range.h"
 #include "Debug.h"
 
-
 ITERABLE_ENUM(BoneSide)
 ITERABLE_ENUM(BoneNumber)
 
@@ -199,32 +198,59 @@ void clamp(T& v, T min, T max) {
 	else if (v < min) v = min;
 }
 
+static int lastX = 0, lastY = 0;
 void Device3D::OnMouseMotion(wxMouseEvent& event)
 {
-	static int lastX = 0, lastY = 0;
+	
 	int x = event.GetX() - clickPt.x;
 	int y = event.GetY() - clickPt.y;
 
 	if (event.Dragging() && HasCapture() && event.LeftIsDown())
 	{
-		irr_Bone* bone = getBone(BoneSide::RIGHT, BoneNumber::UPPER_ARM);
-		irr_Vector3D rot = bone->getRotation() + irr_Vector3D(x - lastX, y - lastY, 0);
-		lastX = x; lastY = y;
-		clamp(rot.X, 260.0f, 365.0f);
-		clamp(rot.Y, -45.0f, 80.0f);
-		bone->setRotation(rot);
+		irr_Vector3D camPos(camera_->getPosition());
+
+		float r = 24.0;
+		float angle = atan2(float(camPos.X), float(camPos.Z));
+
+		if (x > lastX)
+		{
+			angle += (0.5 / (2.0 * M_PI));
+		}
+		else
+		{
+			angle -= (0.5 / (2.0 * M_PI));
+		}
+
+		lastX = x, lastY = y;
+
+		std::cout << "Angle :: " << angle << std::endl;
+		std::cout << "x :: " << camPos.X << std::endl;
+		std::cout << "z :: " << camPos.Z << std::endl;
+
+		camPos = irr_Vector3D(r * sin(angle), camPos.Y, r * cos(angle));
+		//irr_Vector3D cameraPosition(0.0, 20.0, -24.0);
+		//irr_Vector3D cameraLookAt(0.0, 18.0, 0.0);
+		camera_->setPosition(camPos);
+		//irr_Bone* bone = getBone(BoneSide::RIGHT, BoneNumber::UPPER_ARM);
+		//irr_Vector3D rot = bone->getRotation() + irr_Vector3D(x - lastX, y - lastY, 0);
+		//lastX = x; lastY = y;
+		//clamp(rot.X, 260.0f, 365.0f);
+		//clamp(rot.Y, -45.0f, 80.0f);
+		//bone->setRotation(rot);
 		//getBone(side, FOREARM)->setRotation(rot);
 
 		Refresh();
 	}
 	else lastX = lastY = 0;
+
+	
 }
 
 void Device3D::OnMouseLeftDown(wxMouseEvent& event)
 {
 	clickPt = event.GetPosition();
-	//_DEBUG_ DSTREAM << "LEFT DOWN" << endl;
 	CaptureMouse();
+	
 	SetFocus();
 	SetFocusFromKbd();
 }
@@ -261,10 +287,8 @@ void Device3D::OnChar(wxKeyEvent& event)
 
 void Device3D::OnPaint(wxPaintEvent &event)
 {
-	/*UNREFERENCED_PARAMETER*/ (event);
+	(event);
 	wxPaintDC dc(this);
-
-	//_DEBUG_ DSTREAM << "PAINT TEST" << endl;
 
 	if (irrDevice_)
 	{
