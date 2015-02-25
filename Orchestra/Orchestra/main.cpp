@@ -8,17 +8,17 @@ IMPLEMENT_APP(MyApp)
 
 bool MyApp::OnInit()
 {
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	/*AllocConsole();
+	//_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	AllocConsole();
 	AttachConsole(GetCurrentProcessId());
 	freopen("conin$", "r", stdin);
 	freopen("conout$", "w", stdout);
-	freopen("conout$", "w", stderr);*/
+	freopen("conout$", "w", stderr);
 
 	// Create the main frame window
 	_frame = new MainFrame(NULL, wxT("Orchestra"), wxDefaultPosition, wxSize(640, 480));
 
-	//CreateMenu();
+	CreateMenu();
 
 	// Show the frame
 	_frame->Show(true);
@@ -28,13 +28,11 @@ bool MyApp::OnInit()
 void MyApp::CreateMenu()
 {
 	// Make a menubar
-	//wxMenu *file_menu = new wxMenu;
-	//file_menu->Append(wxID_EXIT, wxGetStockLabel(wxID_EXIT));
-	//_menu = new wxMenuBar;
-	//_menu->Append(file_menu, wxT("&File"));
-	//_frame->SetMenuBar(_menu);
-
-
+	wxMenu *file_menu = new wxMenu;
+	file_menu->Append(wxID_EXIT, wxGetStockLabel(wxID_EXIT));
+	_menu = new wxMenuBar;
+	_menu->Append(file_menu, wxT("&File"));
+	_frame->SetMenuBar(_menu);
 }
 
 BEGIN_EVENT_TABLE(MainFrame, wxFrame)
