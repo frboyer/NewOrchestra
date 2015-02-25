@@ -221,7 +221,7 @@ axWidget* axButton::Builder::Create(const axVectorPairString& attributes)
         }
         else if(s.first == "flags")
         {
-            _flags = stoi(s.second);
+            _flags = stoi(s.second) == 0 ? false : true;
         }
         else if(s.first == std::string("event"))
         {
@@ -252,7 +252,7 @@ axButton::axButton(axWindow* parent,
                    axFlag flags,
                    std::string msg):
 // Heritage.
-axWidget(parent, rect, new_ axButton::Info(info)),
+axWidget(parent, rect, axInfo::Ptr(new_ axButton::Info(info))),
 // Members.
 _events(events),
 _label(label),
@@ -312,6 +312,8 @@ void axButton::SetLabel(const std::string& label)
 
 void axButton::OnMouseLeftDown(const axPoint& pos)
 {
+	(pos);
+
     _currentColor = &GetInfo()->clicking;
     _nCurrentImg = axBTN_DOWN;
     
@@ -324,6 +326,8 @@ void axButton::OnMouseLeftDown(const axPoint& pos)
 
 void axButton::OnMouseLeftUp(const axPoint& pos)
 {
+	(pos);
+
     if (IsGrabbed())
     {
         UnGrabMouse();

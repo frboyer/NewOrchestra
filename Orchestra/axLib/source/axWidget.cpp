@@ -29,7 +29,15 @@ _info(toUnique(info))
 {
     #ifdef _axDebugEditor_
     axDebugButton* dbgBtn = new_ axDebugButton(this);
+	(dbgBtn);
     #endif // _axDebugEditor_
+}
+
+axWidget::axWidget(axWindow* parent, const axRect& rect, std::shared_ptr<axInfo> info) :
+axPanel(parent, rect),
+_info(info)
+{
+
 }
 
 axWidget::axWidget(int f, axWindow* parent, const axRect& rect):
@@ -38,6 +46,7 @@ _info(nullptr)
 {
     #ifdef _axDebugEditor_
     axDebugButton* dbgBtn = new_ axDebugButton(this);
+	(dbgBtn);
     #endif // _axDebugEditor_
 }
 

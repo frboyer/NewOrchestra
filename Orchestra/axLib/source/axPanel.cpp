@@ -59,6 +59,7 @@ axPanel::axPanel(int f, axWindow* parent, const axRect& rect) :
 axWindow(parent, rect)
 //_panelColor(0.0, 0.0, 0.0, 0.0)
 {
+	(f);
     //std::cout << "axPanel : Add popup window" << std::endl;
     GetIsPopup() = true;
 	axApp::GetInstance()->AddPopWindow(this);
@@ -214,6 +215,7 @@ bool axPanel::IsMouseHoverWindow()
 
 void axPanel::DeleteWindow(axWindow* win)
 {
+	(win);
 	//_app->GetWindowManager()->
 }
 

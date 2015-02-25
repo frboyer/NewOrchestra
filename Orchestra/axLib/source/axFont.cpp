@@ -51,7 +51,7 @@ _isReady(false)
         }
         else
         {
-            bool err = FT_New_Memory_Face(_freeType,
+            FT_Error err = FT_New_Memory_Face(_freeType,
                                           GetDefaultFontData(data_index),
                                           GetDefaultFontDataSize(data_index),
                                           0,
@@ -148,8 +148,10 @@ int axFont::GetNextPosition() const
     return _next;
 }
 
+// @todo Change function params.
 bool axFont::LoadFont(const string& path, FT_Face& face)
 {
+	(face);
     // Zero mean succes.
     if_error_in(FT_New_Face(_freeType, path.c_str(), 0, &_face))
     {
@@ -185,7 +187,7 @@ void axFont::SetChar(const char& letter)
             _delta = axPoint(_face->glyph->bitmap_left,
                              _face->glyph->bitmap_top);
             
-            _next = g->advance.x / 64.0;
+            _next = int(g->advance.x / 64.0);
             
             glBindTexture(GL_TEXTURE_2D, _texture);
             glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -211,6 +213,7 @@ void axFont::SetChar(const char& letter)
 
 void axFont::SetFontType(const string& font_type)
 {
+	(font_type);
     std::cout << "axFont::SetFontType not implemented yet." << std::endl;
 }
 

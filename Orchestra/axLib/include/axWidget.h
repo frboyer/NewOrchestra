@@ -31,6 +31,8 @@ enum axParameterType
     axCOLOR, axRECT, axPOINT, axSIZE
 };
 
+
+
 class axInfo
 {
 public:
@@ -38,6 +40,8 @@ public:
     {
         
     }
+
+	typedef std::shared_ptr<axInfo> Ptr;
     
     axInfo(const std::string& path):
     _path(path)
@@ -67,6 +71,7 @@ public:
     
     virtual void SetAttribute(const axStringPair& attribute)
     {
+		(attribute);
     }
    
     
@@ -80,6 +85,7 @@ public:
     
     virtual std::string GetAttributeValue(const std::string& name)
     {
+		(name);
         return "";
     }
     
@@ -89,10 +95,14 @@ private:
 };
 
 
+
+
 class axWidget : public axPanel
 {
 public:
     axWidget(axWindow* parent, const axRect& rect, axInfo* info);
+	axWidget(axWindow* parent, const axRect& rect,std::shared_ptr<axInfo> info);
+
     axWidget(int f, axWindow* parent, const axRect& rect);
     virtual ~axWidget();
     
@@ -105,7 +115,7 @@ public:
     axInfo* GetInfo();
 
 protected:
-    std::unique_ptr<axInfo> _info;
+    std::shared_ptr<axInfo> _info;
     
 private:
     bool _isEditable, _isInfoEditable, _acceptChild;

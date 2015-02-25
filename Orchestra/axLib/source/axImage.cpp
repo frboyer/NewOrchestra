@@ -32,6 +32,11 @@ axImageGlobalMapLoader::axImageGlobalMapLoader()
 
 }
 
+axImageGlobalMapLoader::~axImageGlobalMapLoader()
+{
+	std::cout << "Delete axImageGlobalMap." << std::endl;
+}
+
 bool axImageGlobalMapLoader::LoadImage(const string& path, GLuint& _texture, axSize& _size)
 {
 #ifdef _AX_VST_APP_

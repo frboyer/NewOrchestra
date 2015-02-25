@@ -53,8 +53,7 @@
 class axApp
 {
 public:
-    #pragma message("WARNING: Should use GetInstance.")
-	static std::unique_ptr<axApp> MainInstance;
+
 	axApp();
 	~axApp();
 
@@ -103,8 +102,8 @@ public:
 
 	bool CreatePopupWindow(const char*, int, int);
     
-    #pragma message("WARNING: Deprecate.")
-	string GetCurrentAppDirectory();
+ //   #pragma message("WARNING: Deprecate.")
+	//string GetCurrentAppDirectory();
 
 	string GetAppDirectory();
     
@@ -120,6 +119,7 @@ public:
     void CallAfterGUILoadFunction();
     
 private:
+	static std::unique_ptr<axApp> MainInstance;
 	std::unique_ptr<axCore> _core;
     
     std::function<void()> _mainEntryFunction, _afterGuiLoadFunction;

@@ -15,6 +15,10 @@ public:
 
 	virtual bool CreatePopupWindow(const char* title, int width, int height)
 	{
+		(title);
+		(width);
+		(height);
+
 		return false;
 	}
 
@@ -37,7 +41,7 @@ public:
 
 	virtual void ResizeFrame(const axSize& size)
 	{
-
+		(size);
 	}
 	
 	virtual void UpdateAll();
@@ -82,6 +86,10 @@ protected:
 	}
 	virtual bool CreateGLWindow(const char* title, int width, int height, int bits = 16)
 	{
+		(title);
+		(width);
+		(height);
+		(bits);
 		return false;
 	}
 	virtual void MainLoop()

@@ -4,11 +4,15 @@
 /// \date 2014-03
 /// Creation date 2013-01
 
+
+
 #include "Panel3D.h"
 #include <windows.h>
-#include <cmath>
+#define _USE_MATH_DEFINES
+#include <math.h>
 #include "Range.h"
 #include "Debug.h"
+
 
 ITERABLE_ENUM(BoneSide)
 ITERABLE_ENUM(BoneNumber)

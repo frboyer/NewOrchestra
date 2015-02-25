@@ -168,7 +168,7 @@ void axNumberBox::Info::SetAttribute(const axStringPair& attribute)
     }
     else if(attribute.first == "single_img")
     {
-        single_img = stoi(attribute.second);
+        single_img = stoi(attribute.second) == 0 ? false : true;
     }
 }
 
@@ -212,7 +212,7 @@ axNumberBox* axNumberBox::Builder::Create(axVectorPairString attributes)
         }
         else if(s.first == "flags")
         {
-            _flags = stoi(s.second);
+            _flags = stoi(s.second) == 0 ? false : true;
         }
         else if(s.first == std::string("event"))
         {
@@ -267,8 +267,7 @@ axNumberBox::axNumberBox(axWindow* parent,
                          axControlUnit unit,
                          axControlInterpolation interpolation,
                          std::string label):
-
-axWidget(parent, rect, new_ axNumberBox::Info(info)),
+axWidget(parent, rect, axInfo::Ptr(new_ axNumberBox::Info(info))),
 // Members.
 _events(events),
 //_info(info),
@@ -283,7 +282,7 @@ _font(nullptr)
 {
     _bgImg = toUnique(new_ axImage(GetInfo()->img));
     
-    double v = value;
+    //double v = value;
     _value = axClamp<double>(value, _range.left, _range.right);
     
     _font = toUnique(new_ axFont(0));
@@ -347,6 +346,8 @@ void axNumberBox::OnMouseLeftDown(const axPoint& pos)
 
 void axNumberBox::OnMouseLeftUp(const axPoint& pos)
 {
+	(pos);
+
     if(IsGrabbed())
     {
         UnGrabMouse();

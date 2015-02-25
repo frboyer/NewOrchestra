@@ -38,6 +38,8 @@ _index(-1),
 _labels(labels),
 _lastSelected(nullptr)
 {
+	(parent);
+
 	axSize tog_size(rect.size.x, LABEL_HEIGHT);
 
     axToggle::Events tog_event;
@@ -55,7 +57,7 @@ _lastSelected(nullptr)
     tog_info.contour = axColor(0.0, 0.0, 0.0, 0.0);
     tog_info.font_color = axColor(0.0, 0.0, 0.0, 1.0);
     
-	for (int i = 0; i < _labels.size(); i++)
+	for (unsigned int i = 0; i < _labels.size(); i++)
 	{
 		_btns.push_back(new_ axToggle(this,
 						axRect(axPoint(0, i * LABEL_HEIGHT), tog_size),
@@ -76,7 +78,7 @@ _lastSelected(nullptr)
 
 void axPopupMenu::SetSelectedIndex(const int& index)
 {
-    if(index >= 0 && index < _btns.size())
+    if(index >= 0 && index <(int) _btns.size())
     {
         _btns[index]->SetSelected(true);
         
@@ -122,6 +124,7 @@ void axPopupMenu::OnButtonClick(const axToggle::Msg& msg)
 
 void axPopupMenu::OnMouseMotion(const axPoint& pos)
 {
+	(pos);
 	/*if (!IsGrabbed())
 	{
 		GrabMouse();
@@ -148,6 +151,7 @@ void axPopupMenu::OnMouseMotion(const axPoint& pos)
 
 void axPopupMenu::OnMouseLeftUp(const axPoint& pos)
 {
+	(pos);
 	//UnGrabMouse();
 	////m_parent->TriggerEvent(m_eventID.valueChange);
 	//if (_events.selection_change)

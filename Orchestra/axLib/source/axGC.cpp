@@ -90,6 +90,7 @@ void axGC::DrawRectangle(const axRect& rect)
 
 void axGC::DrawRoundedRectangle(const axRect& rect)
 {
+	(rect);
     /// @todo.
 }
 
@@ -126,6 +127,7 @@ void axGC::DrawRectangleContour(const axRect& rect, float linewidth)
 
 void axGC::DrawTexture(GLuint texture, const axRect& rect, axColor color)
 {
+	(color);
 //	axPoint pos = rect.position + _win->GetAbsoluteRect().position;
     axPoint pos = rect.position;
 //	pos.x  -= _win->GetScrollDecay().x;
@@ -313,7 +315,7 @@ void axGC::DrawImage(axImage* img, const axPoint& position, double alpha)
     axPoint pos = position;
 	//pos -= _win->GetScrollDecay();
 
-	glColor4f(1.0, 1.0, 1.0, alpha);
+	glColor4f(1.0f, 1.0f, 1.0f, float(alpha));
 
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
@@ -351,7 +353,7 @@ void axGC::DrawImageResize(axImage* img, const axPoint& position, const axSize& 
     axPoint pos = position;
 	//pos -= _win->GetScrollDecay();
 
-	glColor4f(1.0, 1.0, 1.0, alpha);
+	glColor4f(1.0f, 1.0f, 1.0f, float(alpha));
 
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
@@ -403,7 +405,7 @@ void axGC::DrawPartOfImage(axImage* img,
     double x = posInImage.x / double(img_size.x);
     double y = 1.0 - posInImage.y / double(img_size.y);
     
-    glColor4f(1.0, 1.0, 1.0, alpha);
+    glColor4f(1.0f, 1.0f, 1.0f, float(alpha));
     
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
@@ -451,7 +453,7 @@ void axGC::DrawPartOfImageResize(axImage* img,
 	double x = posInImage.x / double(img_size.x);
 	double y = 1.0 - posInImage.y / double(img_size.y);
 
-	glColor4f(1.0, 1.0, 1.0, alpha);
+	glColor4f(1.0f, 1.0f, 1.0f, float(alpha));
 
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
@@ -491,7 +493,7 @@ void axGC::DrawString(axFont& font,
     {
         int x = pos.x;
         
-        for (int i = 0; i < text.size(); i++)
+        for (unsigned int i = 0; i < text.size(); i++)
         {
             font.SetChar(text[i]);
             axPoint delta = font.GetDelta();
@@ -565,7 +567,7 @@ void axGC::DrawStringAlignedCenter(axFont& font,
     {
         int length = 0;
         int height = 0;
-        for (int i = 0; i < text.size(); i++)
+        for (unsigned int i = 0; i < text.size(); i++)
         {
             font.SetChar(text[i]);
             length += font.GetNextPosition();
@@ -574,11 +576,11 @@ void axGC::DrawStringAlignedCenter(axFont& font,
                 height = font.GetSize().y;
         }
         
-        axPoint pos(rect.position.x + (rect.size.x - length) * 0.5,
-                    rect.position.y + ceil((rect.size.y - height) * 0.5));
+        axPoint pos(int(rect.position.x + (rect.size.x - length) * 0.5),
+                    int(rect.position.y + ceil((rect.size.y - height) * 0.5)));
         
         int x = pos.x;
-        for (int i = 0; i < text.size(); i++)
+        for (unsigned int i = 0; i < text.size(); i++)
         {
             font.SetChar(text[i]);
             axPoint delta = font.GetDelta();
@@ -603,19 +605,20 @@ void axGC::DrawRectangleColorFade(const axRect& rectangle,
 
 	glBegin(GL_QUADS);
 	SetColor(c1, alpha1);
-	glVertex3f(rect.position.x, rect.position.y, 0); // Bottom left.
+	glVertex3f(float(rect.position.x), float(rect.position.y), 0.0f); // Bottom left.
 
 	//SetColor(c1);
-	glVertex3f(rect.position.x + rect.size.x,
-		rect.position.y, 0); // Bottom Right.
+	glVertex3f(float(rect.position.x + rect.size.x),
+			   float(rect.position.y), 0.0f); // Bottom Right.
 
 	SetColor(c2, alpha2);
-	glVertex3f(rect.position.x + rect.size.x,
-		rect.position.y + rect.size.y, 0); // Top Right.
+	glVertex3f(float(rect.position.x + rect.size.x),
+			   float(rect.position.y + rect.size.y), 0.0f); // Top Right.
 
 	//SetColor(c2);
-	glVertex3f(rect.position.x,
-		rect.position.y + rect.size.y, 0); // Top Left
+	glVertex3f(float(rect.position.x),
+			   float(rect.position.y + rect.size.y), 
+			   0.0f); // Top Left
 	glEnd();
 }
 
@@ -628,17 +631,18 @@ void axGC::DrawRectangleColorFade(const axRect& rectangle,
     
     glBegin(GL_QUADS);
     SetColor(c1);
-    glVertex3f(rect.position.x, rect.position.y, 0); // Bottom left.
+    glVertex3f(float(rect.position.x), 
+			   float(rect.position.y), 0.0f); // Bottom left.
     
-    glVertex3f(rect.position.x + rect.size.x,
-               rect.position.y, 0); // Bottom Right.
+    glVertex3f(float(rect.position.x + rect.size.x),
+               float(rect.position.y), 0.0f); // Bottom Right.
     
     SetColor(c2);
-    glVertex3f(rect.position.x + rect.size.x,
-               rect.position.y + rect.size.y, 0); // Top Right.
+	glVertex3f(float(rect.position.x + rect.size.x),
+			   float(rect.position.y + rect.size.y), 0.0f); // Top Right.
     
-    glVertex3f(rect.position.x,
-               rect.position.y + rect.size.y, 0); // Top Left
+	glVertex3f(float(rect.position.x),
+			   float(rect.position.y + rect.size.y), 0.0f); // Top Left
     glEnd();
 }
 
@@ -669,8 +673,8 @@ void axGC::DrawSmouthLine(const axPoint& pt1, const axPoint& pt2)
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
     
     glBegin(GL_LINES);
-    glVertex2f(pt1.x, pt1.y);
-    glVertex2f(pt2.x, pt2.y);
+    glVertex2f(float(pt1.x), float(pt1.y));
+    glVertex2f(float(pt2.x), float(pt2.y));
     glEnd();
     
     glDisable(GL_LINE_SMOOTH);
@@ -698,8 +702,8 @@ void axGC::DrawLine(const axPoint& pt1, const axPoint& pt2, float width)
 	glLineWidth(width);
 
 	glBegin(GL_LINES);
-	glVertex2f(p1.x, p1.y);
-	glVertex2f(p2.x, p2.y);
+	glVertex2f(float(p1.x), float(p1.y));
+	glVertex2f(float(p2.x), float(p2.y));
 	glEnd();
     
 //    glDisable(GL_LINE_SMOOTH);
@@ -708,9 +712,9 @@ void axGC::DrawLine(const axPoint& pt1, const axPoint& pt2, float width)
 void axGC::DrawPoint(const axPoint& pt, const int& size)
 {
     glEnable(GL_POINT_SMOOTH);
-    glPointSize(size);
+    glPointSize(float(size));
     glBegin(GL_POINTS);
-    glVertex2f(pt.x, pt.y);
+	glVertex2f(float(pt.x), float(pt.y));
     glEnd();
     glDisable(GL_POINT_SMOOTH);
 }
@@ -746,8 +750,8 @@ void axGC::DrawLineCubic(const axPoint& pt1, const axPoint& pt2)
         double p_x = h1 * pt1.x + h2 * pt2.x + h3 * v1x + h4 * v2x;
         double p_y = h1 * pt1.y + h2 * pt2.y + h3 * v1y + h4 * v2y;
         
-        glVertex2f(pp_x, pp_y);
-        glVertex2f(p_x, p_y);
+		glVertex2f(float(pp_x), float(pp_y));
+		glVertex2f(float(p_x), float(p_y));
         
         pp_x = p_x;
         pp_y = p_y;
@@ -769,7 +773,7 @@ void axGC::SetLineWidth(const double& width)
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
     glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
     
-    glLineWidth(width);
+    glLineWidth(float(width));
 
 }
 
@@ -797,8 +801,8 @@ void axGC::DrawCircle(const axPoint& pos,
         // Get the current angle.
 		double theta = 2.0f * M_PI * double(i) / double(nSegments);
 
-		double x = radius * cosf(theta);
-		double y = radius * sinf(theta);
+		double x = radius * cos(theta);
+		double y = radius * sin(theta);
 
 		glVertex2d(x + real_pos.x, y + real_pos.y);
 	} 

@@ -15,6 +15,7 @@ axCoreWxWidgets::axCoreWxWidgets() : axCore()
 
 void axCoreWxWidgets::Init(const axSize& frame_size)
 {
+	(frame_size);
 	InitManagers();
 	InitGL();
 }

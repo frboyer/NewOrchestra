@@ -88,6 +88,8 @@ void axDebugButton::SetLabel(const std::string& label)
 
 void axDebugButton::OnMouseLeftDown(const axPoint& pos)
 {
+	(pos);
+
     _currentColor = &_info.clicking;
 
     GrabMouse();
@@ -121,6 +123,8 @@ void axDebugButton::OnMouseLeftDragging(const axPoint &pos)
 
 void axDebugButton::OnMouseLeftUp(const axPoint& pos)
 {
+	(pos);
+
     if (IsGrabbed())
     {
         UnGrabMouse();
@@ -148,6 +152,8 @@ void axDebugButton::OnMouseLeftUp(const axPoint& pos)
 
 void axDebugButton::OnMouseRightDown(const axPoint& pos)
 {
+	(pos);
+
     if(_isEditing == false)
     {
         axTextBox::Events txtEvents;
@@ -268,6 +274,8 @@ void axDebugButton::OnMouseRightDown(const axPoint& pos)
 
 void axDebugButton::OnAttributeEdit(const axTextBox::Msg& msg)
 {
+	(msg);
+
     axWidget* widget = static_cast<axWidget*>(GetParent());
     
     axVectorPairString attributes;

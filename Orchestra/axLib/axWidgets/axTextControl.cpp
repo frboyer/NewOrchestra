@@ -91,12 +91,14 @@ void axTextControl::OnMouseLeftDown(const axPoint& pos)
 
 void axTextControl::OnFlashingCursorTimer(const axTimerMsg& msg)
 {
+	(msg);
     _cursorFlashActive = !_cursorFlashActive;
     Update();
 }
 
 void axTextControl::OnMouseLeftUp(const axPoint& pos)
 {
+	(pos);
     if(IsGrabbed())
     {
         UnGrabMouse();
@@ -122,6 +124,7 @@ void axTextControl::OnMouseLeftDragging(const axPoint& pos)
 
 void axTextControl::OnMouseLeftDoubleClick(const axPoint& pos)
 {
+	(pos);
     _isHightlight = true;
     Update();
 }
@@ -203,7 +206,7 @@ void axTextControl::OnKeyDeleteDown()
         _isHightlight = false;
         Update();
     }
-    else if(_label.size() && _cursorIndex < _label.size())
+    else if((int)_label.size() && _cursorIndex < (int)_label.size())
     {
         _label.erase(_cursorIndex, 1);
         --_cursorIndex;
@@ -238,7 +241,7 @@ void axTextControl::OnRightArrowDown()
 {
     ++_cursorIndex;
     
-    if(_cursorIndex > _label.size())
+    if(_cursorIndex > (int)_label.size())
     {
         _cursorIndex = (int)_label.size();
     }
@@ -305,7 +308,7 @@ void axTextControl::OnPaint()
     {
         _cursorBarXPosition = 5;
         
-        for(int i = 0; i < _label.size(); i++)
+        for(int i = 0; i < (int)_label.size(); i++)
         {
             int x_past_pos = next_pos.x;
             
@@ -327,7 +330,7 @@ void axTextControl::OnPaint()
                     _cursorIndex = i;
                     _cursorBarXPosition = x_past_pos;
                 }
-                else if(i == _label.size() - 1 && _clickPosition.x > next_pos.x)
+                else if(i == (int)_label.size() - 1 && _clickPosition.x > next_pos.x)
                 {
                     _cursorIndex = i + 1;
                     _cursorBarXPosition = next_pos.x;

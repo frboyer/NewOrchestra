@@ -13,8 +13,8 @@ _hasVideoLenght(false)
 	labelInfo._alignement = axAlignement::axALIGN_CENTER;
 
 	_timeLabel = new_ axLabel(this,
-		axRect(axPoint(5, 10),
-		axSize(50, 15)), labelInfo, "00:00");
+							  axRect(axPoint(5, 10),
+							  axSize(50, 15)), labelInfo, "00:00");
 
 	// Scroll slider.
 	axSliderInfo sld_info;
@@ -39,7 +39,6 @@ _hasVideoLenght(false)
 								 axRect(_timeLabel->GetNextPosRight(5), axSize(500, 15)),
 								 axSliderEvents(), 
 								 sld_info);
-
 
 	_videoLengthLabel = new_ axLabel(this,
 		axRect(_scrollSlider->GetNextPosRight(5),
@@ -156,41 +155,7 @@ _hasVideoLenght(false)
 	// Volume slider.
 	axSlider* volume = new_ axSlider(this, axRect(volumeLabel->GetNextPosRight(5), axSize(80, 15)),
 		axSliderEvents(), sld_info);
-
-
-	//axToggle::Info togShowSelectionInfo;
-	//togShowSelectionInfo.normal = axColor(0.3, 0.3, 0.3);
-	//togShowSelectionInfo.hover = axColor(0.45, 0.45, 0.45);
-	//togShowSelectionInfo.clicking = axColor(0.4, 0.4, 0.4);
-
-	//togShowSelectionInfo.selected = axColor(0.7, 0.7, 0.7);
-	//togShowSelectionInfo.selected_hover = axColor(0.85, 0.85, 0.85);
-	//togShowSelectionInfo.selected_clicking = axColor(0.8, 0.8, 0.8);
-
-	//togShowSelectionInfo.contour = axColor::axTransparentColor;
-	//togShowSelectionInfo.img = "3DIcon.png";
-	//togShowSelectionInfo.single_img = true;
-
-	//_animToggle = new axToggle(this,
-	//	axRect(volume->GetNextPosRight(5) - axPoint(0, 5), axSize(25, 25)),
-	//	axToggle::Events(events.toggle_animation),
-	//	togShowSelectionInfo);
-
-	//togShowSelectionInfo.img = "videoIcon.png";
-	//_videoToggle = new axToggle(this,
-	//	axRect(_animToggle->GetNextPosRight(5), axSize(25, 25)),
-	//	axToggle::Events(events.toggle_video),
-	//	togShowSelectionInfo);
-
-	//togShowSelectionInfo.img = "noteIcon.png";
-	//_scoreToggle = new axToggle(this,
-	//	axRect(_videoToggle->GetNextPosRight(5), axSize(25, 25)),
-	//	axToggle::Events(events.toggle_score),
-	//	togShowSelectionInfo);
-
-	//_animToggle->SetSelected(true);
-	//_videoToggle->SetSelected(true);
-	//_scoreToggle->SetSelected(true);
+	(volume);
 }
 
 void PlayerBarGL::SetBar(const int& bar)
@@ -209,8 +174,8 @@ void PlayerBarGL::SetScrollSliderValue(const double& value, const double& ms)
 	{
 		_scrollSlider->SetValue(value);
 
-		int time_in_sec = ms / 1000.0;
-		int min = floor(time_in_sec / 60.0);
+		int time_in_sec = int(ms / 1000.0);
+		int min = (int)floor(time_in_sec / 60.0);
 		int sec = time_in_sec % 60;
 
 		std::string min_label = min < 10 ? std::string("0") + std::to_string(min) : std::to_string(min);
@@ -224,8 +189,8 @@ void PlayerBarGL::SetVideoLength(const double& ms)
 {
 	if (ms > 0.0)
 	{
-		int time_in_sec = ms / 1000.0;
-		int min = floor(time_in_sec / 60.0);
+		int time_in_sec = int(ms / 1000.0);
+		int min = (int)floor(time_in_sec / 60.0);
 		int sec = time_in_sec % 60;
 
 		std::string min_label = min < 10 ? std::string("0") + std::to_string(min) : std::to_string(min);

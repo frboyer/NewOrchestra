@@ -239,7 +239,7 @@ axWidget* axTextBox::Builder::Create(const axVectorPairString& attributes)
         }
         else if(s.first == "flags")
         {
-            _flags = stoi(s.second);
+            _flags = axFlag(stoi(s.second));
         }
         else if(s.first == std::string("event_button_click"))
         {
@@ -352,12 +352,14 @@ void axTextBox::OnMouseLeftDown(const axPoint& pos)
 
 void axTextBox::OnFlashingCursorTimer(const axTimerMsg& msg)
 {
+	(msg);
     _cursorFlashActive = !_cursorFlashActive;
     Update();
 }
 
 void axTextBox::OnMouseLeftUp(const axPoint& pos)
 {
+	(pos);
     if(IsGrabbed())
     {
         UnGrabMouse();
@@ -383,6 +385,7 @@ void axTextBox::OnMouseLeftDragging(const axPoint& pos)
 
 void axTextBox::OnMouseLeftDoubleClick(const axPoint& pos)
 {
+	(pos);
     _isHightlight = true;
     Update();
 }
@@ -470,7 +473,7 @@ void axTextBox::OnKeyDeleteDown()
         _isHightlight = false;
         Update();
     }
-    else if(_label.size() && _cursorIndex < _label.size())
+    else if(int(_label.size()) && _cursorIndex < int(_label.size()))
     {
         _label.erase(_cursorIndex, 1);
         --_cursorIndex;
@@ -505,9 +508,9 @@ void axTextBox::OnRightArrowDown()
 {
     ++_cursorIndex;
     
-    if(_cursorIndex > _label.size())
+    if(_cursorIndex > int(_label.size()))
     {
-        _cursorIndex = _label.size();
+        _cursorIndex = int(_label.size());
     }
     
     if(_isHightlight)
@@ -581,7 +584,7 @@ void axTextBox::OnPaint()
         gc->SetColor(GetInfo()->font_color);
         
         // Start drawing label.
-        for(int i = 0; i < _label.size(); i++)
+        for(int i = 0; i < (int)_label.size(); i++)
         {
             int x_past_pos = next_pos.x;
             next_pos = gc->DrawChar(*_font, _label[i], next_pos);
@@ -601,7 +604,7 @@ void axTextBox::OnPaint()
                     _cursorIndex = i;
                     _cursorBarXPosition = x_past_pos;
                 }
-                else if(i == _label.size() - 1 && _clickPosition.x > next_pos.x)
+                else if(i == int(_label.size()) - 1 && _clickPosition.x > next_pos.x)
                 {
                     _cursorIndex = i + 1;
                     _cursorBarXPosition = next_pos.x;

@@ -223,9 +223,10 @@ axKnob::Builder::Builder(axWindow* parent,
                          axDirection direction):
 _parent(parent),
 _pastKnob(nullptr)
-
 {
-    
+	(direction);
+	(nextPositionDelta);
+	(flags);
 }
 
 axKnob* axKnob::Builder::Create(const axPoint& pos, const axEventFunction& evt)
@@ -311,7 +312,7 @@ axKnob* axKnob::Builder::Create(axVectorPairString attributes)
         }
         else if(s.first == "flags")
         {
-            _flags = stoi(s.second);
+            _flags = stoi(s.second) == 0 ? false : true;
         }
         else if(s.first == std::string("event"))
         {
@@ -337,7 +338,7 @@ axKnob::axKnob(axWindow* parent,
                axFlag flags,
                double value):
 // Heritage.
-axWidget(parent, rect, new_ axKnob::Info(info)),
+axWidget(parent, rect, axInfo::Ptr(new_ axKnob::Info(info))),
 // Members.
 _events(events),
 //_info(info),
@@ -347,17 +348,19 @@ m_knobValue(value),
 _zeroToOneValue(value),
 _range(0.0, 1.0)
 {
+	(flags);
+
     m_knobImg = new_ axImage(GetInfo()->img_path);
     _bgAlpha = 1.0;
     
-    m_nCurrentImg = m_knobValue * (GetInfo()->n_knob - 1);
+    m_nCurrentImg = int(m_knobValue * (GetInfo()->n_knob - 1));
     
     if(_events.value_change)
     {
         AddConnection(0, _events.value_change);
     }
     
-    SetValue(_range.GetValueFromZeroToOne(m_knobValue), false);
+    SetValue((float)_range.GetValueFromZeroToOne(m_knobValue), false);
 }
 
 void axKnob::SetInfo(const axVectorPairString& attributes)
@@ -388,6 +391,8 @@ void axKnob::OnMouseLeftDown(const axPoint& pos)
 
 void axKnob::OnMouseLeftUp(const axPoint& pos)
 {
+	(pos);
+
     if( IsGrabbed() )
     {
         ShowMouse();
@@ -414,9 +419,9 @@ void  axKnob::OnMouseLeftDragging(const axPoint& position)
     _zeroToOneValue = axClamp<double>(_zeroToOneValue, 0.0, 1.0);
     m_knobValue = _range.GetValueFromZeroToOne(_zeroToOneValue);
 
-    m_nCurrentImg = m_knobValue * (GetInfo()->n_knob - 1);
+    m_nCurrentImg = int(m_knobValue * (GetInfo()->n_knob - 1));
     
-    if( m_nCurrentImg != cur_img )
+    if( (int)m_nCurrentImg != cur_img )
     {
         Update();
     }
@@ -429,9 +434,9 @@ void axKnob::SetValue(const axFloat& value, bool callValueChangeEvent)
 	int cur_img = m_nCurrentImg;
 	_zeroToOneValue = axClamp<double>(value, 0.0, 1.0);
     m_knobValue = _zeroToOneValue;
-	m_nCurrentImg = m_knobValue * (GetInfo()->n_knob - 1);
+	m_nCurrentImg = int(m_knobValue * (GetInfo()->n_knob - 1));
 
-	if (m_nCurrentImg != cur_img)
+	if ((int)m_nCurrentImg != cur_img)
 	{
 		Update();
 	}
@@ -478,8 +483,8 @@ _value("0.00")
     axKnob::Events evts;
     evts.value_change = GetOnKnobValueChange();
     
-    axPoint knobPos((rect.size.x - info.knob_size.x) * 0.5,
-                    20 + (rect.size.y - 40 - info.knob_size.y) * 0.5);
+    axPoint knobPos(int((rect.size.x - info.knob_size.x) * 0.5),
+                    int(20 + (rect.size.y - 40 - info.knob_size.y) * 0.5));
 
     _knob = new_ axKnob(this, axRect(knobPos, info.knob_size),
                        evts, info, flags, value);
@@ -492,7 +497,7 @@ _value("0.00")
 
 void axKnobControl::SetValue(const double& value)
 {
-    _knob->SetValue(value);
+    _knob->SetValue(float(value));
 }
 
 void axKnobControl::OnKnobValueChange(const axKnob::Msg& msg)

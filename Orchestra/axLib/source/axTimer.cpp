@@ -21,9 +21,9 @@
  ******************************************************************************/
 #include "axTimer.h"
 
-axTimer::axTimer(axEventFunction fct, int ms)
+axTimer::axTimer(axEventFunction fct)
 {
-//    AddConnection(0, fct);
+    AddConnection(0, fct);
 //    InitTimer(ms);
 }
 

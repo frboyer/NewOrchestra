@@ -81,12 +81,10 @@
     <ClCompile Include="..\axLib\axWidgets\axButton.cpp" />
     <ClCompile Include="..\axLib\axWidgets\axDebugButton.cpp" />
     <ClCompile Include="..\axLib\axWidgets\axDropMenu.cpp" />
-    <ClCompile Include="..\axLib\axWidgets\axGrid.cpp" />
     <ClCompile Include="..\axLib\axWidgets\axKnob.cpp" />
     <ClCompile Include="..\axLib\axWidgets\axLabel.cpp" />
     <ClCompile Include="..\axLib\axWidgets\axMenu.cpp" />
     <ClCompile Include="..\axLib\axWidgets\axNumberBox.cpp" />
-    <ClCompile Include="..\axLib\axWidgets\axPlot.cpp" />
     <ClCompile Include="..\axLib\axWidgets\axPopupMenu.cpp" />
     <ClCompile Include="..\axLib\axWidgets\axScrollBar.cpp" />
     <ClCompile Include="..\axLib\axWidgets\axSlider.cpp" />
@@ -136,12 +134,10 @@
     <ClInclude Include="..\axLib\axWidgets\axButton.h" />
     <ClInclude Include="..\axLib\axWidgets\axDebugButton.h" />
     <ClInclude Include="..\axLib\axWidgets\axDropMenu.h" />
-    <ClInclude Include="..\axLib\axWidgets\axGrid.h" />
     <ClInclude Include="..\axLib\axWidgets\axKnob.h" />
     <ClInclude Include="..\axLib\axWidgets\axLabel.h" />
     <ClInclude Include="..\axLib\axWidgets\axMenu.h" />
     <ClInclude Include="..\axLib\axWidgets\axNumberBox.h" />
-    <ClInclude Include="..\axLib\axWidgets\axPlot.h" />
     <ClInclude Include="..\axLib\axWidgets\axPopupMenu.h" />
     <ClInclude Include="..\axLib\axWidgets\axScrollBar.h" />
     <ClInclude Include="..\axLib\axWidgets\axSlider.h" />
