@@ -63,7 +63,7 @@ private:
 class axTimer : public axObject
 {
 public:
-    axTimer(axEventFunction fct, int ms);
+    axTimer(axEventFunction fct);
     axTimer();
     
     static void timer_thread(axTimer& timer, int interval_ms, int length_ms);
@@ -80,7 +80,7 @@ private:
     std::mutex timer_mutex;
     bool _isRunning;
     
-    void InitTimer(int ms);
+    //void InitTimer(int ms);
 };
 
 /// @}

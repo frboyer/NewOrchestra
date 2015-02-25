@@ -44,6 +44,7 @@ axCore::axCore():
 
 axCore::~axCore()
 {
+	std::cout << "Delete core." << std::endl;
 }
 
 void axCore::InitManagers()
@@ -280,23 +281,23 @@ int axCore::DrawGLPopScene()
 
 		axFloatRect rect(0 - 1.0, 0 - 1, _size.x * 2.0, _size.y * 2.0);
 
-		glColor3f(0.1, 0.1, 0.1);
+		glColor3f(0.1f, 0.1f, 0.1f);
 		GLfloat z = 0;
 
 		glBegin(GL_QUADS);
 		// Bottom left.
-		glVertex3f(rect.position.x, rect.position.y, z);
+		glVertex3d(rect.position.x, rect.position.y, z);
 
 		// Bottom Right.
-		glVertex3f(rect.position.x + rect.size.x,
+		glVertex3d(rect.position.x + rect.size.x,
 			rect.position.y, z);
 
 		// Top Right.
-		glVertex3f(rect.position.x + rect.size.x,
+		glVertex3d(rect.position.x + rect.size.x,
 			rect.position.y + rect.size.y, z);
 
 		// Top Left
-		glVertex3f(rect.position.x, rect.position.y + rect.size.y, z);
+		glVertex3d(rect.position.x, rect.position.y + rect.size.y, z);
 		glEnd();
 
 		GetPopupManager()->OnPaint();

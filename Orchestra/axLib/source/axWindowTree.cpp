@@ -48,7 +48,7 @@ axWindowNode::~axWindowNode()
 
 void axWindowNode::DeleteWindow(axWindow* win)
 {
-    
+	(win);
 }
 
 axWindow* axWindowNode::GetWindow()
@@ -94,19 +94,18 @@ void BeforeDrawing(axWindow* win)
         axRect abs_rect = win->GetAbsoluteRect();
         axRect shown_rect = win->GetShownRect();
         
-        double delta_size_x = shown_rect.size.x - abs_rect.size.x;
+        //double delta_size_x = shown_rect.size.x - abs_rect.size.x;
         double delta_size_y = shown_rect.size.y - abs_rect.size.y;
         
         double globalY = axApp::GetInstance()->GetCore()->GetGlobalSize().y;
         double sumY = (abs_rect.position.y + shown_rect.position.y +
                        abs_rect.size.y + delta_size_y);
         
-        glScissor(abs_rect.position.x + shown_rect.position.x - 1,
-                  globalY - sumY,
-                  //abs_rect.size.x + delta_size_x + 1,
-                  shown_rect.size.x + 1,
-                  shown_rect.size.y + 1);
-//                  abs_rect.size.y + delta_size_y + 1);
+        glScissor(int(abs_rect.position.x + shown_rect.position.x - 1),
+                  int(globalY - sumY),
+                  int(shown_rect.size.x + 1),
+                  int(shown_rect.size.y + 1));
+
         
         
 //        std::cout << "SHOUWN  " << shown_rect.size.x << std::endl;
@@ -204,7 +203,9 @@ axWindowTree::axWindowTree()
 axWindowTree::~axWindowTree()
 {
 	for (auto& node : _nodes)
+	{
 		delete node;
+	}
 }
 
 std::deque<axWindow*> axWindowTree::GetWindowParents(axWindow* win)
@@ -296,7 +297,7 @@ void axWindowTree::DeleteWindow(axWindow* win)
         std::vector<axWindowNode*> childs = parent->GetChild();
 
         int child_index = -1;
-        for (int i = 0; i < childs.size(); i++)
+        for (unsigned int i = 0; i < childs.size(); i++)
         {
             if(childs[i]->window == node->window)
             {
@@ -351,7 +352,7 @@ axWindow* axWindowTree::FindMousePosition(const axPoint& pos)
 
 	axWindowNode* n = node;
     
-    axWindowNode* tmpNode = nullptr;
+//    axWindowNode* tmpNode = nullptr;
 	if_not_null(n)
 	{
 		do

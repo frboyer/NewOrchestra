@@ -130,6 +130,7 @@ axApp::~axApp() {
 
 void axApp::CreatePopupWindow(const axSize& size)
 {
+	(size);
 #ifdef __linux__
 	axCore* c = new_ axCoreX11(this);
 	c->Init(size);
@@ -152,6 +153,7 @@ void axApp::CallMainEntryFunction()
 //------------------------------------------------------------------------------
 void axApp::OnDebugEditor(const axMsg& msg)
 {
+	(msg);
 //    std::cout << "Size : " << _core->GetGlobalSize().x << " " << _core->GetGlobalSize().y << std::endl;
 //
 //    editingToggle
@@ -174,6 +176,7 @@ string axApp::OpenFileDialog()
 
 bool axApp::CreatePopupWindow(const char* title, int x, int y)
 {
+	(title);
 	return _core->CreatePopupWindow("Popup", x, y);
 }
 
@@ -182,33 +185,33 @@ string axApp::GetAppDirectory()
 	return _core->GetAppDirectory();
 }
 
-string axApp::GetCurrentAppDirectory()
-{
-#ifdef __linux__
-	char buf[1024];
-	readlink("/proc/self/exe", buf, sizeof(buf)-1);
-	string path(buf);
-	path = path.substr(0, path.find_last_of("/"));
-	path.push_back('/');
-	return path;
-#endif //__linux__
-
-#ifdef _MSC_VER
-	HMODULE hModule = GetModuleHandleW(NULL);
-	WCHAR path[MAX_PATH];
-	GetModuleFileNameW(hModule, path, MAX_PATH);
-
-	char str[MAX_PATH];
-	wcstombs(str, path, MAX_PATH);
-
-	return string(str);
-
-#endif //_MSC_VER
-    
-#ifdef __APPLE__
-    return "";
-#endif // __APPLE__
-}
+//string axApp::GetCurrentAppDirectory()
+//{
+//#ifdef __linux__
+//	char buf[1024];
+//	readlink("/proc/self/exe", buf, sizeof(buf)-1);
+//	string path(buf);
+//	path = path.substr(0, path.find_last_of("/"));
+//	path.push_back('/');
+//	return path;
+//#endif //__linux__
+//
+//#ifdef _MSC_VER
+//	HMODULE hModule = GetModuleHandleW(NULL);
+//	WCHAR path[MAX_PATH];
+//	GetModuleFileNameW(hModule, path, MAX_PATH);
+//
+//	char str[MAX_PATH];
+//	wcstombs(str, path, MAX_PATH);
+//
+//	return string(str);
+//
+//#endif //_MSC_VER
+//    
+//#ifdef __APPLE__
+//    return "";
+//#endif // __APPLE__
+//}
 
 void axApp::MainLoop()
 {

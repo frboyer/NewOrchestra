@@ -38,6 +38,7 @@ axButton(parent, rect, events, axBUTTON_TRANSPARENT, img_path, label)
 
 void axAnimatedButton::OnFadeTimer(const axTimerMsg& msg)
 {
+	(msg);
     _fadeValueMutex.lock();
     _fadeValue += (20.0 / _fadeTimeMs);
     _fadeValue = axClamp<double>(_fadeValue, 0.0, 1.0);
@@ -53,7 +54,7 @@ void axAnimatedButton::SetupTimer()
     _fadeValue = 1.0 - _fadeValue;
     _fadeValueMutex.unlock();
     
-    _fadeTimer->StartTimer(20, _fadeTimeMs);
+    _fadeTimer->StartTimer(20, (int)_fadeTimeMs);
 }
 
 void axAnimatedButton::OnMouseLeftDown(const axPoint& pos)

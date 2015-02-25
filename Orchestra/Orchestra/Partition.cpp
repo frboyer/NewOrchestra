@@ -21,7 +21,7 @@ void BasicGLPane::mouseMoved(wxMouseEvent& event)
 	axPoint pos(event.GetPosition().x, event.GetPosition().y);
 
 	//std::cout << "Mouse pos : " << pos.x << " " << pos.y << std::endl;
-	axApp::MainInstance->GetWindowManager()->OnMouseMotion(pos);
+	axApp::GetInstance()->GetWindowManager()->OnMouseMotion(pos);
 }
 
 void BasicGLPane::mouseDown(wxMouseEvent& event)
@@ -30,13 +30,13 @@ void BasicGLPane::mouseDown(wxMouseEvent& event)
 
 	if (event.LeftDown())
 	{
-		axApp::MainInstance->GetWindowManager()->OnMouseLeftDown(pos);
+		axApp::GetInstance()->GetWindowManager()->OnMouseLeftDown(pos);
 	}
 }
 
 void BasicGLPane::mouseWheelMoved(wxMouseEvent& event)
 {
-
+	(event);
 }
 
 void BasicGLPane::mouseReleased(wxMouseEvent& event)
@@ -45,28 +45,33 @@ void BasicGLPane::mouseReleased(wxMouseEvent& event)
 
 	if (event.LeftUp())
 	{
-		axApp::MainInstance->GetWindowManager()->OnMouseLeftUp(pos);
+		axApp::GetInstance()->GetWindowManager()->OnMouseLeftUp(pos);
 	}
 }
 
 void BasicGLPane::rightClick(wxMouseEvent& event)
 {
+	(event);
 }
 
 void BasicGLPane::mouseLeftWindow(wxMouseEvent& event)
 {
+	(event);
 }
 
 void BasicGLPane::keyPressed(wxKeyEvent& event)
 {
+	(event);
 }
 
 void BasicGLPane::keyReleased(wxKeyEvent& event)
 {
+	(event);
 }
 
 void BasicGLPane::OnEvent(wxCommandEvent& event)
 {
+	(event);
 	std::cout << "Event" << std::endl;
 	axEventManager::GetInstance()->CallNext();
 }
@@ -95,6 +100,7 @@ BasicGLPane::~BasicGLPane()
 
 void BasicGLPane::resized(wxSizeEvent& evt)
 {
+	(evt);
 	Refresh();
 }
 
@@ -110,6 +116,7 @@ int BasicGLPane::getHeight()
 
 void BasicGLPane::render(wxPaintEvent& evt)
 {
+	(evt);
 	if (!IsShown())
 	{
 		return;
@@ -118,7 +125,7 @@ void BasicGLPane::render(wxPaintEvent& evt)
 	wxGLCanvas::SetCurrent(*m_context);
 	wxPaintDC(this); // only to be used in paint events. use wxClientDC to paint outside the paint event
 
-	axCore* core = axApp::MainInstance->GetCore();
+	axCore* core = axApp::GetInstance()->GetCore();
 
 	wxSize size(GetSize());
 	core->ResizeGLScene(size.x, size.y, 0);

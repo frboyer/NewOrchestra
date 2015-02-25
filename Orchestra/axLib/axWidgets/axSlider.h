@@ -137,6 +137,8 @@ struct axSliderInfo
 
 	axSliderInfo(const string& info_path)
 	{
+
+		(info_path);
 	// 	ifstream file;
 	// 	file.open(info_path);
 

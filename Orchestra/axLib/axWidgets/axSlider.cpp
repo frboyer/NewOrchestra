@@ -52,8 +52,8 @@ axSlider::axSlider(axWindow* parent,
 
 	if (IsFlag(axSLIDER_FLAG_VERTICAL, _flags))
 	{
-		_sliderYPos = (GetSize().x - _info.slider_width) * 0.5;
-		_btnYPos = (GetSize().x - _info.btn_size.x) * 0.5;
+		_sliderYPos = int((GetSize().x - _info.slider_width) * 0.5);
+		_btnYPos = int((GetSize().x - _info.btn_size.x) * 0.5);
 
 		if (IsFlag(axSLIDER_FLAG_RIGHT_ALIGN, _flags))
 		{
@@ -62,8 +62,8 @@ axSlider::axSlider(axWindow* parent,
 	}
 	else
 	{
-		_sliderYPos = (GetSize().y - _info.slider_width) * 0.5;
-		_btnYPos = (GetSize().y - _info.btn_size.y) * 0.5;
+		_sliderYPos = int((GetSize().y - _info.slider_width) * 0.5);
+		_btnYPos = int((GetSize().y - _info.btn_size.y) * 0.5);
 
 		if (IsFlag(axSLIDER_FLAG_RIGHT_ALIGN, _flags))
 		{
@@ -82,17 +82,17 @@ void axSlider::SetValue(const double& value)
 	{
         if (IsFlag(axSLIDER_FLAG_RIGHT_ALIGN, _flags))
         {
-            _sliderPosition = double(GetSize().y - _info.btn_size.y ) * (_sliderValue);
+            _sliderPosition = int(double(GetSize().y - _info.btn_size.y ) * (_sliderValue));
         }
         else
         {
-            _sliderPosition = double(GetSize().y - _info.btn_size.y ) * (1.0 - _sliderValue);
+            _sliderPosition = int(double(GetSize().y - _info.btn_size.y ) * (1.0 - _sliderValue));
         }
 		
 	}
 	 else
 	 {
-         _sliderPosition = double(GetSize().x - _info.btn_size.x - 2) * (_sliderValue);
+         _sliderPosition = int(double(GetSize().x - _info.btn_size.x - 2) * (_sliderValue));
 //	 	_sliderValue = (_sliderPosition - 1) /
 //	 		double(GetSize().x - _info.btn_size.x - 2);
 	 }
@@ -123,11 +123,11 @@ void axSlider::OnMouseLeftDown(const axPoint& mousePos)
 		
 		if (IsFlag(axSLIDER_FLAG_VERTICAL, _flags))//IsMouseHoverRect( sliderBtnRect ) && m_nCurrentImg != axBTN_DOWN )
 		{
-			_delta_click = -_info.btn_size.y * 0.5;
+			_delta_click = int(-_info.btn_size.y * 0.5);
 		}
 		else
 		{
-			_delta_click = -_info.btn_size.x * 0.5;
+			_delta_click = int(-_info.btn_size.x * 0.5);
 		}
 
 		blockSliderPosition(pos);
@@ -221,7 +221,7 @@ void axSlider::blockSliderPosition(const axPoint& pos)
 	{
 		int pos_y = pos.y + _delta_click;
 
-        pos_y = axClamp<double>(pos_y, 1, GetSize().y - _info.btn_size.y - 1);
+        pos_y =(int) axClamp<double>(pos_y, 1, GetSize().y - _info.btn_size.y - 1);
 		//axCLIP(pos_y, 1, GetSize().y - _info.btn_size.y - 1);
 
 		_sliderPosition = pos_y;
@@ -231,7 +231,7 @@ void axSlider::blockSliderPosition(const axPoint& pos)
 		int pos_x = pos.x + _delta_click;
 
 //		axCLIP(pos_x, 1, GetSize().x - _info.btn_size.x - 1);
-        pos_x = axClamp<double>(pos_x, 1, GetSize().x - _info.btn_size.x - 1);
+        pos_x = (int)axClamp<double>(pos_x, 1, GetSize().x - _info.btn_size.x - 1);
 
 		_sliderPosition = pos_x;
 	}
@@ -336,7 +336,8 @@ void axSlider::OnMouseLeave(const axPoint& p)
 
 void axSlider::DrawLineBehindSlider_Vertical(axGC* gc, const axRect& rect0)
 {
-	int half_btn_size = _info.btn_size.y * 0.5;
+	(rect0);
+	int half_btn_size = int(_info.btn_size.y * 0.5);
 
 	axRect slider_rect;
 	if (IsFlag(axSLIDER_FLAG_RIGHT_ALIGN, _flags))
@@ -366,7 +367,7 @@ void axSlider::DrawLineBehindSlider_Vertical(axGC* gc, const axRect& rect0)
 void axSlider::DrawVerticalSlider(axGC* gc, const axRect& rect0)
 {
 	axSize size(rect0.size);
-	int half_btn_size = _info.btn_size.y * 0.5;
+	//int half_btn_size = int(_info.btn_size.y * 0.5);
 
 	// if (IsFlag(axSLIDER_FLAG_BACK_SLIDER, _flags))
 	// {
@@ -431,7 +432,7 @@ void axSlider::OnPaint()
 			gc->DrawRectangleContour(back_slider);
 		}
 
-		int half_btn_size = _info.btn_size.x * 0.5;
+		int half_btn_size = int(_info.btn_size.x * 0.5);
 
 		if (!IsFlag(axSLIDER_FLAG_NO_SLIDER_LINE, _flags))
 		{

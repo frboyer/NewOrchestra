@@ -200,8 +200,8 @@ axLabel::axLabel(axWindow* parent,
                  const axRect& rect,
                  const axLabel::Info& info,
                  const std::string& label):
-axWidget(parent, rect, new_ Info(info)),
-//_info(info),
+//axPanel(parent, rect),
+axWidget(parent, rect, axInfo::Ptr(new_ axLabel::Info(info))),
 _label(label),
 _font(nullptr)
 {
@@ -210,7 +210,6 @@ _font(nullptr)
     if (GetInfo()->font_name != "")
     {
         _font = toUnique(new_ axFont(GetInfo()->font_name));
-        
     }
     else
     {
@@ -245,8 +244,7 @@ void axLabel::OnPaint()
     {
         gc->DrawString(*_font, _label, axPoint(5, 2));
     }
-    
-    
+   
     gc->SetColor(GetInfo()->contour);
     gc->DrawRectangleContour(rect);
 }

@@ -59,6 +59,8 @@ m_nCurrentImg(axMENU_NODE_IMAGE_NORMAL),
 m_nSubNode(0),
 m_nSubNodeMax(axMENU_NODE_INIT_ARRAY_SIZE)
 {
+	(mode);
+
     //m_nodes = new_ axMenuNode* [ m_nSubNodeMax ];
     m_delta = parent->GetDelta() + 8;
 
@@ -103,7 +105,7 @@ void axMenuNode::ResizeNode()
 
         y -= (_nodes.size() + 1);
 
-        for(int i = 1; i < _nodes.size(); ++i)
+        for(int i = 1; i < int(_nodes.size()); ++i)
         {
             _nodes[i]->SetPosition(_nodes[i - 1]->GetButtomPosition() - axPoint(0, 1));
         }
@@ -153,6 +155,8 @@ void axMenuNode::UnselectAll()
 
 void axMenuNode::OnMouseLeftDown(const axPoint& pos)
 {
+	(pos);
+
     // If node is already selected.
     if( m_nCurrentImg == axMENU_NODE_IMAGE_SELECTED )
     {
@@ -174,7 +178,7 @@ void axMenuNode::OnPaint()
     axGC* gc = GetGC();
     axSize size = GetSize();
     axRect rect( m_delta, 0, size.x, axMENU_NODE_HEIGHT );
-	axRect rect0(0.0, 0.0, rect.size.x, rect.size.y);
+	axRect rect0(0, 0, rect.size.x, rect.size.y);
 
     gc->SetColor(axColor(0.6, 0.6, 0.6));
     gc->DrawRectangle(rect0);

@@ -219,7 +219,7 @@ void axToggle::Info::SetAttribute(const axStringPair& attribute)
     }
     else if(attribute.first == "single_img")
     {
-        single_img = stoi(attribute.second);
+        single_img = stoi(attribute.second) != 0 ? true : false;
     }
 }
 
@@ -288,7 +288,7 @@ axToggle* axToggle::Builder::Create(axVectorPairString attributes)
         }
         else if(s.first == "flags")
         {
-            _flags = stoi(s.second);
+            _flags = axFlag(stoi(s.second));
         }
         else if(s.first == "msg")
         {
@@ -321,7 +321,7 @@ axToggle::axToggle(axWindow* parent,
                    axFlag flags,
                    std::string msg) :
 // Heritage.
-axWidget(parent, rect, new_ axToggle::Info(info)),
+axWidget(parent, rect, std::shared_ptr<axInfo>(new_ axToggle::Info(info))),
 // Members.
 _events(events),
 _label(label),
@@ -379,6 +379,8 @@ void axToggle::SetSelected(const bool& selected)
 
 void axToggle::OnMouseLeftDown(const axPoint& pos)
 {
+	(pos);
+
     if(_selected && IsFlag(Flags::CANT_UNSELECT_WITH_MOUSE, _flags))
     {
         // Don't do anything.
@@ -414,6 +416,8 @@ void axToggle::OnMouseLeftDown(const axPoint& pos)
 
 void axToggle::OnMouseLeftUp(const axPoint& pos)
 {
+	(pos);
+
 	if (IsGrabbed())
 	{
 		UnGrabMouse();

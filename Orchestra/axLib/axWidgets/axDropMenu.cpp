@@ -124,6 +124,8 @@ void axDropMenu::OnPopupMenuChoice(const axPopupMenuMsg& msg)
 
 void axDropMenu::OnMouseLeftDown(const axPoint& pos)
 {
+	(pos);
+
     _currentColor = &_info.clicking;
     _nCurrentImg = axDROP_DOWN;
     
@@ -144,6 +146,8 @@ void axDropMenu::OnMouseLeftDown(const axPoint& pos)
 
 void axDropMenu::OnMouseLeftUp(const axPoint& pos)
 {
+	(pos);
+
     if (IsGrabbed())
     {
         UnGrabMouse();
@@ -231,8 +235,8 @@ void axDropMenu::OnPaint()
         if (axFlag_exist(axDROP_MENU_SINGLE_IMG, _flags))
         {
             gc->DrawImageResize(_btnImg,
-                                axPoint(rect.size.x - _btnImg->GetSize().x - 5,
-                                        (rect.size.y - _btnImg->GetHeight()) * 0.5),
+                                axPoint(int(rect.size.x - _btnImg->GetSize().x - 5),
+                                        int((rect.size.y - _btnImg->GetHeight()) * 0.5)),
                                 _btnImg->GetSize(), 1.0);
         }
         else
@@ -242,8 +246,8 @@ void axDropMenu::OnPaint()
             
             gc->DrawPartOfImage(_btnImg, axPoint(0, _nCurrentImg * rect.size.y),
                                 btn_size,
-                                axPoint(rect.size.x - _btnImg->GetSize().x - 5,
-                                        (rect.size.y - _btnImg->GetHeight()) * 0.5));
+                                axPoint(int(rect.size.x - _btnImg->GetSize().x - 5),
+                                        int((rect.size.y - _btnImg->GetHeight()) * 0.5)));
         }
         
     }

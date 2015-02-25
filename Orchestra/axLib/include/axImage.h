@@ -55,6 +55,7 @@ class axImageGlobalMapLoader
 {
 public:
 	axImageGlobalMapLoader();
+	~axImageGlobalMapLoader();
 	bool LoadImage(const string& path, GLuint& _texture, axSize& _size);
 
 private:

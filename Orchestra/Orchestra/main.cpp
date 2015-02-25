@@ -8,30 +8,33 @@ IMPLEMENT_APP(MyApp)
 
 bool MyApp::OnInit()
 {
-	AllocConsole();
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	/*AllocConsole();
 	AttachConsole(GetCurrentProcessId());
 	freopen("conin$", "r", stdin);
 	freopen("conout$", "w", stdout);
-	freopen("conout$", "w", stderr);
+	freopen("conout$", "w", stderr);*/
 
 	// Create the main frame window
 	_frame = new MainFrame(NULL, wxT("Orchestra"), wxDefaultPosition, wxSize(640, 480));
 
-	CreateMenu();
+	//CreateMenu();
+
+	// Show the frame
+	_frame->Show(true);
 	return true;
 }
 
 void MyApp::CreateMenu()
 {
 	// Make a menubar
-	wxMenu *file_menu = new wxMenu;
-	file_menu->Append(wxID_EXIT, wxGetStockLabel(wxID_EXIT));
-	_menu = new wxMenuBar;
-	_menu->Append(file_menu, wxT("&File"));
-	_frame->SetMenuBar(_menu);
+	//wxMenu *file_menu = new wxMenu;
+	//file_menu->Append(wxID_EXIT, wxGetStockLabel(wxID_EXIT));
+	//_menu = new wxMenuBar;
+	//_menu->Append(file_menu, wxT("&File"));
+	//_frame->SetMenuBar(_menu);
 
-	// Show the frame
-	_frame->Show(true);
+
 }
 
 BEGIN_EVENT_TABLE(MainFrame, wxFrame)
@@ -58,8 +61,6 @@ MainFrame::MainFrame(wxFrame *frame,
 	
 	wxSize psize = _panel->GetSize();
 
-	int x = (size.x - 150) * 0.5;
-
 	wxRect remainingRect(pos, wxSize(size.x * 0.5, size.y));
 	wxRect videoRect = rectAtBottom(remainingRect, remainingRect.height / 2);
 	_videoPlayer = new VlcVideoPlayer(_panel, wxID_ANY, videoRect.GetPosition(), videoRect.GetSize());
@@ -74,10 +75,10 @@ MainFrame::MainFrame(wxFrame *frame,
 	// Instance wxOpenGL window and axLib wraper.
 	_axWrapper = new BasicGLPane(_panel, wxPoint(150, 0), wxSize(size.x - 150, psize.y), args);
 		 
-	//------------------------------------------------------------------------------------
-	// axLib code.
-	//------------------------------------------------------------------------------------
-	
+//	//------------------------------------------------------------------------------------
+//	// axLib code.
+//	//------------------------------------------------------------------------------------
+//	
 	///bool loadInfo(const wxString& data_path, const vector<wxString>& list);
 	std::string data_path("Ressources/Lesson1/output.data");
 	axStringVector img_list;
@@ -112,10 +113,10 @@ MainFrame::MainFrame(wxFrame *frame,
 	//_playerBar->SetVideoLength(_videoPlayer->getMovieLength() / 1000.0);
 
 	_score->loadInfo(data_path, img_list);
-	//-----------------------------------------------------------------------------------
-
+//	//-----------------------------------------------------------------------------------
+//
 	_partitionTimer = new wxTimer(this, EVENT_PARTITION_TIMER_ID);
-	
+//	
 	Maximize(true);
 }
 
@@ -230,6 +231,7 @@ void MainFrame::OnPartitionTimer(wxTimerEvent& event)
 
 void MainFrame::OnBackwardButton(const axButton::Msg& msg)
 {
+	(msg);
 	_videoPlayer->backward();
 }
 
@@ -259,6 +261,7 @@ void MainFrame::OnPlayPauseButton(const axToggle::Msg& msg)
 
 void MainFrame::OnStopButton(const axButton::Msg& msg)
 {
+	(msg);
 	_videoPlayer->stop();
 
 	if (_partitionTimer->IsRunning())
@@ -270,6 +273,7 @@ void MainFrame::OnStopButton(const axButton::Msg& msg)
 
 void MainFrame::OnForwardButton(const axButton::Msg& msg)
 {
+	(msg);
 	_videoPlayer->forward();
 }
 
