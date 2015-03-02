@@ -102,6 +102,9 @@ MainFrame::MainFrame(wxFrame *frame,
 	playBarEvents.toggle_animation = GetOnToggleAnimation();
 	playBarEvents.toggle_video = GetOnToggleVideo();
 	playBarEvents.toggle_score = GetOnToggleScore();
+	playBarEvents.left_click = GetOnLeftButton();
+	playBarEvents.front_click = GetOnFrontButton();
+	playBarEvents.right_click = GetOnRightButton();
 
 	_playerBar = new PlayerBarGL(_axMainPanel, 
 								 axRect(0, size.y - PLAYER_BAR_HEIGHT, size.x * 0.5, PLAYER_BAR_HEIGHT),
@@ -329,4 +332,23 @@ void MainFrame::OnToggleScore(const axToggle::Msg& msg)
 
 		Resize();
 	}
+}
+
+
+void MainFrame::OnLeftButton(const axButton::Msg& msg)
+{
+	_device3D->SetLeftAlign();
+}
+
+
+
+void MainFrame::OnFrontButton(const axButton::Msg& msg)
+{
+	_device3D->SetFrontAlign();
+}
+
+
+void MainFrame::OnRightButton(const axButton::Msg& msg)
+{
+	_device3D->SetRightAlign();
 }

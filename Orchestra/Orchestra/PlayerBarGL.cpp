@@ -36,7 +36,7 @@ _hasVideoLenght(false)
 	sld_info.backSliderContourColor = axColor(0.2, 0.2, 0.2);
 
 	_scrollSlider = new_ axSlider(this, 
-								 axRect(_timeLabel->GetNextPosRight(5), axSize(500, 15)),
+								 axRect(_timeLabel->GetNextPosRight(5), axSize(400, 15)),
 								 axSliderEvents(), 
 								 sld_info);
 
@@ -44,9 +44,27 @@ _hasVideoLenght(false)
 		axRect(_scrollSlider->GetNextPosRight(5),
 		axSize(50, 15)), labelInfo, "00:00");
 
+	axButton* left = new_ axButton(this,
+		axRect(_videoLengthLabel->GetNextPosRight(10), axSize(25, 25)),
+		axButton::Events(events.left_click),
+		axBUTTON_TRANSPARENT,
+		"Left.png");
+
+	axButton* front = new_ axButton(this,
+		axRect(left->GetNextPosRight(5), axSize(25, 25)),
+		axButton::Events(events.front_click),
+		axBUTTON_TRANSPARENT,
+		"Front.png");
+
+	axButton* right = new_ axButton(this,
+		axRect(front->GetNextPosRight(5), axSize(25, 25)),
+		axButton::Events(events.right_click),
+		axBUTTON_TRANSPARENT,
+		"Right.png");
+
 	// Backward button.
 	axButton* back = new_ axButton(this,
-		axRect(_videoLengthLabel->GetNextPosRight(20) - axPoint(0, 5), axSize(25, 25)),
+		axRect(right->GetNextPosRight(20) - axPoint(0, 5), axSize(25, 25)),
 		axButton::Events(events.backward_click),
 		axBUTTON_TRANSPARENT,
 		"backwardBtn.png");
@@ -153,7 +171,7 @@ _hasVideoLenght(false)
 
 
 	// Volume slider.
-	axSlider* volume = new_ axSlider(this, axRect(volumeLabel->GetNextPosRight(5), axSize(80, 15)),
+	axSlider* volume = new_ axSlider(this, axRect(volumeLabel->GetNextPosRight(5), axSize(50, 15)),
 		axSliderEvents(), sld_info);
 	(volume);
 }

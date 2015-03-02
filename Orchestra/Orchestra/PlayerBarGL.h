@@ -20,6 +20,10 @@ public:
 		axEventFunction toggle_animation;
 		axEventFunction toggle_video;
 		axEventFunction toggle_score;
+
+		axEventFunction left_click;
+		axEventFunction front_click;
+		axEventFunction right_click;
 	};
 
 	PlayerBarGL(axWindow* parent, const axRect& rect, const Events& events);

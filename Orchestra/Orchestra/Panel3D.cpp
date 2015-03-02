@@ -183,6 +183,8 @@ void Device3D::mSize(const wxSize& newSize)
 	Refresh();
 }
 
+
+
 void Device3D::OnMouseLeftUp(wxMouseEvent& event)
 {
 	/*UNREFERENCED_PARAMETER*/ (event);
@@ -214,11 +216,11 @@ void Device3D::OnMouseMotion(wxMouseEvent& event)
 
 		if (x > lastX)
 		{
-			angle += (0.5 / (2.0 * M_PI));
+			angle += (1.0 / (4.0 * M_PI));
 		}
 		else
 		{
-			angle -= (0.5 / (2.0 * M_PI));
+			angle -= (1.0 / (4.0 * M_PI));
 		}
 
 		lastX = x, lastY = y;
@@ -426,3 +428,34 @@ void Device3D::timerEvent(double ms)
 //
 //    return true;
 //}
+
+void Device3D::SetLeftAlign()
+{
+	irr_Vector3D camPos(camera_->getPosition());
+
+	float r = 24.0;
+
+	camPos = irr_Vector3D(r * sin(M_PI * 0.5), camPos.Y, r * cos(M_PI * 0.5));
+	camera_->setPosition(camPos);
+	Refresh();
+}
+void Device3D::SetFrontAlign()
+{
+	irr_Vector3D camPos(camera_->getPosition());
+
+	float r = 24.0;
+
+	camPos = irr_Vector3D(r * sin(M_PI), camPos.Y, r * cos(M_PI));
+	camera_->setPosition(camPos);
+	Refresh();
+}
+void Device3D::SetRightAlign()
+{
+	irr_Vector3D camPos(camera_->getPosition());
+
+	float r = 24.0;
+
+	camPos = irr_Vector3D(r * sin(M_PI * -0.5), camPos.Y, r * cos(M_PI * -0.5));
+	camera_->setPosition(camPos);
+	Refresh();
+}
