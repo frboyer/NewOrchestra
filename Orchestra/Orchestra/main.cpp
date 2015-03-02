@@ -55,6 +55,8 @@ MainFrame::MainFrame(wxFrame *frame,
 				 wxFrame(frame, wxID_ANY, title, pos, size, 
 						 wxDEFAULT_FRAME_STYLE | wxFULL_REPAINT_ON_RESIZE)
 {
+	_menuActive = false;
+
 	_panel = new wxPanel(this, -1, wxPoint(0, 0), GetSize() );
 	
 	wxSize psize = _panel->GetSize();
@@ -88,6 +90,7 @@ MainFrame::MainFrame(wxFrame *frame,
 	img_list.push_back("Ressources/Lesson1/test005.png");
 
 	_axMainPanel = new axPanel(nullptr, axRect(0, 0, size.x, size.y));
+	//std::cout << "axLib : TOP PARENT PANEL ID : " << _axMainPanel->GetId() << std::endl;
 	_axMainPanel->SetWindowColor(axColor(0.6));
 
 	_score = new ScoreGL(_axMainPanel, 
@@ -105,6 +108,7 @@ MainFrame::MainFrame(wxFrame *frame,
 	playBarEvents.left_click = GetOnLeftButton();
 	playBarEvents.front_click = GetOnFrontButton();
 	playBarEvents.right_click = GetOnRightButton();
+	playBarEvents.menu_toggle = GetOnMenuToggle();
 
 	_playerBar = new PlayerBarGL(_axMainPanel, 
 								 axRect(0, size.y - PLAYER_BAR_HEIGHT, size.x * 0.5, PLAYER_BAR_HEIGHT),
@@ -114,6 +118,38 @@ MainFrame::MainFrame(wxFrame *frame,
 	//_playerBar->SetVideoLength(_videoPlayer->getMovieLength() / 1000.0);
 
 	_score->loadInfo(data_path, img_list);
+
+
+	std::vector<LessonInfo> folder1_lessons_info = 
+	{ 
+		LessonInfo(1, "Nom de la piece", "02:26"),
+		LessonInfo(2, "Nom de la piece2", "04:21")
+	};
+
+	std::vector<LessonInfo> folder2_lessons_info =
+	{
+		LessonInfo(1, "Nom de la piece", "01:20"),
+		LessonInfo(2, "Nom de la piece2", "03:47"),
+		LessonInfo(3, "Nom de la piece3", "00:58")
+	};
+
+	std::vector<LessonInfo> folder3_lessons_info =
+	{
+		LessonInfo(1, "Blalala", "06:52"),
+		LessonInfo(2, "Nom de la piece2", "04:07")
+	};
+
+	std::vector<FolderInfo> folders_info = 
+	{
+		FolderInfo("Piece 1", "Alexandre Arsenault", folder1_lessons_info),
+		FolderInfo("Piece 2", "Peter Smith", folder2_lessons_info),
+		FolderInfo("Piece 3", "John Ferg", folder3_lessons_info)
+	};
+
+	_menu = new OrchestraMenu(_axMainPanel, 
+		axRect(0, 0, size.y - PLAYER_BAR_HEIGHT, 200), folders_info);
+		
+	_menu->Hide();
 //	//-----------------------------------------------------------------------------------
 //
 	_partitionTimer = new wxTimer(this, EVENT_PARTITION_TIMER_ID);
@@ -134,57 +170,72 @@ void MainFrame::Resize()
 	_axWrapper->SetSize(wxSize(psize.x, psize.y));
 	_axMainPanel->SetSize(axSize(psize.x, psize.y));
 	_playerBar->SetRect(axRect(0, h, psize.x, PLAYER_BAR_HEIGHT));
+	_menu->Resize(axSize(200 - 5,h));
 
 	bool videoShown = _videoPlayer->IsShown();
 	bool animShown = _device3D->IsShown();
 	bool scoreShown = _score->IsShown();
 
+	int menu_width = 200;
+	int left_pos_x = 0;
+	int middle_pos_x = w;
+
+	if (_menuActive)
+	{
+		w = (psize.x - menu_width) * 0.5;
+		left_pos_x = menu_width;
+		middle_pos_x = menu_width + (psize.x - menu_width) * 0.5;
+		psize.x -= menu_width;
+	}
+
 	if (videoShown && animShown && scoreShown)
 	{
-		_device3D->SetPosition(wxPoint(0, 0));
+		_device3D->SetPosition(wxPoint(left_pos_x, 0));
 		_device3D->SetSize(wxSize(w - 5, h * 0.5 - 5));
 
-		_videoPlayer->SetPosition(wxPoint(0, h * 0.5));
+		_videoPlayer->SetPosition(wxPoint(left_pos_x, h * 0.5));
 		_videoPlayer->SetSize(wxSize(w - 5, h * 0.5));
 
-		_score->SetRect(axRect(w, 0, w, h));
+		_score->SetRect(axRect(middle_pos_x, 0, w, h));
 	}
 	else if (!videoShown && animShown && scoreShown)
 	{
-		_device3D->SetPosition(wxPoint(0, 0));
+		_device3D->SetPosition(wxPoint(left_pos_x, 0));
 		_device3D->SetSize(wxSize(w - 5, h));
 
-		_score->SetRect(axRect(w, 0, w, h));
+		_score->SetRect(axRect(middle_pos_x, 0, w, h));
 	}
 	else if (videoShown && !animShown && scoreShown)
 	{
-		_videoPlayer->SetPosition(wxPoint(0, 0));
+		_videoPlayer->SetPosition(wxPoint(left_pos_x, 0));
 		_videoPlayer->SetSize(wxSize(w - 5, h));
 
-		_score->SetRect(axRect(w, 0, w, h));
+		_score->SetRect(axRect(middle_pos_x, 0, w, h));
 	}
 	else if (!videoShown && !animShown && scoreShown)
 	{
-		_score->SetRect(axRect(0, 0, psize.x, h));
+		_score->SetRect(axRect(left_pos_x, 0, psize.x, h));
 	}
 	else if (videoShown && animShown && !scoreShown)
 	{
-		_device3D->SetPosition(wxPoint(0, 0));
+		_device3D->SetPosition(wxPoint(left_pos_x, 0));
 		_device3D->SetSize(wxSize(w - 5, h));
 
-		_videoPlayer->SetPosition(wxPoint(w, 0));
+		_videoPlayer->SetPosition(wxPoint(middle_pos_x, 0));
 		_videoPlayer->SetSize(wxSize(w, h));
 	}
 	else if (videoShown && !animShown && !scoreShown)
 	{
-		_videoPlayer->SetPosition(wxPoint(0, 0));
+		_videoPlayer->SetPosition(wxPoint(left_pos_x, 0));
 		_videoPlayer->SetSize(wxSize(psize.x, h));
 	}
 	else if (!videoShown && animShown && !scoreShown)
 	{
-		_device3D->SetPosition(wxPoint(0, 0));
+		_device3D->SetPosition(wxPoint(left_pos_x, 0));
 		_device3D->SetSize(wxSize(psize.x, h));
 	}
+
+	_score->Update();
 }
 
 void MainFrame::OnSize(wxSizeEvent& event)
@@ -241,6 +292,16 @@ void MainFrame::OnPlayPauseButton(const axToggle::Msg& msg)
 	if (msg.GetSelected())
 	{
 		_videoPlayer->play();
+
+		// Hide menu when playing.
+		if (_menuActive)
+		{
+			_menu->Hide();
+			_playerBar->HideMenu();
+			_menuActive = false;
+			Resize();
+			Refresh();
+		}
 
 		if (!_partitionTimer->IsRunning())
 		{
@@ -351,4 +412,35 @@ void MainFrame::OnFrontButton(const axButton::Msg& msg)
 void MainFrame::OnRightButton(const axButton::Msg& msg)
 {
 	_device3D->SetRightAlign();
+}
+
+void MainFrame::OnMenuToggle(const axToggle::Msg& msg)
+{
+	if (msg.GetSelected())
+	{
+		if (_videoPlayer->isPlaying())
+		{
+			_playerBar->SetPauseToggle();
+			_videoPlayer->pause();
+
+			if (_partitionTimer->IsRunning())
+			{
+				_partitionTimer->Stop();
+				_score->setPlaying(false);
+			}
+		}
+
+		_menuActive = true;
+		_menu->Show();
+		
+
+	}
+	else
+	{
+		//std::cout << "Menu off" << std::endl;
+		_menuActive = false;
+		_menu->Hide();
+	}
+
+	Resize();
 }

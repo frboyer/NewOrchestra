@@ -1,7 +1,6 @@
 #ifndef __AX_CORE_WX_WIDGETS__
 #define __AX_CORE_WX_WIDGETS__
 
-
 #include "axCore.h"
 
 class wxGLCanvas;

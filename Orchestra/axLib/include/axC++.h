@@ -34,8 +34,9 @@
 #endif //__linux__
 
 #ifdef _MSC_VER
+#include "GL/glew.h"
+
 #include <windows.h>
-//#include "GL/glew.h"
 #include <gl\gl.h>
 #include <gl\glu.h>
 #endif //_MSC_VER

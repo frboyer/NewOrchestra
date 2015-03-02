@@ -196,6 +196,20 @@ public:
     void SetSelected(const bool& selected);
 	Info* GetInfo() { return static_cast<Info*>(_info.get()); }
 
+
+protected:
+	enum axToggleState
+	{
+		axTOG_NORMAL,
+		axTOG_HOVER,
+		axTOG_CLICK,
+		axTOG_SEL_NORMAL,
+		axTOG_SEL_HOVER,
+		axTOG_SEL_CLICK
+	};
+
+	int _nCurrentImg;
+
 private:
     axToggle::Events _events;
 	axColor* _currentColor;
@@ -209,17 +223,7 @@ private:
 	axColor test;
 	axFloat _bgAlpha;
 
-	enum axToggleState
-	{
-		axTOG_NORMAL,
-		axTOG_HOVER,
-		axTOG_CLICK,
-		axTOG_SEL_NORMAL,
-        axTOG_SEL_HOVER,
-        axTOG_SEL_CLICK
-	};
 
-	int _nCurrentImg;
 
     // Events.
 	virtual void OnPaint();

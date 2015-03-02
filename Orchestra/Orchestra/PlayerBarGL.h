@@ -24,6 +24,8 @@ public:
 		axEventFunction left_click;
 		axEventFunction front_click;
 		axEventFunction right_click;
+
+		axEventFunction menu_toggle;
 	};
 
 	PlayerBarGL(axWindow* parent, const axRect& rect, const Events& events);
@@ -39,6 +41,10 @@ public:
 		return _hasVideoLenght;
 	}
 
+	void SetPauseToggle();
+
+	void HideMenu();
+
 private:
 	axNumberBox* _pageBox;
 	axNumberBox* _barBox;
@@ -46,9 +52,11 @@ private:
 	axLabel* _timeLabel;
 	axLabel* _videoLengthLabel;
 	bool _hasVideoLenght;
+	axToggle* _playPauseToggle;
 	axToggle* _animToggle;
 	axToggle* _videoToggle;
 	axToggle* _scoreToggle;
+	axToggle* _menuToggle;
 	// axEvents.
 	virtual void OnPaint();
 };

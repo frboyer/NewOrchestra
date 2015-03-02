@@ -4,6 +4,23 @@ PlayerBarGL::PlayerBarGL(axWindow* parent, const axRect& rect, const PlayerBarGL
 axPanel(parent, rect),
 _hasVideoLenght(false)
 {
+	// Play pause button.
+	axToggle::Info togInfo;
+	togInfo.normal = axColor::axTransparentColor;
+	togInfo.hover = axColor::axTransparentColor;
+	togInfo.clicking = axColor::axTransparentColor;
+	togInfo.selected = axColor::axTransparentColor;
+	togInfo.selected_hover = axColor::axTransparentColor;
+	togInfo.selected_clicking = axColor::axTransparentColor;
+	togInfo.contour = axColor::axTransparentColor;
+	togInfo.img = "MenuToggle.png";
+	togInfo.single_img = false;
+
+	_menuToggle = new_ axToggle(this,
+		axRect(axPoint(5, 5), axSize(25, 25)),
+		axToggle::Events(events.menu_toggle),
+		togInfo);
+
 	axLabel::Info labelInfo;
 	labelInfo.normal = axColor::axTransparentColor;
 	labelInfo.contour = axColor::axTransparentColor;;
@@ -13,7 +30,7 @@ _hasVideoLenght(false)
 	labelInfo._alignement = axAlignement::axALIGN_CENTER;
 
 	_timeLabel = new_ axLabel(this,
-							  axRect(axPoint(5, 10),
+							  axRect(axPoint(30, 10),
 							  axSize(50, 15)), labelInfo, "00:00");
 
 	// Scroll slider.
@@ -69,26 +86,16 @@ _hasVideoLenght(false)
 		axBUTTON_TRANSPARENT,
 		"backwardBtn.png");
 
-	// Play pause button.
-	axToggle::Info togInfo;
-	togInfo.normal = axColor::axTransparentColor;
-	togInfo.hover = axColor::axTransparentColor;
-	togInfo.clicking = axColor::axTransparentColor;
-	togInfo.selected = axColor::axTransparentColor;
-	togInfo.selected_hover = axColor::axTransparentColor;
-	togInfo.selected_clicking = axColor::axTransparentColor;
-	togInfo.contour = axColor::axTransparentColor;
-	togInfo.img = "playPauseBtn.png";
-	togInfo.single_img = false;
 
-	axToggle* _play = new_ axToggle(this,
+	togInfo.img = "playPauseBtn.png";
+	_playPauseToggle = new_ axToggle(this,
 		axRect(back->GetNextPosRight(5), axSize(25, 25)),
 		axToggle::Events(events.play_pause_click),
 		togInfo);
 
 	// Stop button.
 	axButton* stop = new_ axButton(this,
-		axRect(_play->GetNextPosRight(5), axSize(25, 25)),
+		axRect(_playPauseToggle->GetNextPosRight(5), axSize(25, 25)),
 		axButton::Events(events.stop_click),
 		axBUTTON_TRANSPARENT,
 		"stopBtn.png");
@@ -218,6 +225,16 @@ void PlayerBarGL::SetVideoLength(const double& ms)
 
 		_hasVideoLenght = true;
 	}
+}
+
+void PlayerBarGL::HideMenu()
+{
+	_menuToggle->SetSelected(false);
+}
+
+void PlayerBarGL::SetPauseToggle()
+{
+	_playPauseToggle->SetSelected(false);
 }
 
 void PlayerBarGL::OnPaint()

@@ -67,25 +67,14 @@ void axGC::SetColor(const axColor& color, const float& alpha)
 }
 
 void axGC::DrawRectangle(const axRect& rect)
-{
-//    axMatrix4 mview_before(GL_MODELVIEW_MATRIX);
-//    axMatrix4 mview;
-    
-//    mview.Identity().Translate(_win->GetAbsoluteRect().position).Process();
-    
+{    
     axFloatRect frect = RectToFloatRect(rect);
     axRectFloatPoints points = frect.GetPoints(); // Order : bl, tl, tr, br.
-    
-    // For scroll bar.
-    //	frect.position.x  -= floor(_win->GetScrollDecay().x);
-    //	frect.position.y  -= _win->GetScrollDecay().y;
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(2, GL_DOUBLE, 0, &points);
 	glDrawArrays(GL_QUADS, 0, 4);
 	glDisableClientState(GL_VERTEX_ARRAY);
-    
-//    mview_before.Load();
 }
 
 void axGC::DrawRoundedRectangle(const axRect& rect)
@@ -183,82 +172,21 @@ void axGC::DrawTexture(GLuint texture, const axRect& rect, axColor color)
 
 void axGC::DrawWindowBuffer()
 {
-//    axPoint pos = _win->GetRect().position;
-//    //pos -= _win->GetScrollDecay();
-//    
-//    
-//    
-//    axRect shown_rect(_win->GetShownRect());
-//    axPoint posInImage(shown_rect.position);
-//    axSize sizeInImage(shown_rect.size);
-//    axSize img_size = _win->GetRect().size;
-//    
-//    double alpha = 1.0;
-//    
-//    double img_x = (posInImage.x + sizeInImage.x) / double(img_size.x),
-//           img_y = 1.0 - (posInImage.y + sizeInImage.y) / double(img_size.y);
-//    
-//    double x = posInImage.x / double(img_size.x);
-//    double y = 1.0 - posInImage.y / double(img_size.y);
-//    
-//    glColor4f(1.0, 1.0, 1.0, alpha);
-//    
-//    glEnable(GL_TEXTURE_2D);
-//    glEnable(GL_BLEND);
-//
-////    glBlendFunc(GL_DST_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-//    glBindTexture(GL_TEXTURE_2D, _win->GetWindowBufferTexture());
-//    
-////    glBindTexture(GL_TEXTURE_2D, img->GetTexture());
-//    glDepthMask(GL_TRUE);
-//    
-//    // OpenGL stores texture upside down so glTexCoord2d must be flipped.
-//    glBegin(GL_QUADS);
-//    
-//    // Buttom left.
-//    glTexCoord2d(x, y);
-//    glVertex2d(pos.x, pos.y);
-//    
-//    // Top left.
-//    glTexCoord2d(x, img_y);
-//    glVertex2d(pos.x, pos.y + sizeInImage.y-1);
-//    
-//    // Top right.
-//    glTexCoord2d(img_x, img_y);
-//    glVertex2d(pos.x + sizeInImage.x-1, pos.y + sizeInImage.y-1);
-//    
-//    // Buttom right.
-//    glTexCoord2d(img_x, y);
-//    glVertex2d(pos.x + sizeInImage.x-1, pos.y);
-//    glEnd();
-//    //	glDisable(GL_BLEND);
-//    glDisable(GL_TEXTURE_2D);
-    
-    
-    //--------------------------------------------------------------------------
-    
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
     
     // Destionation funciton.
     glBlendFunc(GL_DST_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
     ///!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     axFloatRect rect(RectToFloatRect(_win->GetShownRect()));
-//    axFloatRect rect(RectToFloatRect(_win->GetRect()));
     axFloatPoint pos(0.0, 0.0);
     axFloatSize size = rect.size;
-//    size.x += 1.0;
-//    size.y += 1.0;
 
-//     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_BLEND);
     glBindTexture(GL_TEXTURE_2D, _win->GetWindowBufferTexture());
-//    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-//    glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_BLEND);
-//    glDepthMask(GL_TRUE);
-    
-//    glColor4d(1.0, 1.0, 1.0, 1.0);
+
+	std::cout << "Draw back buffer texture quad : " << _win->GetId() << std::endl;
+	glColor4d(1.0, 1.0, 1.0, 1.0);
     glBegin(GL_QUADS);
     
     // Bottom left.
@@ -282,7 +210,7 @@ void axGC::DrawWindowBuffer()
     //	glDisable(GL_BLEND);
     glDisable(GL_TEXTURE_2D);
     
-    
+
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 

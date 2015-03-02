@@ -145,11 +145,13 @@ void axWindowNode::DrawNode()
         {
             axMatrix4 mview_before(GL_MODELVIEW_MATRIX);
             
+
             BeforeDrawing(window);
             DrawWindow(window);
-            
+
+
             for(axWindowNode* it : _childNodes)
-{
+			{
                 if(it->window != nullptr)            
                 {
                     if(it->window->IsShown())

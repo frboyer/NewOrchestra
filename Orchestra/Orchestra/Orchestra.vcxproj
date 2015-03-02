@@ -44,14 +44,14 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>VCN\;..\wxWidgets-3.0.2\include\;..\wxWidgets-3.0.2\lib\vc_lib\mswud;..\vlc-2.1.3\sdk\include\vlc;..\vlc-2.1.3\sdk\include;..\irrlicht-1.8.1\include\;..\axLib\;..\axLib\include\;..\axLib\source\;..\axLib\axWidgets\;..\freetype-2.5.3\include\;..\lpng1610\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\glew-1.12.0\include\;VCN\;..\wxWidgets-3.0.2\include\;..\wxWidgets-3.0.2\lib\vc_lib\mswud;..\vlc-2.1.3\sdk\include\vlc;..\vlc-2.1.3\sdk\include;..\irrlicht-1.8.1\include\;..\axLib\;..\axLib\include\;..\axLib\source\;..\axLib\axWidgets\;..\freetype-2.5.3\include\;..\lpng1610\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>VCNFloat=double;VCNBool=bool;WIN32;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;_UNICODE;_WINDOWS;NOPCH;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>/bigobj</AdditionalOptions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>libpng16.lib;zlib.lib;freetype253_D.lib;libvlc.lib;irrlicht.lib;wxbase30ud.lib;wxbase30ud_net.lib;wxbase30ud_xml.lib;wxexpatd.lib;wxjpegd.lib;wxmsw30ud_adv.lib;wxmsw30ud_aui.lib;wxmsw30ud_core.lib;wxmsw30ud_gl.lib;wxmsw30ud_html.lib;wxmsw30ud_media.lib;wxmsw30ud_propgrid.lib;wxmsw30ud_qa.lib;wxmsw30ud_ribbon.lib;wxmsw30ud_richtext.lib;wxmsw30ud_stc.lib;wxmsw30ud_webview.lib;wxmsw30ud_xrc.lib;wxpngd.lib;wxregexud.lib;wxscintillad.lib;wxtiffd.lib;wxzlibd.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\wxWidgets-3.0.2\lib\vc_lib;..\vlc-2.1.3\sdk\lib;..\irrlicht-1.8.1\lib\Win32-visualstudio;..\freetype-2.5.3\objs\win32\vc2010\;..\lpng1610\projects\vstudio\Debug\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glew32.lib;libpng16.lib;zlib.lib;freetype253_D.lib;libvlc.lib;irrlicht.lib;wxbase30ud.lib;wxbase30ud_net.lib;wxbase30ud_xml.lib;wxexpatd.lib;wxjpegd.lib;wxmsw30ud_adv.lib;wxmsw30ud_aui.lib;wxmsw30ud_core.lib;wxmsw30ud_gl.lib;wxmsw30ud_html.lib;wxmsw30ud_media.lib;wxmsw30ud_propgrid.lib;wxmsw30ud_qa.lib;wxmsw30ud_ribbon.lib;wxmsw30ud_richtext.lib;wxmsw30ud_stc.lib;wxmsw30ud_webview.lib;wxmsw30ud_xrc.lib;wxpngd.lib;wxregexud.lib;wxscintillad.lib;wxtiffd.lib;wxzlibd.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\wxWidgets-3.0.2\lib\vc_lib;..\vlc-2.1.3\sdk\lib;..\irrlicht-1.8.1\lib\Win32-visualstudio;..\freetype-2.5.3\objs\win32\vc2010\;..\lpng1610\projects\vstudio\Debug\;..\glew-1.12.0\lib\Release\Win32\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>
       </AdditionalOptions>
     </Link>
@@ -121,6 +121,7 @@
     <ClCompile Include="..\axLib\source\axWindow.cpp" />
     <ClCompile Include="..\axLib\source\axWindowTree.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Menu.cpp" />
     <ClCompile Include="OrchestraConstValue.cpp" />
     <ClCompile Include="Panel3D.cpp" />
     <ClCompile Include="Partition.cpp" />
@@ -175,6 +176,7 @@
     <ClInclude Include="..\axLib\include\axWindowTree.h" />
     <ClInclude Include="..\axLib\include\rapidxml.hpp" />
     <ClInclude Include="Debug.h" />
+    <ClInclude Include="Menu.h" />
     <ClInclude Include="OrchestraConstValue.h" />
     <ClInclude Include="PlayerBarGL.h" />
     <ClInclude Include="main.h" />
