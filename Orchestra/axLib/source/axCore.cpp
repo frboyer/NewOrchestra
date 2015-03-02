@@ -27,6 +27,7 @@ axCore::axCore():
 	_needToDraw(true),
 	_popupNeedToDraw(true)
 {
+	
     _windowManager = nullptr;
     _popupManager = nullptr;
     

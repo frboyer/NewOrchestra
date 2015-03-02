@@ -76,6 +76,7 @@ void BasicGLPane::OnEvent(wxCommandEvent& event)
 	axEventManager::GetInstance()->CallNext();
 }
 
+
 BasicGLPane::BasicGLPane(wxPanel* parent, 
 						 const wxPoint& pos, 
 						 const wxSize& size, 
@@ -84,6 +85,19 @@ wxGLCanvas(parent, wxID_ANY, args, pos, size, wxFULL_REPAINT_ON_RESIZE)
 {
 	m_context = new wxGLContext(this);
 	wxGLCanvas::SetCurrent(*m_context);
+
+	//Initialize GLEW
+	GLenum glewError = glewInit();
+	if (glewError != GLEW_OK)
+	{
+		printf("Error initializing GLEW! %s\n", glewGetErrorString(glewError));
+	}
+
+	//Make sure OpenGL 2.1 is supported
+	if (!GLEW_VERSION_2_1)
+	{
+		printf("OpenGL 2.1 not supported!\n");
+	}
 	
 	axEventManager::GetInstance();
 	axApp* app = axApp::CreateApp(axSize(size.x, size.y));

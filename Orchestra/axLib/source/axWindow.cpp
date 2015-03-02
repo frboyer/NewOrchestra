@@ -220,8 +220,6 @@ void axWindow::SetSize(const axSize& size)
 
     InitGLWindowBackBufferDrawing();
     Update();
-
-	
 }
 
 void axWindow::SetPosition(const axPoint& pos)
@@ -351,6 +349,12 @@ void axWindow::InitGLWindowBackBufferDrawing()
             std::cerr << "ERROR GEN FRAME BUFFER : " << status << std::endl;
     }
     
+	GLenum error = glGetError();
+	if (error != GL_NO_ERROR)
+	{
+		std::cerr << "Init Back buffer Error : " << gluErrorString(error) << std::endl;
+	}
+
     glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 #endif // _axBackBufferWindow_
@@ -395,7 +399,7 @@ void axWindow::InitGLWindowBackBufferDrawing()
 
 void axWindow::RenderWindow()
 {
-	
+
     if(_needUpdate)
     {
         #if _axBackBufferWindow_ == 1
@@ -406,15 +410,24 @@ void axWindow::RenderWindow()
             glDisable(GL_SCISSOR_TEST);
             need_to_reactive_clip_test = true;
         }
-        
-        
+
+
+
             // Save modelView matrix.
             glMatrixMode(GL_MODELVIEW);
-            axMatrix4 modelView(GL_MODELVIEW);
-        
-//        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-        
-            glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
+			axMatrix4 modelView(GL_MODELVIEW_MATRIX);
+                
+            
+			//Check for error
+			GLenum error = glGetError();
+			if (error != GL_NO_ERROR)
+			{
+				std::cerr << "Error :  Line : " << __LINE__ << " " << gluErrorString(error) << std::endl;
+			}
+		
+
+			glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
+
             glPushAttrib(GL_DEPTH_BUFFER_BIT);
             glClearColor(0.0, 0.0, 1.0, 0.0);
             glClearDepth(1.0f);
@@ -437,16 +450,12 @@ void axWindow::RenderWindow()
             glTranslated(1.0, 1.0, 0.0);
         #endif // _axBackBufferWindow_
         
-//        glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
-//        glDisable(GL_BLEND);
-        
-//        glBlendFunc(<#GLenum sfactor#>, <#GLenum dfactor#>);
         OnPaint();
-//        glEnable(GL_BLEND);
         
         #if _axBackBufferWindow_ == 1
             _needUpdate = false;
 
+			// Unbind buffer.
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
         
             axSize gSize(axApp::GetInstance()->GetCore()->GetGlobalSize());
@@ -457,15 +466,12 @@ void axWindow::RenderWindow()
             modelView.Load();
             glPopAttrib();
         
-        
-        
-            //axGC* gc = GetGC();
-        
-//        BeforeDrawing(this);
-            //gc->DrawWindowBuffer();
-//        EndDrawing(this);
-        if(need_to_reactive_clip_test)
-            glEnable(GL_SCISSOR_TEST);
+
+		if (need_to_reactive_clip_test)
+		{
+			glEnable(GL_SCISSOR_TEST);
+		}
+            
         
 		axGC* gc = GetGC();
 		gc->DrawWindowBuffer();

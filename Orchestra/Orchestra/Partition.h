@@ -1,3 +1,7 @@
+#ifndef __PARTITION__
+#define __PARTITION__
+
+#include "GL/glew.h"
 #include "wx/wx.h"
 #include "wx/dcbuffer.h"
 #include <vector>
@@ -47,3 +51,5 @@ public:
 private:
 	wxGLContext* m_context;
 };
+
+#endif // __PARTITION__
