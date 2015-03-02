@@ -62,6 +62,10 @@ public:
 	void mSize(const wxSize& newSize);
 	void timerEvent(double ms);
 
+	void SetLeftAlign();
+	void SetFrontAlign();
+	void SetRightAlign();
+
 protected:
 	irr_Device* irrDevice_;
 	irr::video::IVideoDriver* irrVideoDriver_;

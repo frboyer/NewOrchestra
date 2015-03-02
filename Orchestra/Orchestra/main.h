@@ -71,6 +71,16 @@ private:
 	axEVENT_ACCESSOR(axToggle::Msg, OnToggleScore);
 	void OnToggleScore(const axToggle::Msg& msg);
 
+
+	axEVENT_ACCESSOR(axButton::Msg, OnLeftButton);
+	void OnLeftButton(const axButton::Msg& msg);
+
+	axEVENT_ACCESSOR(axButton::Msg, OnFrontButton);
+	void OnFrontButton(const axButton::Msg& msg);
+
+	axEVENT_ACCESSOR(axButton::Msg, OnRightButton);
+	void OnRightButton(const axButton::Msg& msg);
+
 	DECLARE_EVENT_TABLE()
 };
 
