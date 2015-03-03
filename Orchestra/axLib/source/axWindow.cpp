@@ -448,6 +448,10 @@ void axWindow::RenderWindow()
             axMatrix4 mv_matrix;
             mv_matrix.Identity().Load();
             glTranslated(1.0, 1.0, 0.0);
+
+
+			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA,
+				GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
         #endif // _axBackBufferWindow_
         
         OnPaint();
@@ -455,17 +459,31 @@ void axWindow::RenderWindow()
         #if _axBackBufferWindow_ == 1
             _needUpdate = false;
 
-			// Unbind buffer.
-            glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        
-            axSize gSize(axApp::GetInstance()->GetCore()->GetGlobalSize());
-            glViewport(0, 0, gSize.x, gSize.y);
-            axOrtho2D(proj.Identity().GetData(), gSize);
-        
-            glMatrixMode(GL_MODELVIEW);
-            modelView.Load();
-            glPopAttrib();
-        
+		//	// Unbind buffer.
+  //          glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  //      
+  //          axSize gSize(axApp::GetInstance()->GetCore()->GetGlobalSize());
+  //          glViewport(0, 0, gSize.x, gSize.y);
+  //          axOrtho2D(proj.Identity().GetData(), gSize);
+  //      
+  //          glMatrixMode(GL_MODELVIEW);
+  //          modelView.Load();
+  //          glPopAttrib();
+  //      
+
+		//if (need_to_reactive_clip_test)
+		//{
+		//	glEnable(GL_SCISSOR_TEST);
+		//}
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		axSize gSize(axApp::GetInstance()->GetCore()->GetGlobalSize());
+		glViewport(0, 0, gSize.x, gSize.y);
+		axOrtho2D(proj.Identity().GetData(), gSize);
+
+		glMatrixMode(GL_MODELVIEW);
+		modelView.Load();
+		glPopAttrib();
 
 		if (need_to_reactive_clip_test)
 		{
