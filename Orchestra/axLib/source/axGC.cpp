@@ -173,10 +173,12 @@ void axGC::DrawTexture(GLuint texture, const axRect& rect, axColor color)
 void axGC::DrawWindowBuffer()
 {
     glEnable(GL_TEXTURE_2D);
-    glEnable(GL_BLEND);
+    //glEnable(GL_BLEND);
     
     // Destionation funciton.
-    glBlendFunc(GL_DST_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //glBlendFunc(GL_DST_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBlendFuncSeparate(GL_DST_ALPHA, GL_ONE_MINUS_SRC_ALPHA,
+		GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     
     ///!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     axFloatRect rect(RectToFloatRect(_win->GetShownRect()));
@@ -211,7 +213,7 @@ void axGC::DrawWindowBuffer()
     glDisable(GL_TEXTURE_2D);
     
 
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 //glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
