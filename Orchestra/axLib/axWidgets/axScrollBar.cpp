@@ -47,13 +47,13 @@ _value(0.0)
 
 	//function<void (axButtonMsg)> btnFct();
 
-//	_btn[0] = new_ axButton(this, 
+//	_btn[0] = new axButton(this, 
 //						   axRect(0, 0, 14, 14), 
 //						   axButtonEvents(), 
 //						   btn_info, 
 //						   "/Users/alexarse/Project/axLib/axProjects/MidiSequencer/scrollBar_up.png");
 //
-//	_btn[1] = new_ axButton(this, 
+//	_btn[1] = new axButton(this, 
 //						   axRect(0, rect.size.y - 14, 14, 14), 
 //						   axButtonEvents(), 
 //						   btn_info, 
@@ -61,11 +61,11 @@ _value(0.0)
 
 	_imgHeight = 0;
     _panelSize = rect.size;
-    _sliderMaxHeight = int(rect.size.y - (2.0 * _imgHeight));
+    _sliderMaxHeight = rect.size.y - (2.0 * _imgHeight);
     
     double ratio = double(_panelSize.y - rect.size.y) / double(_panelSize.y);
     
-    _sliderHeight = int(_sliderMaxHeight * (1.0 - ratio));
+    _sliderHeight = _sliderMaxHeight * (1.0 - ratio);
     _sliderPos = 0;
     
     _currentScrollBarColor = &_info.normal;
@@ -81,11 +81,11 @@ void axScrollBar::SetPanelSize(const axSize& size)
 {
     axSize framSize(GetRect().size);
     _panelSize = size;
-    _sliderMaxHeight = int(framSize.y - (2.0 * _imgHeight));
+    _sliderMaxHeight = framSize.y - (2.0 * _imgHeight);
     
     double ratio = double(_panelSize.y - framSize.y) / double(_panelSize.y);
 
-    _sliderHeight = int(_sliderMaxHeight * (1.0 - ratio));
+    _sliderHeight = _sliderMaxHeight * (1.0 - ratio);
     Update();
 }
 
@@ -121,8 +121,6 @@ void axScrollBar::OnMouseLeftDown(const axPoint& position)
 
 void axScrollBar::OnMouseLeftUp(const axPoint& pos)
 {
-	(pos);
-
 	if(IsGrabbed())
 	{
 		UnGrabMouse();
@@ -156,9 +154,9 @@ void axScrollBar::OnMouseLeftDragging(const axPoint& position)
 
         
         PushEvent(axScrollBarEvents::VALUE_CHANGE,
-                  new_ axScrollBarMsg(this, std::string("")));
+                  new axScrollBarMsg(this, std::string("")));
         
-        _handle->SetScrollDecay(axPoint(0, int(_value * (_panelSize.y - GetRect().size.y))));
+        _handle->SetScrollDecay(axPoint(0, _value * (_panelSize.y - GetRect().size.y)));
 
 		Update();
 	}

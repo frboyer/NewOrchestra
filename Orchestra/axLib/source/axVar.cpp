@@ -28,5 +28,5 @@ bool axVar::is_null() const
 
 bool axVar::not_null() const
 {
-    return ptr == nullptr ? false : true;
+    return ptr;
 }

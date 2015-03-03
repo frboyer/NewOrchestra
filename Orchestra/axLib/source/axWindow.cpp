@@ -23,6 +23,7 @@
 #include "axApp.h"
 #include "axMath.h"
 #include "axConfig.h"
+#include "axGraphicInterface.h"
 
 axWindow::axWindow(axWindow* parent, const axRect& rect):
 // Members.
@@ -35,13 +36,11 @@ _shownRect(axPoint(0, 0), rect.size),
 _isSelectable(true),
 _windowColor(0.0, 0.0, 0.0, 0.0),
 _contourColor(0.0, 0.0, 0.0, 0.0),
-_needUpdate(true)
+_needUpdate(true),
+_isEditingWidget(false),
+_isEditable(true),
+_frameBufferObj(rect.size)
 {
-//#ifdef _axDebugEditor_
-    _isEditingWidget = false;
-    _isEditable = true;
-//#endif // _axDebugEditor_
-    
 	if (parent == nullptr)
 	{
 		_absolutePosition = rect.position;
@@ -51,13 +50,7 @@ _needUpdate(true)
 		_absolutePosition = parent->_absolutePosition + rect.position;
 	}
     
-	_gc = toUnique(new_ axGC(this));
-    
-    InitGLWindowBackBufferDrawing();
-}
-
-axWindow::~axWindow()
-{
+	_gc = new axGC(this);
 }
 
 axWindow* axWindow::GetParent() const
@@ -90,7 +83,6 @@ bool axWindow::IsShown() const
         
     }
     return true;
-    //		return !_isHidden;
 }
 
 void axWindow::Show()
@@ -109,9 +101,6 @@ void axWindow::Hide()
         _isHidden = true;
         Update();
     }
-    
-//    _isHidden = true;
-//    Update();
 }
 
 void axWindow::Reparent(axWindow* parent, const axPoint& position)
@@ -120,8 +109,8 @@ void axWindow::Reparent(axWindow* parent, const axPoint& position)
 	SetPosition(position);
 
 	axID temp = _parent->GetId();
-	_parent->SetIdForReparenting(GetId());
-	SetIdForReparenting(temp);
+	_parent->ChangeId(GetId());
+	ChangeId(temp);
 
 	Update();
 }
@@ -131,25 +120,22 @@ axRect axWindow::GetShownRect() const
     return _shownRect;
 }
 
+void axWindow::SetRect(const axRect& rect)
+{
+	_rect = rect;
+	_shownRect = rect;
+	_frameBufferObj.Resize(rect.size);
+	Update();
+}
+
 void axWindow::SetShownRect(const axRect& rect)
 {
     _shownRect = rect;
 }
 
-// axID axWindow::GetId() const
-// {
-// 	return _id;
-// }
-
 axRect axWindow::GetRect() const
 {
 	return _rect;
-}
-
-void axWindow::SetRect(const axRect& rect)
-{
-	SetPosition(rect.position);
-	SetSize(rect.size);
 }
 
 axPoint axWindow::GetBottomLeftPosition() const
@@ -183,7 +169,6 @@ axPoint axWindow::GetNextPosUp(const int& delta) const
     return axPoint(_rect.position.x, _rect.position.y - delta);
 }
 
-
 axRect axWindow::GetAbsoluteRect() const
 {
 	axPoint pos = _rect.position;
@@ -198,9 +183,6 @@ axRect axWindow::GetAbsoluteRect() const
 	}
 
 	return axRect(pos, _rect.size);
-	
-	// Constant.
-	//return axRect(_absolutePosition, _rect.size);
 }
 
 axSize axWindow::GetSize() const
@@ -210,15 +192,14 @@ axSize axWindow::GetSize() const
 
 axGC* axWindow::GetGC()
 {
-	return _gc.get();
+	return _gc;
 }
 
 void axWindow::SetSize(const axSize& size)
 {
 	_rect.size = size;
     _shownRect.size = size;
-
-    InitGLWindowBackBufferDrawing();
+    _frameBufferObj.Resize(size);
     Update();
 }
 
@@ -269,6 +250,11 @@ bool axWindow::IsEditable() const
     return _isEditable;
 }
 
+void axWindow::SetPopupWindow(const bool& popup)
+{
+    _isPopup = popup;
+}
+
 void axWindow::SetWindowColor(const axColor& color)
 {
     _windowColor = color;
@@ -279,8 +265,44 @@ void axWindow::SetContourColor(const axColor& color)
     _contourColor = color;
 }
 
+axRect axWindow::GetDrawingRect() const
+{
+    return axRect(1, 1, _rect.size.x - 1, _rect.size.y - 1);
+}
+
+void axWindow::SetNeedUpdate()
+{
+    _needUpdate = true;
+}
+
+bool axWindow::GetIsPopup()
+{
+    return _isPopup;
+}
+
+void axWindow::SetSelectable(const bool& selectable)
+{
+    _isSelectable = selectable;
+}
+
+bool axWindow::IsBlockDrawing() const
+{
+    return _isBlockDrawing;
+}
+
+void axWindow::SetBlockDrawing(const bool& block)
+{
+    _isBlockDrawing = block;
+}
+
+axResourceManager* axWindow::GetResourceManager()
+{
+    return &_resourceManager;
+}
+
 void axWindow::OnPaint()
 {
+    
     axGC* gc = GetGC();
     axRect rect(GetRect());
     
@@ -291,214 +313,20 @@ void axWindow::OnPaint()
     gc->DrawRectangle(axRect(axPoint(0, 0), rect.size));
 }
 
-// https://www.opengl.org/wiki/Framebuffer_Object_Examples
-void axWindow::InitGLWindowBackBufferDrawing()
-{
-#if _axBackBufferWindow_ == 1
-
-    // Create framebuffer object (FBO).
-    glGenFramebuffers(1, &_frameBuffer);
-    glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
-    
-    // Create texture.
-    glGenTextures(1, &_frameBufferTexture);
-    glBindTexture(GL_TEXTURE_2D, _frameBufferTexture);
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    
-    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-    
-    // NULL means reserve texture memory, but texels are undefined.
-    glTexImage2D(GL_TEXTURE_2D,
-                 0,
-                 GL_RGBA8,
-                 _rect.size.x,
-                 _rect.size.y,
-                 0,
-                 GL_RGBA,
-                 GL_UNSIGNED_BYTE,
-                 NULL);
-    
-    // Attach 2D texture to this FBO.
-    glFramebufferTexture2D(GL_FRAMEBUFFER,
-                           GL_COLOR_ATTACHMENT0,
-                           GL_TEXTURE_2D,
-                           _frameBufferTexture,
-                           0);
-    
-    
-//    glGenRenderbuffers(1, &_depthBuffer);
-//    glBindRenderbuffer(GL_RENDERBUFFER, _depthBuffer);
-//    glRenderbufferStorage(GL_RENDERBUFFER,
-//                          GL_DEPTH_COMPONENT32,
-//                          _rect.size.x,
-//                          _rect.size.y);
-
-    // Does the GPU support current FBO configuration.
-    GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER_EXT);
-
-	//std::cout << "Status : " << status << std::endl;
-
-    switch(status)
-    {
-        case GL_FRAMEBUFFER_COMPLETE_EXT: 
-			break;
-        default:
-            std::cerr << "ERROR GEN FRAME BUFFER : " << status << std::endl;
-    }
-    
-	GLenum error = glGetError();
-	if (error != GL_NO_ERROR)
-	{
-		std::cerr << "Init Back buffer Error : " << gluErrorString(error) << std::endl;
-	}
-
-    glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-#endif // _axBackBufferWindow_
-}
-
-
-//void WinEndDrawing(axWindow* win)
-//{
-//    if(win->IsBlockDrawing())
-//    {
-//        glDisable(GL_SCISSOR_TEST);
-//    }
-//}
-//
-//void WinBeforeDrawing(axWindow* win)
-//{
-//    if(win->IsBlockDrawing())
-//    {
-//        axMatrix4 mview;
-//        mview.Identity().Load();
-//        
-//        axRect abs_rect = win->GetAbsoluteRect();
-//        axRect shown_rect = win->GetShownRect();
-//        
-//        double delta_size_x = shown_rect.size.x - abs_rect.size.x;
-//        double delta_size_y = shown_rect.size.y - abs_rect.size.y;
-//        
-//        double globalY = axApp::GetInstance()->GetCore()->GetGlobalSize().y;
-//        double sumY = (abs_rect.position.y + shown_rect.position.y +
-//                       abs_rect.size.y + delta_size_y);
-//        
-//        glScissor(abs_rect.position.x + shown_rect.position.x - 1,
-//                  globalY - sumY,
-//                  shown_rect.size.x + 1,
-//                  shown_rect.size.y + 1);
-//        
-//        
-//        std::cout << "SHOUWN  " << shown_rect.size.x << std::endl;
-//        glEnable(GL_SCISSOR_TEST);
-//    }
-//}
-
 void axWindow::RenderWindow()
 {
-
+#if _axBackBufferWindow_ == 1
     if(_needUpdate)
     {
-        #if _axBackBufferWindow_ == 1
-	
-        bool need_to_reactive_clip_test = false;
-        if(glIsEnabled(GL_SCISSOR_TEST))
-        {
-            glDisable(GL_SCISSOR_TEST);
-            need_to_reactive_clip_test = true;
-        }
-
-
-
-            // Save modelView matrix.
-            glMatrixMode(GL_MODELVIEW);
-			axMatrix4 modelView(GL_MODELVIEW_MATRIX);
-                
-            
-			//Check for error
-			GLenum error = glGetError();
-			if (error != GL_NO_ERROR)
-			{
-				std::cerr << "Error :  Line : " << __LINE__ << " " << gluErrorString(error) << std::endl;
-			}
-		
-
-			glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
-
-            glPushAttrib(GL_DEPTH_BUFFER_BIT);
-            glClearColor(0.0, 0.0, 1.0, 0.0);
-            glClearDepth(1.0f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        
-            glViewport(0, 0, GetRect().size.x, GetRect().size.y);
-        
-            glMatrixMode(GL_PROJECTION);
-            axMatrix4 proj;
-//        axOrtho2D(proj.Identity().GetData(), GetRect().size);
-        
-            glLoadIdentity();
-            glOrtho(0.0, GetRect().size.x,
-                    0.0, GetRect().size.y,
-                    0.0, 1.0);
-        
-            glMatrixMode(GL_MODELVIEW);
-            axMatrix4 mv_matrix;
-            mv_matrix.Identity().Load();
-            glTranslated(1.0, 1.0, 0.0);
-
-
-			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA,
-				GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-        #endif // _axBackBufferWindow_
-        
-        OnPaint();
-        
-        #if _axBackBufferWindow_ == 1
-            _needUpdate = false;
-
-		//	// Unbind buffer.
-  //          glBindFramebuffer(GL_FRAMEBUFFER, 0);
-  //      
-  //          axSize gSize(axApp::GetInstance()->GetCore()->GetGlobalSize());
-  //          glViewport(0, 0, gSize.x, gSize.y);
-  //          axOrtho2D(proj.Identity().GetData(), gSize);
-  //      
-  //          glMatrixMode(GL_MODELVIEW);
-  //          modelView.Load();
-  //          glPopAttrib();
-  //      
-
-		//if (need_to_reactive_clip_test)
-		//{
-		//	glEnable(GL_SCISSOR_TEST);
-		//}
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-		axSize gSize(axApp::GetInstance()->GetCore()->GetGlobalSize());
-		glViewport(0, 0, gSize.x, gSize.y);
-		axOrtho2D(proj.Identity().GetData(), gSize);
-
-		glMatrixMode(GL_MODELVIEW);
-		modelView.Load();
-		glPopAttrib();
-
-		if (need_to_reactive_clip_test)
-		{
-			glEnable(GL_SCISSOR_TEST);
-		}
-            
-        
-		axGC* gc = GetGC();
-		gc->DrawWindowBuffer();
-
-        #endif // _axBackBufferWindow_
-        
+        std::function<void()> draw([this](){ OnPaint(); });
+  
+        _frameBufferObj.DrawOnFrameBuffer(draw, GetRect().size);
+        _needUpdate = false;
     }
     
-    
+    _frameBufferObj.DrawFrameBuffer(GetShownRect().size);
 
-
+#else
+    OnPaint();
+#endif //_axBackBufferWindow_
 }

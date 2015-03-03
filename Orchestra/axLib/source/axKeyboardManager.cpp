@@ -55,7 +55,7 @@ void axKeyboardManager::OnEnterDown()
 
 void axKeyboardManager::OnKeyUp(const char& key)
 {
-	(key);
+    
 }
 
 void axKeyboardManager::OnBackSpaceDown()

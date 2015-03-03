@@ -34,10 +34,9 @@
 #endif //__linux__
 
 #ifdef _MSC_VER
-#include "GL/glew.h"
-
 #include <windows.h>
-#include <gl\gl.h>
+#include "GL/glew.h"
+//#include <gl\gl.h>
 #include <gl\glu.h>
 #endif //_MSC_VER
 
@@ -47,6 +46,8 @@
 #endif // __APPLE__
 
 #include <stdint.h>
+#include <memory>
+#include <functional>
 #include "axUtils.h"
 
 #define axDEBUG_LEVEL0 0
@@ -62,17 +63,7 @@
 #define axREMOVE_ON_RELEASE(x) 
 #endif
 
-#if axDEBUG_LEVEL > 0 && !defined(new) && defined(_MSC_VER)
-#define _CRTDBG_MAP_ALLOC
-#include <crtdbg.h>
-
-inline void * __CRTDECL operator new(size_t size, int blockType, const char* fileName, int lineNumber, void* placement){ (size); (blockType); (fileName); (lineNumber);  return placement; } // Placement new does not allocate, so we simply return the pointer without using the crtdbg version.
-#define newp(...) new(_NORMAL_BLOCK, __FILE__, __LINE__, __VA_ARGS__)
-#define new_ new(_NORMAL_BLOCK, __FILE__, __LINE__)
-#else
-#define newp new
 #define new_ new
-#endif
 
 //#define DSTREAM cout
 #define DSTREAM(x) if(x <= axDEBUG_LEVEL) cout 
@@ -115,6 +106,30 @@ typedef axRange<axDouble> axFloatRange;
 typedef axRange<axInt> axIntRange;
 
 typedef axRectPoints<axTemplate2DPoint<axDouble>> axRectFloatPoints;
+
+// Since variadic templates are recursive, must have a base case.
+void axPrint();
+
+template <typename T, typename ...P>
+void axPrint(T t, P ...p)
+{
+    std::cout << t << ' ';
+    {
+        axPrint(p...);
+    }
+}
+
+// Since variadic templates are recursive, must have a base case.
+void axError();
+
+template <typename T, typename ...P>
+void axError(T t, P ...p)
+{
+    std::cerr << "Error : " << t << ' ';
+    {
+        axError(p...);
+    }
+}
 
 // Flag.
 typedef uint16_t axFlag;

@@ -30,7 +30,8 @@ axWindow(parent, rect)
 	{
 		if (parent->GetIsPopup())
 		{
-            GetIsPopup() = true;
+//            GetIsPopup() = true;
+            SetPopupWindow(true);
 			axApp::GetInstance()->AddPopWindow(this);
 		}
 		else
@@ -59,9 +60,9 @@ axPanel::axPanel(int f, axWindow* parent, const axRect& rect) :
 axWindow(parent, rect)
 //_panelColor(0.0, 0.0, 0.0, 0.0)
 {
-	(f);
     //std::cout << "axPanel : Add popup window" << std::endl;
-    GetIsPopup() = true;
+//    GetIsPopup() = true;
+    SetPopupWindow(true);
 	axApp::GetInstance()->AddPopWindow(this);
 }
 
@@ -183,7 +184,7 @@ void axPanel::UpdateAll()
 
 void axPanel::Update()
 {
-    _needUpdate = true;
+    SetNeedUpdate();
 	UpdateAll();
 }
 
@@ -215,7 +216,6 @@ bool axPanel::IsMouseHoverWindow()
 
 void axPanel::DeleteWindow(axWindow* win)
 {
-	(win);
 	//_app->GetWindowManager()->
 }
 
@@ -227,7 +227,7 @@ axRect axPanel::GetWindowPixelData(unsigned char*& data) const
     rect.position.y -= 1;
     rect.size.y += 1;
     
-    data = new_ unsigned char[rect.size.x * rect.size.y * 4];
+    data = new unsigned char[rect.size.x * rect.size.y * 4];
     
     axSize globalSize(axApp::GetInstance()->GetCore()->GetGlobalSize());
 
@@ -241,8 +241,3 @@ axRect axPanel::GetWindowPixelData(unsigned char*& data) const
     
     return rect;
 }
-
-//void axPanel::SetPanelColor(const axColor& color)
-//{
-//    _panelColor = color;
-//}

@@ -1,6 +1,7 @@
 #ifndef __ORCHESTRA_MAIN__
 #define __ORCHESTRA_MAIN__
 
+#include "axWxPanel.h"
 #include "GL/glew.h"
 #include <iostream>
 #include "wx/wx.h"
@@ -11,6 +12,8 @@
 #include "ScoreGL.h"
 #include "PlayerBarGL.h"
 #include "Menu.h"
+
+
 
 class VlcVideoPlayer;
 class Device3D;
@@ -30,8 +33,8 @@ public:
 
 private:
 	wxPanel* _panel;
-
 	BasicGLPane* _axWrapper;
+	//axWxPanel* _axWrapper;
 
 	VlcVideoPlayer* _videoPlayer;
 	Device3D* _device3D;

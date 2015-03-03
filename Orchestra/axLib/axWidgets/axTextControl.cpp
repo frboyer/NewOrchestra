@@ -45,7 +45,7 @@ _findClickCursorIndex(false)
 {
 	_currentColor = &_info.normal;
 
-    _btnImg = new_ axImage(img_path);
+    _btnImg = new axImage(img_path);
     
     if(_events.button_click)
     {
@@ -54,13 +54,13 @@ _findClickCursorIndex(false)
     
     if(IsFlag(axTEXT_CTRL_FLASHING_CURSOR, _flags))
     {
-        _flashingCursor = new_ axTimer();
+        _flashingCursor = new axTimer();
         _flashingCursor->AddConnection(0, GetOnFlashingCursorTimer());
     }
     
     _cursorIndex = _label.size();
     
-    _font = new_ axFont(0);
+    _font = new axFont(0);
     
     SetShownRect(axRect(-5,
                         -5,
@@ -91,14 +91,12 @@ void axTextControl::OnMouseLeftDown(const axPoint& pos)
 
 void axTextControl::OnFlashingCursorTimer(const axTimerMsg& msg)
 {
-	(msg);
     _cursorFlashActive = !_cursorFlashActive;
     Update();
 }
 
 void axTextControl::OnMouseLeftUp(const axPoint& pos)
 {
-	(pos);
     if(IsGrabbed())
     {
         UnGrabMouse();
@@ -124,7 +122,6 @@ void axTextControl::OnMouseLeftDragging(const axPoint& pos)
 
 void axTextControl::OnMouseLeftDoubleClick(const axPoint& pos)
 {
-	(pos);
     _isHightlight = true;
     Update();
 }
@@ -206,7 +203,7 @@ void axTextControl::OnKeyDeleteDown()
         _isHightlight = false;
         Update();
     }
-    else if((int)_label.size() && _cursorIndex < (int)_label.size())
+    else if(_label.size() && _cursorIndex < _label.size())
     {
         _label.erase(_cursorIndex, 1);
         --_cursorIndex;
@@ -241,7 +238,7 @@ void axTextControl::OnRightArrowDown()
 {
     ++_cursorIndex;
     
-    if(_cursorIndex > (int)_label.size())
+    if(_cursorIndex > _label.size())
     {
         _cursorIndex = (int)_label.size();
     }
@@ -308,7 +305,7 @@ void axTextControl::OnPaint()
     {
         _cursorBarXPosition = 5;
         
-        for(int i = 0; i < (int)_label.size(); i++)
+        for(int i = 0; i < _label.size(); i++)
         {
             int x_past_pos = next_pos.x;
             
@@ -330,7 +327,7 @@ void axTextControl::OnPaint()
                     _cursorIndex = i;
                     _cursorBarXPosition = x_past_pos;
                 }
-                else if(i == (int)_label.size() - 1 && _clickPosition.x > next_pos.x)
+                else if(i == _label.size() - 1 && _clickPosition.x > next_pos.x)
                 {
                     _cursorIndex = i + 1;
                     _cursorBarXPosition = next_pos.x;
