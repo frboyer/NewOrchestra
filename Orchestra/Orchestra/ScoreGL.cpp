@@ -1,5 +1,6 @@
 #include "ScoreGL.h"
 
+#define toUnique(x)  
 //*****************************************************************************
 // ScorePlayer
 //*****************************************************************************
@@ -224,7 +225,8 @@ bool ScoreGL::loadInfo(const std::string& data_path,
 		// Load all images in memory.
 		for (auto& path : list)
 		{
-			_images.push_back(toUnique(new_ axImage(path)));
+			//_images.push_back(toUnique(new_ axImage(path)));
+			_images.push_back(std::unique_ptr<axImage>(new_ axImage(path)));
 		}
 
 		std::cout << "IMG index" << std::endl;
@@ -359,6 +361,10 @@ void ScoreGL::OnPaint()
 		gc->DrawImageResize(_images[img_index].get(),
 							axPoint(10, 10),
 							axSize(rect.size.x - 35, rect.size.y - 40));
+		//gc->DrawImageResize(_images[img_index].get(),
+		//	axPoint(10, 10),
+		//	axSize(300, 400));
+		//axPrint("Score size : ", rect.size.x, rect.size.y);
 	}
 
 

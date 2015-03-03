@@ -44,10 +44,10 @@ _msg(msg)
 {
     _currentColor = &_info.normal;
     
-    _btnImg = new_ axImage(img_path);
-    _bgImg = new_ axImage(bg_img_path);
+    _btnImg = new axImage(img_path);
+    _bgImg = new axImage(bg_img_path);
     
-    _font = toUnique(new_ axFont(0));
+    _font = new axFont(0);
     
     if(_events.selection_change)
     {
@@ -69,7 +69,7 @@ _msg(msg)
     axPoint menu_pos = GetAbsoluteRect().position;
     menu_pos.y += rect.size.y;
     
-    _popMenu = new_ axPopupMenu(this,
+    _popMenu = new axPopupMenu(this,
                                axRect(menu_pos, axSize(rect.size.x, 30)),
                                menu_evts,
                                menu_info,
@@ -118,14 +118,12 @@ void axDropMenu::OnPopupMenuChoice(const axPopupMenuMsg& msg)
     _label = msg.GetMsg();
     
     PushEvent(axDropMenuEvents::SELECTION_CHANGE,
-              new_ axDropMenuMsg(this, _label));
+              new axDropMenuMsg(this, _label));
     Update();
 }
 
 void axDropMenu::OnMouseLeftDown(const axPoint& pos)
 {
-	(pos);
-
     _currentColor = &_info.clicking;
     _nCurrentImg = axDROP_DOWN;
     
@@ -146,8 +144,6 @@ void axDropMenu::OnMouseLeftDown(const axPoint& pos)
 
 void axDropMenu::OnMouseLeftUp(const axPoint& pos)
 {
-	(pos);
-
     if (IsGrabbed())
     {
         UnGrabMouse();
@@ -235,8 +231,8 @@ void axDropMenu::OnPaint()
         if (axFlag_exist(axDROP_MENU_SINGLE_IMG, _flags))
         {
             gc->DrawImageResize(_btnImg,
-                                axPoint(int(rect.size.x - _btnImg->GetSize().x - 5),
-                                        int((rect.size.y - _btnImg->GetHeight()) * 0.5)),
+                                axPoint(rect.size.x - _btnImg->GetSize().x - 5,
+                                        (rect.size.y - _btnImg->GetHeight()) * 0.5),
                                 _btnImg->GetSize(), 1.0);
         }
         else
@@ -246,8 +242,8 @@ void axDropMenu::OnPaint()
             
             gc->DrawPartOfImage(_btnImg, axPoint(0, _nCurrentImg * rect.size.y),
                                 btn_size,
-                                axPoint(int(rect.size.x - _btnImg->GetSize().x - 5),
-                                        int((rect.size.y - _btnImg->GetHeight()) * 0.5)));
+                                axPoint(rect.size.x - _btnImg->GetSize().x - 5,
+                                        (rect.size.y - _btnImg->GetHeight()) * 0.5));
         }
         
     }

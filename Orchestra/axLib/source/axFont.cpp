@@ -26,18 +26,13 @@ _isReady(false)
 {
     
 }
-//
-//axFont::axFont(axFont&& font)
-//{
-//    
-//}
 
 axFont::axFont(const int& data_index):
 _isReady(false)
 {
     if (FT_Init_FreeType(&_freeType))
     {
-        std::cerr << "Error : Could not init freetype library." << std::endl;
+        axError("Could not init freetype library.");
         FT_Done_FreeType(_freeType);
     }
     else
@@ -45,13 +40,13 @@ _isReady(false)
         
         if(data_index > 1)
         {
-            std::cerr << "Error : Only two default font buffer." << std::endl;
+            axError("Only two default font buffer.");
 
             FT_Done_FreeType(_freeType);
         }
         else
         {
-            FT_Error err = FT_New_Memory_Face(_freeType,
+            bool err = FT_New_Memory_Face(_freeType,
                                           GetDefaultFontData(data_index),
                                           GetDefaultFontDataSize(data_index),
                                           0,
@@ -59,7 +54,7 @@ _isReady(false)
             
             if(err)
             {
-                std::cerr << "Init error : Could not open font." << std::endl;
+                axError("Could not open font.");
                 FT_Done_FreeType(_freeType);
             }
             else
@@ -77,7 +72,7 @@ _isReady(false)
 {
     if (FT_Init_FreeType(&_freeType))
     {
-        std::cerr << "Error : Could not init freetype library." << std::endl;
+        axError("Could not init freetype library.");
         FT_Done_FreeType(_freeType);
     }
     else
@@ -86,7 +81,7 @@ _isReady(false)
         
         if(err)
         {
-            std::cerr << "Init error : Could not open font." << std::endl;
+            axError("Could not open font.");
             FT_Done_FreeType(_freeType);
         }
         else
@@ -148,10 +143,8 @@ int axFont::GetNextPosition() const
     return _next;
 }
 
-// @todo Change function params.
 bool axFont::LoadFont(const string& path, FT_Face& face)
 {
-	(face);
     // Zero mean succes.
     if_error_in(FT_New_Face(_freeType, path.c_str(), 0, &_face))
     {
@@ -177,7 +170,7 @@ void axFont::SetChar(const char& letter)
         // Zero mean succes.
         if_error_in(FT_Load_Char(_face, letter, FT_LOAD_RENDER))
         {
-            std::cerr << "Error : Could not load character " << letter << std::endl;
+            axError("Could not load character ", letter);
         }
         else
         {
@@ -187,7 +180,7 @@ void axFont::SetChar(const char& letter)
             _delta = axPoint(_face->glyph->bitmap_left,
                              _face->glyph->bitmap_top);
             
-            _next = int(g->advance.x / 64.0);
+            _next = g->advance.x / 64.0;
             
             glBindTexture(GL_TEXTURE_2D, _texture);
             glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -201,9 +194,9 @@ void axFont::SetChar(const char& letter)
                          GL_ALPHA,
                          GL_UNSIGNED_BYTE,
                          g->bitmap.buffer);
-            //-----------------------------
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
             
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -213,8 +206,7 @@ void axFont::SetChar(const char& letter)
 
 void axFont::SetFontType(const string& font_type)
 {
-	(font_type);
-    std::cout << "axFont::SetFontType not implemented yet." << std::endl;
+    axError("SetFontType not implemented yet.");
 }
 
 GLuint axFont::GetTexture()

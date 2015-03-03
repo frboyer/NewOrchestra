@@ -46,7 +46,7 @@ double axNumberBox::Msg::GetValue() const
 
 axMsg* axNumberBox::Msg::GetCopy()
 {
-    return new_ Msg(*this);
+    return new Msg(*this);
 }
 
 /*******************************************************************************
@@ -168,7 +168,7 @@ void axNumberBox::Info::SetAttribute(const axStringPair& attribute)
     }
     else if(attribute.first == "single_img")
     {
-        single_img = stoi(attribute.second) == 0 ? false : true;
+        single_img = stoi(attribute.second);
     }
 }
 
@@ -212,7 +212,7 @@ axNumberBox* axNumberBox::Builder::Create(axVectorPairString attributes)
         }
         else if(s.first == "flags")
         {
-            _flags = stoi(s.second) == 0 ? false : true;
+            _flags = stoi(s.second);
         }
         else if(s.first == std::string("event"))
         {
@@ -245,7 +245,7 @@ axNumberBox* axNumberBox::Builder::Create(axVectorPairString attributes)
         
     }
     
-    axNumberBox* box = new_ axNumberBox(_parent, axRect(pos, _size),
+    axNumberBox* box = new axNumberBox(_parent, axRect(pos, _size),
                                        evts, _info, 0, 0.0, range,
                                        ctrltype);
     
@@ -267,7 +267,8 @@ axNumberBox::axNumberBox(axWindow* parent,
                          axControlUnit unit,
                          axControlInterpolation interpolation,
                          std::string label):
-axWidget(parent, rect, axInfo::Ptr(new_ axNumberBox::Info(info))),
+
+axWidget(parent, rect, new axNumberBox::Info(info)),
 // Members.
 _events(events),
 //_info(info),
@@ -276,16 +277,16 @@ _range(range),
 _type(type),
 _unit(unit),
 _interpolation(interpolation),
-_currentColor(&GetInfo()->normal),
+_currentColor(&static_cast<Info*>(_info)->normal),
 _nCurrentImg(axNUM_BOX_NORMAL),
 _font(nullptr)
 {
-    _bgImg = toUnique(new_ axImage(GetInfo()->img));
+    _bgImg = new axImage(static_cast<Info*>(_info)->img);
     
-    //double v = value;
+    double v = value;
     _value = axClamp<double>(value, _range.left, _range.right);
     
-    _font = toUnique(new_ axFont(0));
+    _font = new axFont(0);
     _font->SetFontSize(10);
 
     _zeroToOneValue = _range.GetZeroToOneValue(_value);
@@ -304,7 +305,7 @@ void axNumberBox::SetInfo(const axVectorPairString& attributes)
     std::string path = _info->GetAttributeValue("img");
     if(_bgImg->GetImagePath() != path)
     {
-        _bgImg = toUnique(new_ axImage(path));
+        _bgImg = new axImage(path);
     }
     
     Update();
@@ -315,9 +316,15 @@ double axNumberBox::GetValue()
     return _value;
 }
 
+void axNumberBox::SetValue(const double& value)
+{
+	_value = value; 
+	Update();
+}
+
 void axNumberBox::OnMouseEnter()
 {
-    _currentColor = &GetInfo()->hover;
+    _currentColor = &static_cast<Info*>(_info)->hover;
     _nCurrentImg = axNUM_BOX_HOVER;
     Update();
 }
@@ -327,7 +334,7 @@ void axNumberBox::OnMouseLeave()
     
     if(!IsGrabbed())
     {
-        _currentColor = &GetInfo()->normal;
+        _currentColor = &static_cast<Info*>(_info)->normal;
         _nCurrentImg = axNUM_BOX_NORMAL;
         Update();
     }
@@ -336,9 +343,9 @@ void axNumberBox::OnMouseLeave()
 void axNumberBox::OnMouseLeftDown(const axPoint& pos)
 {
 
-    _clickPosY = (pos - GetAbsoluteRect().position).y;
+	_clickPosY = (pos - GetAbsoluteRect().position).y;
     _nCurrentImg = axNUM_BOX_DOWN;
-    _currentColor = &GetInfo()->clicking;
+    _currentColor = &static_cast<Info*>(_info)->clicking;
     GrabMouse();
     Update();
 
@@ -346,24 +353,22 @@ void axNumberBox::OnMouseLeftDown(const axPoint& pos)
 
 void axNumberBox::OnMouseLeftUp(const axPoint& pos)
 {
-	(pos);
-
     if(IsGrabbed())
     {
         UnGrabMouse();
         
         if(IsMouseHoverWindow())
         {
-            _currentColor = &GetInfo()->hover;
+            _currentColor = &static_cast<Info*>(_info)->hover;
             _nCurrentImg = axNUM_BOX_HOVER;
         }
         else
         {
-            _currentColor = &GetInfo()->normal;
+            _currentColor = &static_cast<Info*>(_info)->normal;
             _nCurrentImg = axNUM_BOX_NORMAL;
         }
 
-        PushEvent(Events::VALUE_CHANGE, new_ Msg(_value));
+        PushEvent(Events::VALUE_CHANGE, new Msg(_value));
         Update();
     }
 }
@@ -383,7 +388,7 @@ void axNumberBox::OnMouseLeftDragging(const axPoint& pos)
     _zeroToOneValue = axClamp<double>(_zeroToOneValue, 0.0, 1.0);
     _value = _range.GetValueFromZeroToOne(_zeroToOneValue);
 
-    PushEvent(Events::VALUE_CHANGE, new_ Msg(_value));
+    PushEvent(Events::VALUE_CHANGE, new Msg(_value));
     
     Update();
 }
@@ -401,25 +406,25 @@ void axNumberBox::OnPaint()
 
     if(_bgImg->IsImageReady())
     {
-        if (GetInfo()->single_img)
+        if(static_cast<Info*>(_info)->single_img)
         {
             if(IsFlag(Flags::NO_IMG_RESIZE, _flags))
             {
-                gc->DrawImage(_bgImg.get(), axPoint(0, 0));
+                gc->DrawImage(_bgImg, axPoint(0, 0));
             }
             else
             {
-                gc->DrawImageResize(_bgImg.get(), axPoint(0, 0), rect0.size);
+                gc->DrawImageResize(_bgImg, axPoint(0, 0), rect0.size);
             }
         }
         else
         {
-            gc->DrawPartOfImage(_bgImg.get(), axPoint(0, _nCurrentImg * rect.size.y),
+            gc->DrawPartOfImage(_bgImg, axPoint(0, _nCurrentImg * rect.size.y),
                                 rect.size, axPoint(0, 0));
         }
     }
 
-    gc->SetColor(GetInfo()->font_color);
+    gc->SetColor(static_cast<Info*>(_info)->font_color);
 
     if(_type == axControlType::axCTRL_FLOAT)
     {
@@ -442,6 +447,6 @@ void axNumberBox::OnPaint()
     }
 
     
-    gc->SetColor(GetInfo()->contour);
+    gc->SetColor(static_cast<Info*>(_info)->contour);
     gc->DrawRectangleContour(rect0);
 }

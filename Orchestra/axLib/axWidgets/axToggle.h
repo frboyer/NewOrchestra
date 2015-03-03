@@ -144,6 +144,7 @@ public:
         
         axColor contour;
         axColor font_color;
+        int font_size = 12;
         
         std::string img;
         bool single_img;
@@ -194,7 +195,6 @@ public:
         
     void SetMsg(const string& msg);
     void SetSelected(const bool& selected);
-	Info* GetInfo() { return static_cast<Info*>(_info.get()); }
 
 
 protected:
@@ -213,17 +213,15 @@ protected:
 private:
     axToggle::Events _events;
 	axColor* _currentColor;
-	std::unique_ptr<axImage> _bgImg;
+	axImage* _bgImg;
     std::string _label;
     std::string _msg;
-    std::unique_ptr<axFont> _font;
+    axFont* _font;
 	
 	bool _selected;
 	axFlag _flags;
 	axColor test;
 	axFloat _bgAlpha;
-
-
 
     // Events.
 	virtual void OnPaint();

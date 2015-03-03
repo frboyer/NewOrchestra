@@ -25,53 +25,55 @@
 /// @defgroup Core
 /// @{
 
-//#define _AX_VST_APP_ 1
+#include "axConfig.h"
 
 #ifdef __linux__
 #include "axCoreX11.h"
 #endif //__linux__
 
 #ifdef _MSC_VER
-//#include "axCoreWin32.h"
-#include "axCoreWxWidgets.h"
+	#if _axWxWidgetsCore_ == 1
+	#include "axCoreWxWidgets.h"
+	#else
+	#include "axCoreWin32.h"
+	#endif // _axWxWidgetsCore_.
 #endif //_MSC_VER
 
 #ifdef __APPLE__
-#ifdef _AX_VST_APP_
-#include "axVstCoreMac.h"
-#else
-#include "axCoreMac.h"
-#endif // _AX_VST_APP_
+    #ifdef _AX_VST_APP_
+        #include "axVstCoreMac.h"
+    #else
+        #include "axCoreMac.h"
+    #endif // _AX_VST_APP_
 #endif // __APPLE__
 
-#include <memory>
+
 #include "axC++.h"
 #include "axResourceManager.h"
-//#include "axToggle.h"
 
 // Is use as an adapter to global axCore class (axCORE).
 class axApp
 {
 public:
-
+    #pragma message("WARNING: Should use GetInstance.")
+	static axApp* MainInstance;
 	axApp();
-	~axApp();
 
 	inline static axApp* GetInstance()
 	{
-		return MainInstance.get();
+		return MainInstance;
 	}
 
 	inline static axApp* CreateApp()
 	{
-		return (MainInstance == nullptr ?
-               MainInstance = toUnique(new_ axApp()) : MainInstance).get();
+		return MainInstance == nullptr ?
+               MainInstance = new axApp() : MainInstance;
 	}
 
 	inline static axApp* CreateApp(const axSize& frame_size)
 	{
-		return (MainInstance == nullptr ?
-               MainInstance = toUnique(new_ axApp(frame_size)) : MainInstance).get();
+		return MainInstance == nullptr ?
+               MainInstance = new axApp(frame_size) : MainInstance;
 	}
     
     inline static std::string GetAppPath()
@@ -85,7 +87,7 @@ public:
 
     
     
-	void CreatePopupWindow(const axSize& size);
+//	void CreatePopupWindow(const axSize& size);
 
 	axManager* GetWindowManager();
     axManager* GetPopupManager();
@@ -102,10 +104,10 @@ public:
 
 	bool CreatePopupWindow(const char*, int, int);
     
- //   #pragma message("WARNING: Deprecate.")
-	//string GetCurrentAppDirectory();
+    #pragma message("WARNING: Deprecate.")
+	string GetCurrentAppDirectory();
 
-	string GetAppDirectory();
+    std::string GetAppDirectory();
     
     axResourceManager* GetResourceManager() const;
     
@@ -119,8 +121,7 @@ public:
     void CallAfterGUILoadFunction();
     
 private:
-	static std::unique_ptr<axApp> MainInstance;
-	std::unique_ptr<axCore> _core;
+	axCore* _core;
     
     std::function<void()> _mainEntryFunction, _afterGuiLoadFunction;
     static axResourceManager* _resourceManager;

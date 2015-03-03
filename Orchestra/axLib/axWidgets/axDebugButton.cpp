@@ -45,7 +45,7 @@ _msg(""),
 _font(nullptr)
 {
     _currentColor = &_info.normal;
-    _font = toUnique(new_ axFont(0));
+    _font = new axFont(0);
     
     SetEditingWidget(true);
 }
@@ -88,14 +88,12 @@ void axDebugButton::SetLabel(const std::string& label)
 
 void axDebugButton::OnMouseLeftDown(const axPoint& pos)
 {
-	(pos);
-
     _currentColor = &_info.clicking;
 
     GrabMouse();
     
     PushEvent(axButton::Events::BUTTON_CLICK,
-              new_ axButton::Msg(nullptr, _msg));
+              new axButton::Msg(nullptr, _msg));
     
     Update();
 }
@@ -123,8 +121,6 @@ void axDebugButton::OnMouseLeftDragging(const axPoint &pos)
 
 void axDebugButton::OnMouseLeftUp(const axPoint& pos)
 {
-	(pos);
-
     if (IsGrabbed())
     {
         UnGrabMouse();
@@ -152,8 +148,6 @@ void axDebugButton::OnMouseLeftUp(const axPoint& pos)
 
 void axDebugButton::OnMouseRightDown(const axPoint& pos)
 {
-	(pos);
-
     if(_isEditing == false)
     {
         axTextBox::Events txtEvents;
@@ -190,9 +184,9 @@ void axDebugButton::OnMouseRightDown(const axPoint& pos)
             {
                 if(i == 0)
                 {
-                    label = new_ axLabel(win, axRect(widget->GetNextPosRight(2),
+                    label = new axLabel(win, axRect(widget->GetNextPosRight(2),
                                                     axSize(140, 25)), labelInfo, n);
-                    txtBox = new_ axTextBox(win,
+                    txtBox = new axTextBox(win,
                                            axRect(label->GetNextPosRight(0),
                                                   axSize(180, 25)),
                                            txtEvents,
@@ -204,11 +198,11 @@ void axDebugButton::OnMouseRightDown(const axPoint& pos)
                 }
                 else
                 {
-                    label = new_ axLabel(win, axRect(label->GetNextPosDown(0),
+                    label = new axLabel(win, axRect(label->GetNextPosDown(0),
                                                     axSize(140, 25)),
                                         labelInfo, n);
                     
-                    txtBox = new_ axTextBox(win, axRect(label->GetNextPosRight(0),
+                    txtBox = new axTextBox(win, axRect(label->GetNextPosRight(0),
                                                        axSize(180, 25)),
                                            txtEvents, txtInfo, "",
                                            info->GetAttributeValue(n));
@@ -274,8 +268,6 @@ void axDebugButton::OnMouseRightDown(const axPoint& pos)
 
 void axDebugButton::OnAttributeEdit(const axTextBox::Msg& msg)
 {
-	(msg);
-
     axWidget* widget = static_cast<axWidget*>(GetParent());
     
     axVectorPairString attributes;

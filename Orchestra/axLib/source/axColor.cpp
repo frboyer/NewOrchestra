@@ -73,10 +73,9 @@ axColor::axColor(const string& color)
 
 	unsigned int r_i, g_i, b_i;
 
-	int err = sscanf(c.substr(1, 2).c_str(), "%x", &r_i);
-	err = sscanf(c.substr(3, 2).c_str(), "%x", &g_i);
-	err = sscanf(c.substr(5, 2).c_str(), "%x", &b_i);
-	(err);
+	sscanf(c.substr(1, 2).c_str(), "%x", &r_i);
+	sscanf(c.substr(3, 2).c_str(), "%x", &g_i);
+	sscanf(c.substr(5, 2).c_str(), "%x", &b_i);
 
 	_r = axDouble(r_i / 255.0);
 	_g = axDouble(g_i / 255.0);

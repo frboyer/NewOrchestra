@@ -58,13 +58,11 @@ _currentElementColor(0.0, 0.8, 0.0)
 
 void axGrid::SetMsg(const string& msg)
 {
-	(msg);
 	//_msg = msg;
 }
 
 void axGrid::SetSelected(const bool& selected)
 {
-	(selected);
 	// if (_selected != selected)
 	// {
 	// 	_selected = selected;
@@ -90,7 +88,6 @@ void axGrid::SetSelected(const bool& selected)
 
 void axGrid::SetBackgroundAlpha(const float& alpha)
 {
-	(alpha);
 	// _bgAlpha = alpha;
 	// Update();
 }
