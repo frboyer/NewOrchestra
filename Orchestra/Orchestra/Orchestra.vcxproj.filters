@@ -25,6 +25,15 @@
     <Filter Include="axLib\Widgets">
       <UniqueIdentifier>{d075d0e0-1ebb-444d-a430-c16b13dd2db9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\VCN">
+      <UniqueIdentifier>{426b8e4c-4bcf-4536-8eb7-86547253f84e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\VCN">
+      <UniqueIdentifier>{df238feb-f842-4cbc-a95c-fdd59499e0b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Motion">
+      <UniqueIdentifier>{7b224506-7071-4395-8a44-8821a5efacbc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -185,6 +194,12 @@
     </ClCompile>
     <ClCompile Include="OrchestraConstValue.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Motion\VCNQuat.cpp">
+      <Filter>Source Files\VCN</Filter>
+    </ClCompile>
+    <ClCompile Include="Motion\VCNVector.cpp">
+      <Filter>Source Files\VCN</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -352,6 +367,24 @@
     </ClInclude>
     <ClInclude Include="OrchestraConstValue.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Motion\VCNConstants.h">
+      <Filter>Header Files\VCN</Filter>
+    </ClInclude>
+    <ClInclude Include="Motion\VCNMatrix.h">
+      <Filter>Header Files\VCN</Filter>
+    </ClInclude>
+    <ClInclude Include="Motion\VCNQuat.h">
+      <Filter>Header Files\VCN</Filter>
+    </ClInclude>
+    <ClInclude Include="Motion\VCNVector.h">
+      <Filter>Header Files\VCN</Filter>
+    </ClInclude>
+    <ClInclude Include="Motion\MotionFile.h">
+      <Filter>Header Files\Motion</Filter>
+    </ClInclude>
+    <ClInclude Include="Motion\simpleFileIO.hpp">
+      <Filter>Header Files\Motion</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

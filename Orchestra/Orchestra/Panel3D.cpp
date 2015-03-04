@@ -8,6 +8,7 @@
 #include <windows.h>
 #include <cmath>
 #include "Range.h"
+#include "Motion\simpleFileIO.hpp"
 #include "Debug.h"
 
 ITERABLE_ENUM(BoneSide)
@@ -46,6 +47,10 @@ string getBoneName(BoneSide boneSide, BoneNumber boneNumber)
 }
 
 static const irr::f32 DEG_TO_RAD = irr::f32(M_PI / 180.0);
+
+static double moduloAngle(double angle) {
+	return angle - 360 * floor((angle+180) / 360);
+}
 
 Device3D::Device3D(wxWindow* win, const wxWindowID& id,
 				   wxPoint point, wxSize size,
@@ -128,7 +133,7 @@ Device3D::Device3D(wxWindow* win, const wxWindowID& id,
 	{
 		irr_Bone* bone = m_node->getJointNode(i);
 		const irr_Vector3D& r = bone->getRotation();
-		DEBUG_STREAM << "BONE NAME : " << i << " " << bone->getName() << " : " << r.X << "," << r.Y << "," << r.Z << endl;
+		DEBUG_STREAM << "BONE NAME : " << i << " " << bone->getName() << " : " << moduloAngle(r.X) << "," << moduloAngle(r.Y) << "," << moduloAngle(r.Z) << endl;
 	}
 
 	// Display hierarchy from one hand.
@@ -137,7 +142,21 @@ Device3D::Device3D(wxWindow* win, const wxWindowID& id,
 		DEBUG_STREAM << "  " << bone->getName() << endl;
 	DEBUG_STREAM << "}" << endl;
 
+	// Load motion.
+	//TODO: Should load on demand when selecting menu item.
+	{
+		static const std::string baseDir = "Ressources/";
+		static const std::string fileName = baseDir + "Stravinsky Sacre 1avant142 a 149_export.mtn"; //  "exampleFile_export.mtn"; // 
+		std::ifstream f(fileName, std::ios::binary);
+		readVector(f, m_motion, getFileSize(f) / sizeof(MotionFilePacket));
+	}
+
 	//Compute(hand_, (irr_Bone*) upper_arm_L->getParent(), hand_->getPosition());
+
+	//TODO: Get T-stand "standard" rotations.
+	//getBone(BoneSide::RIGHT, BoneNumber::UPPER_ARM)->getRotation();
+	//getBone(BoneSide::RIGHT, BoneNumber::FOREARM)->getRotation();
+	//getBone(BoneSide::RIGHT, BoneNumber::HAND)->getRotation();
 
 	//getBone(BoneSide::LEFT, BoneNumber::SHOULDER)->setRotation(irr_Vector3D(0, 90, 90));
 	//getBone(BoneSide::RIGHT, BoneNumber::SHOULDER)->setRotation(irr_Vector3D(0, -90, -90));
@@ -148,6 +167,7 @@ Device3D::Device3D(wxWindow* win, const wxWindowID& id,
 	//	getBone(side, BoneNumber::FOREARM)->setRotation(irr_Vector3D(0, 0, 0));
 	//	getBone(side, BoneNumber::HAND)->setRotation(irr_Vector3D(0, 0, 0));
 	//}
+	timerEvent(0.0);
 }
 
 Device3D::~Device3D()
@@ -297,6 +317,31 @@ void Device3D::OnPaint(wxPaintEvent &event)
 	}
 }
 
+template <typename T> inline T toDegrees(T x) { return T(x * (180 / M_PI)); }
+template <typename T> inline T toRadians(T x) { return T(x * (M_PI / 180)); }
+
+static inline irr_quaternion toIrrQuat(const VCNQuat& q) { return irr_quaternion(q.x, q.y, q.z, q.w); }
+static inline VCNQuat toVcnQuat(const irr_quaternion& q) { return VCNQuat(q.X, q.Y, q.Z, q.W); }
+
+static irr_Vector3D vcnQuatToIrrRotation(const VCNQuat& q)
+{
+	irr_Vector3D ea; toIrrQuat(q).toEuler(ea);
+	return toDegrees(ea);
+
+	//double pitch, yaw, roll; q.GetEulers(&pitch, &yaw, &roll);
+	//return irr_Vector3D(toDegrees(roll), toDegrees(pitch), toDegrees(yaw)); //FIXME: What are the axis, in what order?
+	// with q.GetEulers, pitch,yaw,roll and roll,yaw,pitch are smooth, not the other orders.
+}
+
+static inline bool isZero(double x) { return fabs(x) < 16 * std::numeric_limits<double>::epsilon(); }
+
+/// Get quaternion from rotation axis and angle aroud that axis.
+static VCNQuat axisAngleToQuaternion(const VCNVector& axis, double angle)
+{
+	if (isZero(angle)) return VCNQuat();
+	return VCNQuat(axis * (sin(angle / 2) / axis.GetLength()), cos(angle / 2));
+}
+
 void Device3D::timerEvent(double ms)
 {
 	//static double lastMs = 0.0;
@@ -304,10 +349,45 @@ void Device3D::timerEvent(double ms)
 	//	DEBUG_STREAM << ms - lastMs << endl;
 	//}
 	//lastMs = ms;
-	auto* bone = getBone(BoneSide::RIGHT, BoneNumber::UPPER_ARM);
-	irr_Vector3D rot = bone->getRotation();
-	rot.X = 360.0 * ms / 1000.0;
-	bone->setRotation(rot);
+	{
+		//auto* bone = getBone(BoneSide::RIGHT, BoneNumber::UPPER_ARM);
+		//irr_Vector3D rot = bone->getRotation();
+		//rot.X = 360.0 * ms / 1000.0;
+		//irr_Vector3D rot = { irr::f32(360.0 * ms / 1000.0), 0.0f, 0.0f };
+		//bone->setRotation(rot);
+
+		//VCNQuat q; q.SetFromEuler(0.0, 2.0 * M_PI * ms / 1000.0, 0.0);
+		//VCNQuat q = axisAngleToQuaternion({ 0, 0, 1 }, 2.0 * M_PI * ms / 1000.0); // X and Y rotations are reversed.
+		//q.Rotate(axisAngleToQuaternion({ 0, 0, 1 }, M_PI / 2.0), q);
+		//getBone(BoneSide::RIGHT, BoneNumber::UPPER_ARM)->setRotation(vcnQuatToIrrRotation(q));
+	}
+	auto& frame = m_motion[irr::core::clamp(unsigned(ms * (64.0 / 1000.0) + .5), 0U, m_motion.size() - 1)];
+	static const VCNQuat axisOrientation = axisAngleToQuaternion({ 0, 0, 1 }, M_PI / 2.0);
+	static const BoneNumber bonesOrder[] = { BoneNumber::UPPER_ARM, BoneNumber::FOREARM, BoneNumber::HAND };
+	static const BoneSide sidesOrder[] = { BoneSide::RIGHT, BoneSide::LEFT };
+	for (int sideIndex : range(0, 2)) {
+		auto& arm = frame.armsDirections[sideIndex];
+		BoneSide side = sidesOrder[sideIndex];
+		VCNQuat partOrientations[] = { arm.armOrientation[0], arm.armOrientation[1], arm.handOrientation };
+		//VCNQuat previousPartOrientation = side == BoneSide::RIGHT ? axisAngleToQuaternion({ 0, 0, 1 }, M_PI) : VCNQuat();
+		VCNQuat previousPartOrientation = axisAngleToQuaternion({ 0, -1, 0 }, M_PI / 2.0) *
+			axisAngleToQuaternion({ 0, 0, 1 }, M_PI / 2.0) *
+			toVcnQuat(irr_quaternion(getBone(side, BoneNumber::SHOULDER)->getAbsoluteTransformation()));
+		// previousPartOrientation.Rotate(axisAngleToQuaternion({ 1, 0, 0 }, M_PI / 2.0), previousPartOrientation);
+		for (int i : range(0, 3)) {
+			VCNQuat orientation = partOrientations[i];
+			orientation.Rotate(axisOrientation, orientation);
+			auto relativeOrientation = vcnQuatToIrrRotation(~previousPartOrientation * orientation);
+			getBone(side, bonesOrder[i])->setRotation(relativeOrientation);
+			if (i == 1) {
+				//TODO: Interpolate twist.
+				getBone(side, BoneNumber::FOREARM_TWIST1)->setRotation(relativeOrientation);
+				getBone(side, BoneNumber::FOREARM_TWIST2)->setRotation(irr_Vector3D(0, 0, 0));
+			}
+			previousPartOrientation = orientation;
+		}
+	}
+
 	Refresh();
 }
 
