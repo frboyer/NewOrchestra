@@ -63,14 +63,14 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>VCN\;..\wxWidgets\include\;..\wxWidgets\lib\vc_lib\mswud;..\vlc\sdk\include\vlc;..\vlc\sdk\include;..\irrlicht\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>VCN\;..\wxWidgets\include\;..\wxWidgets\lib\vc_lib\mswud;..\vlc\sdk\include\vlc;..\vlc\sdk\include;..\irrlicht\include\;..\axLib\;..\axLib\include\;..\axLib\source\;..\axLib\axWidgets\;..\freetype-2.5.3\include\;..\lpng1610\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>VCNFloat=double;VCNBool=bool;WIN32;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;_UNICODE;_WINDOWS;NOPCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>..\wxWidgets\lib\vc_lib;..\vlc\sdk\lib;..\irrlicht\lib\Win32-visualstudio;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\wxWidgets\lib\vc_lib;..\vlc\sdk\lib;..\irrlicht\lib\Win32-visualstudio;..\freetype-2.5.3\objs\win32\vc2010\;..\lpng1610\projects\vstudio\Debug\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>libvlc.lib;irrlicht.lib;wxbase30u.lib;wxbase30u_net.lib;wxbase30u_xml.lib;wxmsw30u_core.lib;wxmsw30u_adv.lib;wxmsw30u_aui.lib;wxmsw30u_gl.lib;wxmsw30u_html.lib;wxmsw30u_media.lib;wxmsw30u_propgrid.lib;wxmsw30u_qa.lib;wxmsw30u_ribbon.lib;wxmsw30u_richtext.lib;wxmsw30u_stc.lib;wxmsw30u_webview.lib;wxmsw30u_xrc.lib;wxexpat.lib;wxjpeg.lib;wxpng.lib;wxregexu.lib;wxscintilla.lib;wxtiff.lib;wxzlib.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
@@ -123,6 +123,8 @@
     <ClCompile Include="..\axLib\source\axWindow.cpp" />
     <ClCompile Include="..\axLib\source\axWindowTree.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Motion\VCNQuat.cpp" />
+    <ClCompile Include="Motion\VCNVector.cpp" />
     <ClCompile Include="OrchestraConstValue.cpp" />
     <ClCompile Include="Panel3D.cpp" />
     <ClCompile Include="Partition.cpp" />
@@ -179,6 +181,12 @@
     <ClInclude Include="..\axLib\include\axWindowTree.h" />
     <ClInclude Include="..\axLib\include\rapidxml.hpp" />
     <ClInclude Include="Debug.h" />
+    <ClInclude Include="Motion\MotionFile.h" />
+    <ClInclude Include="Motion\simpleFileIO.hpp" />
+    <ClInclude Include="Motion\VCNConstants.h" />
+    <ClInclude Include="Motion\VCNMatrix.h" />
+    <ClInclude Include="Motion\VCNQuat.h" />
+    <ClInclude Include="Motion\VCNVector.h" />
     <ClInclude Include="OrchestraConstValue.h" />
     <ClInclude Include="PlayerBarGL.h" />
     <ClInclude Include="main.h" />

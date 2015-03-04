@@ -4,7 +4,9 @@
 //#include "axLib.h"
 #include "irrlicht.h"
 #include "wx/wx.h" 
+#include "Motion\MotionFile.h"
 #include <list>
+#include <vector>
 
 typedef irr::SIrrlichtCreationParameters	irr_CreateParam;
 typedef irr::video::E_DRIVER_TYPE			irr_DriverType;
@@ -73,6 +75,7 @@ protected:
 	{
 		return bones_[int(side)][int(bone)];
 	}
+	std::vector<MotionFilePacket> m_motion;
 
 	double theta;
 	wxPoint clickPt;
