@@ -37,6 +37,7 @@ axWindowNode::axWindowNode()
 
 axWindowNode::~axWindowNode()
 {
+    _childNodes.clear();
     for(axWindowNode* node : _childNodes)
     {
         delete node;
@@ -63,7 +64,7 @@ void axWindowNode::SetWindow(axWindow* win)
 
 void axWindowNode::AddWindow(axWindow* win)
 {
-	_childNodes.push_back(new_ axWindowNode(win));
+	_childNodes.push_back(new axWindowNode(win));
 }
 
 axWindowNode* axWindowNode::Get(axWindow* win)
@@ -201,12 +202,6 @@ axWindowTree::axWindowTree()
 {
 }
 
-axWindowTree::~axWindowTree()
-{
-	for (auto& node : _nodes)
-		delete node;
-}
-
 std::deque<axWindow*> axWindowTree::GetWindowParents(axWindow* win)
 {
     std::deque<axWindow*> windows;
@@ -260,29 +255,32 @@ axWindowNode* axWindowTree::FindWinNode(axWindow* win)
 
 void axWindowTree::AddWindow(axWindow* win)
 {
-	deque<axWindow*> windows = GetWindowParents(win);
-
-	// If there's no node in the nodes vector 
-	// then it must be the first one to be added
-	// with nullptr parent.
-	if (_nodes.size() == 0 && windows.size() == 0)
-	{
-        // First top level window.
-		_nodes.push_back(new_ axWindowNode(win));
-	}
-	else if (windows.size() == 0)
-	{
-        // Second or more top level windows.
-		_nodes.push_back(new_ axWindowNode(win));
-	}
-	else
-	{
-		axWindowNode* node = FindWinNode(win->GetParent());
-		if_not_null(node)
-		{
-			node->AddWindow(win);
-		}
-	}
+    if(win != nullptr)
+    {
+        deque<axWindow*> windows = GetWindowParents(win);
+        
+        // If there's no node in the nodes vector
+        // then it must be the first one to be added
+        // with nullptr parent.
+        if (_nodes.size() == 0 && windows.size() == 0)
+        {
+            // First top level window.
+            _nodes.push_back(new axWindowNode(win));
+        }
+        else if (windows.size() == 0)
+        {
+            // Second or more top level windows.
+            _nodes.push_back(new axWindowNode(win));
+        }
+        else
+        {
+            axWindowNode* node = FindWinNode(win->GetParent());
+            if_not_null(node)
+            {
+                node->AddWindow(win);
+            }
+        }
+    }
 }
 
 void axWindowTree::DeleteWindow(axWindow* win)

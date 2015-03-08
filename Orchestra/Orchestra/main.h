@@ -1,3 +1,8 @@
+#ifndef __ORCHESTRA_MAIN__
+#define __ORCHESTRA_MAIN__
+
+#include "axWxPanel.h"
+#include "GL/glew.h"
 #include <iostream>
 #include "wx/wx.h"
 
@@ -6,6 +11,9 @@
 #include "Partition.h"
 #include "ScoreGL.h"
 #include "PlayerBarGL.h"
+#include "Menu.h"
+
+
 
 class VlcVideoPlayer;
 class Device3D;
@@ -25,8 +33,8 @@ public:
 
 private:
 	wxPanel* _panel;
-
 	BasicGLPane* _axWrapper;
+	//axWxPanel* _axWrapper;
 
 	VlcVideoPlayer* _videoPlayer;
 	Device3D* _device3D;
@@ -37,6 +45,8 @@ private:
 	ScoreGL* _score;
 	axPanel* _axMainPanel;
 	PlayerBarGL* _playerBar;
+	OrchestraMenu* _menu;
+	bool _menuActive;
 	//--------------------
 	wxTimer* _partitionTimer;
 
@@ -71,6 +81,19 @@ private:
 	axEVENT_ACCESSOR(axToggle::Msg, OnToggleScore);
 	void OnToggleScore(const axToggle::Msg& msg);
 
+
+	axEVENT_ACCESSOR(axButton::Msg, OnLeftButton);
+	void OnLeftButton(const axButton::Msg& msg);
+
+	axEVENT_ACCESSOR(axButton::Msg, OnFrontButton);
+	void OnFrontButton(const axButton::Msg& msg);
+
+	axEVENT_ACCESSOR(axButton::Msg, OnRightButton);
+	void OnRightButton(const axButton::Msg& msg);
+
+	axEVENT_ACCESSOR(axToggle::Msg, OnMenuToggle);
+	void OnMenuToggle(const axToggle::Msg& msg);
+
 	DECLARE_EVENT_TABLE()
 };
 
@@ -86,3 +109,4 @@ private:
 	void CreateMenu();
 };
 
+#endif // __ORCHESTRA_MAIN__

@@ -186,7 +186,7 @@ axLabel* axLabel::Builder::Create(axVectorPairString attributes)
         }
     }
     
-    axLabel* label = new_ axLabel(_parent, axRect(pos, _size),
+    axLabel* label = new axLabel(_parent, axRect(pos, _size),
                                  _info, _label);
     
     _parent->GetResourceManager()->Add(name, label);
@@ -200,24 +200,25 @@ axLabel::axLabel(axWindow* parent,
                  const axRect& rect,
                  const axLabel::Info& info,
                  const std::string& label):
-axWidget(parent, rect, new_ Info(info)),
+axWidget(parent, rect, new Info(info)),
 //_info(info),
 _label(label),
 _font(nullptr)
 {
     SetSelectable(false);
     
-    if (GetInfo()->font_name != "")
+    if(static_cast<Info*>(_info)->font_name != "")
     {
-        _font = toUnique(new_ axFont(GetInfo()->font_name));
+        _font = new axFont(static_cast<Info*>(_info)->font_name);
         
     }
     else
     {
-        _font = toUnique(new_ axFont(0));
+        _font = new axFont(0);
+        axPrint("axLabel :: Default font.");
     }
     
-    _font->SetFontSize(GetInfo()->font_size);
+    _font->SetFontSize(static_cast<Info*>(_info)->font_size);
 }
 
 void axLabel::SetLabel(const std::string& label)
@@ -232,21 +233,21 @@ void axLabel::OnPaint()
 //    axRect rect(axPoint(0, 0), GetRect().size);
     axRect rect(GetDrawingRect());
     
-    gc->SetColor(GetInfo()->normal);
+    gc->SetColor(static_cast<Info*>(_info)->normal);
     gc->DrawRectangle(rect);
     
-    gc->SetColor(GetInfo()->font_color);
+    gc->SetColor(static_cast<Info*>(_info)->font_color);
     
-    if (GetInfo()->_alignement == axALIGN_CENTER)
+    if(static_cast<Info*>(_info)->_alignement == axALIGN_CENTER)
     {
         gc->DrawStringAlignedCenter(*_font, _label, rect);
     }
-    else if (GetInfo()->_alignement == axALIGN_LEFT)
+    else if(static_cast<Info*>(_info)->_alignement == axALIGN_LEFT)
     {
         gc->DrawString(*_font, _label, axPoint(5, 2));
     }
     
     
-    gc->SetColor(GetInfo()->contour);
+    gc->SetColor(static_cast<Info*>(_info)->contour);
     gc->DrawRectangleContour(rect);
 }
