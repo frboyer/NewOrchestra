@@ -130,7 +130,8 @@ private:
 /// A finger has a direction relative to hand orientation, and a flexion (third joint has no data from glove).
 struct SmallFinger {
 	typedef unsigned char ValType; // As the angle range of a finger is never > 100 degrees, the resolution is better than 0.4 degree (~ a pixel in 143).
-	SmallDirection<ValType> relativeDirection;
+	//SmallDirection<ValType> relativeDirection;
+	SmallOrientation<ValType> relativeOrientation;
 	NormalizedValue<ValType> flexion;
 };
 
@@ -138,7 +139,7 @@ struct SmallArm { // 22bytes
 	//SmallDirection<short> armDirections[2];  // 2*2bytes
 	SmallOrientation<short> armOrientation[2];  // 3*2bytes
 	SmallOrientation<short> handOrientation; // 3bytes
-	SmallFinger fingers[5];           // 5*3bytes
+	SmallFinger fingers[5];           // 5*4bytes
 };
 
 // TorsoFilePacket has size 8+6*(3*3*8+3*8)=584, and GloveFilePacket has 4+2*14*2=60, total of 644 (~133MB/hour).
