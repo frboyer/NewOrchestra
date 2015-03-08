@@ -144,6 +144,7 @@ public:
         
         axColor contour;
         axColor font_color;
+        int font_size = 12;
         
         std::string img;
         bool single_img;
@@ -194,32 +195,33 @@ public:
         
     void SetMsg(const string& msg);
     void SetSelected(const bool& selected);
-	Info* GetInfo() { return static_cast<Info*>(_info.get()); }
 
-private:
-    axToggle::Events _events;
-	axColor* _currentColor;
-	std::unique_ptr<axImage> _bgImg;
-    std::string _label;
-    std::string _msg;
-    std::unique_ptr<axFont> _font;
-	
-	bool _selected;
-	axFlag _flags;
-	axColor test;
-	axFloat _bgAlpha;
 
+protected:
 	enum axToggleState
 	{
 		axTOG_NORMAL,
 		axTOG_HOVER,
 		axTOG_CLICK,
 		axTOG_SEL_NORMAL,
-        axTOG_SEL_HOVER,
-        axTOG_SEL_CLICK
+		axTOG_SEL_HOVER,
+		axTOG_SEL_CLICK
 	};
 
 	int _nCurrentImg;
+
+private:
+    axToggle::Events _events;
+	axColor* _currentColor;
+	axImage* _bgImg;
+    std::string _label;
+    std::string _msg;
+    axFont* _font;
+	
+	bool _selected;
+	axFlag _flags;
+	axColor test;
+	axFloat _bgAlpha;
 
     // Events.
 	virtual void OnPaint();

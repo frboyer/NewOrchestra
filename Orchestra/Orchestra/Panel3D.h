@@ -57,12 +57,16 @@ public:
 						  const irr_Vector3D& lookat = irr_Vector3D(0.0f, 0.0f, 1.0f),
 						  irr_S32 id = 1)
 	{
-		/*UNREFERENCED_PARAMETER*/ (id);
+		(id);
 		return irrSceneManager_->addCameraSceneNode(parent, position, lookat);
 	}
 
 	void mSize(const wxSize& newSize);
 	void timerEvent(double ms);
+
+	void SetLeftAlign();
+	void SetFrontAlign();
+	void SetRightAlign();
 
 protected:
 	irr_Device* irrDevice_;

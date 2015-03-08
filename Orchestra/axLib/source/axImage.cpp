@@ -185,7 +185,7 @@ bool axImageGlobalMapLoader::InitImage(const string& path,
 
 	if (image_data == NULL)
 	{
-		std::cerr << "Error memory allocation for PNG image data." << std::endl;
+		cerr << "Error memory allocation for PNG image data." << endl;
 		png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
 
 		fclose(fp);
@@ -217,8 +217,6 @@ bool axImageGlobalMapLoader::InitImage(const string& path,
 	// Bind texture object.
 	glBindTexture(GL_TEXTURE_2D, _texture);
 
-	std::cout << "Image size : " << _size.x << " " << _size.y << std::endl;
-
 	if (color_type == 2)
 	{
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _size.x, _size.y,
@@ -233,7 +231,7 @@ bool axImageGlobalMapLoader::InitImage(const string& path,
 	GLenum err = glGetError();
 	if (err != GL_NO_ERROR)
 	{
-		cout << "GL FUCKUP  : error : " << err << endl;
+		cout << "GL FUCKUP" << endl;
 	}
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -353,7 +351,7 @@ bool axImage::SaveImage(const std::string& path)
     // Get OpenGL texture data.
     glBindTexture(GL_TEXTURE_2D, _texture);
     
-    unsigned char* data = new_ unsigned char[_size.x * _size.y * 4];
+    unsigned char* data = new unsigned char[_size.x * _size.y * 4];
     glGetTexImage(GL_TEXTURE_2D,
                   0,
                   GL_RGBA, // Format.

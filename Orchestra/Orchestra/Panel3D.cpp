@@ -5,9 +5,11 @@
 /// Creation date 2013-01
 
 #define IRR_TEST_BROKEN_QUATERNION_USE 0 //NOTE: A note in Irrlicht 1.8 sais the matrix to quaternion got fixe between 1.7 and 1.8, but it is still broken.  We use our own code instead (I lost too much time searching why my quaternion had problems!). By broken I mean that setting the rotation to the difference in absolute orientations between parent and child (using multiplication of quaternions got from absolute transformation matrix) does not give the correct rotation.
+
+
 #include "Panel3D.h"
 #include <windows.h>
-#include <cmath>
+#include <math.h>
 #include "Range.h"
 #define NO_CMT
 #include "Motion\myAngles.h"
@@ -356,6 +358,8 @@ void Device3D::mSize(const wxSize& newSize)
 	Refresh();
 }
 
+
+
 void Device3D::OnMouseLeftUp(wxMouseEvent& event)
 {
 	/*UNREFERENCED_PARAMETER*/ (event);
@@ -393,8 +397,8 @@ void Device3D::OnMouseMotion(wxMouseEvent& event)
 void Device3D::OnMouseLeftDown(wxMouseEvent& event)
 {
 	clickPt = event.GetPosition();
-	//_DEBUG_ DSTREAM << "LEFT DOWN" << endl;
 	CaptureMouse();
+	
 	SetFocus();
 	SetFocusFromKbd();
 }
@@ -479,10 +483,8 @@ static void drawGrid(irr::video::IVideoDriver* irrVideoDriver_)
 
 void Device3D::OnPaint(wxPaintEvent &event)
 {
-	/*UNREFERENCED_PARAMETER*/ (event);
+	(event);
 	wxPaintDC dc(this);
-
-	//_DEBUG_ DSTREAM << "PAINT TEST" << endl;
 
 	if (irrDevice_)
 	{
@@ -735,4 +737,35 @@ static void tests() {
 	VCNQuat x = axisAngleToQuaternion({ 1, 0, 0 }, M_PI / 4), y = axisAngleToQuaternion({ 0, 1, 0 }, M_PI / 8);
 	VCNQuat vcnMult = y * x;
 	irr_quaternion irrMult = toIrrQuat(x) * toIrrQuat(y); // Irrlicht multiply in reverse order of "standard".
+}
+
+void Device3D::SetLeftAlign()
+{
+	irr_Vector3D camPos(camera_->getPosition());
+
+	float r = 24.0;
+
+	camPos = irr_Vector3D(r * sin(M_PI * 0.5), camPos.Y, r * cos(M_PI * 0.5));
+	camera_->setPosition(camPos);
+	Refresh();
+}
+void Device3D::SetFrontAlign()
+{
+	irr_Vector3D camPos(camera_->getPosition());
+
+	float r = 24.0;
+
+	camPos = irr_Vector3D(r * sin(M_PI), camPos.Y, r * cos(M_PI));
+	camera_->setPosition(camPos);
+	Refresh();
+}
+void Device3D::SetRightAlign()
+{
+	irr_Vector3D camPos(camera_->getPosition());
+
+	float r = 24.0;
+
+	camPos = irr_Vector3D(r * sin(M_PI * -0.5), camPos.Y, r * cos(M_PI * -0.5));
+	camera_->setPosition(camPos);
+	Refresh();
 }

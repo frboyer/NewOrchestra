@@ -25,8 +25,8 @@
 /*******************************************************************************
  * axKnob::Msg.
  ******************************************************************************/
-axKnob::Msg::Msg(const double& value):
-_value(value)
+axKnob::Msg::Msg(const double& value, const std::string& msg):
+_value(value), _msg(msg)
 {
 }
 
@@ -35,9 +35,14 @@ double axKnob::Msg::GetValue() const
     return _value;
 }
 
+std::string axKnob::Msg::GetMsg() const
+{
+    return _msg;
+}
+
 axMsg* axKnob::Msg::GetCopy()
 {
-    return new_ Msg(*this);
+    return new Msg(*this);
 }
 
 /*******************************************************************************
@@ -230,14 +235,14 @@ _pastKnob(nullptr)
 
 axKnob* axKnob::Builder::Create(const axPoint& pos, const axEventFunction& evt)
 {
-    return _pastKnob = new_ axKnob(_parent, axRect(pos, _size), evt,
+    return _pastKnob = new axKnob(_parent, axRect(pos, _size), evt,
                                   _info, _flags);
 }
 
 axKnob* axKnob::Builder::Create(const axPoint& pos)
 {
     axKnob::Events evts;
-    return _pastKnob = new_ axKnob(_parent, axRect(pos, _size), evts,
+    return _pastKnob = new axKnob(_parent, axRect(pos, _size), evts,
                                   _info, _flags);
 }
 
@@ -248,7 +253,7 @@ axKnob* axKnob::Builder::Create(const axEventFunction& evt)
         if(_direction == axDIRECTION_RIGHT)
         {
             axPoint pos(_pastKnob->GetNextPosRight(_nextPositionDelta));
-            return _pastKnob = new_ axKnob(_parent, axRect(pos, _size), evt,
+            return _pastKnob = new axKnob(_parent, axRect(pos, _size), evt,
                                           _info, _flags);
         }
         else if(_direction == axDIRECTION_DOWN)
@@ -276,7 +281,7 @@ axKnob* axKnob::Builder::Create()
     {
         axKnob::Events evts;
         axPoint pos(_pastKnob->GetNextPosRight(_nextPositionDelta));
-        return _pastKnob = new_ axKnob(_parent, axRect(pos, _size),
+        return _pastKnob = new axKnob(_parent, axRect(pos, _size),
                                       evts, _info, _flags);
     }
     
@@ -320,7 +325,7 @@ axKnob* axKnob::Builder::Create(axVectorPairString attributes)
         
     }
     
-    axKnob* knob = new_ axKnob(_parent, axRect(pos, _size),
+    axKnob* knob = new axKnob(_parent, axRect(pos, _size),
                               evts, _info);
     
     _parent->GetResourceManager()->Add(name, knob);
@@ -335,22 +340,24 @@ axKnob::axKnob(axWindow* parent,
                const axKnob::Events& events,
                const axKnob::Info& info,
                axFlag flags,
-               double value):
+               double value,
+               const std::string& msg):
 // Heritage.
-axWidget(parent, rect, new_ axKnob::Info(info)),
+axWidget(parent, rect, new axKnob::Info(info)),
 // Members.
 _events(events),
 //_info(info),
-m_currentBgColor(&GetInfo()->bgColorNormal),
+m_currentBgColor(&static_cast<Info*>(_info)->bgColorNormal),
 //m_nCurrentImg(0),
 m_knobValue(value),
 _zeroToOneValue(value),
-_range(0.0, 1.0)
+_range(0.0, 1.0),
+_msg(msg)
 {
-    m_knobImg = new_ axImage(GetInfo()->img_path);
+    m_knobImg = new axImage(static_cast<Info*>(_info)->img_path);
     _bgAlpha = 1.0;
     
-    m_nCurrentImg = m_knobValue * (GetInfo()->n_knob - 1);
+    m_nCurrentImg = m_knobValue * (static_cast<Info*>(_info)->n_knob - 1);
     
     if(_events.value_change)
     {
@@ -368,7 +375,7 @@ void axKnob::SetInfo(const axVectorPairString& attributes)
     std::string path = _info->GetAttributeValue("img");
     if(m_knobImg->GetImagePath() != path)
     {
-        m_knobImg = new_ axImage(path);
+        m_knobImg = new axImage(path);
     }
 
     Update();
@@ -383,7 +390,7 @@ void axKnob::OnMouseLeftDown(const axPoint& pos)
     
     HideMouse();
 
-    PushEvent(0, new_ Msg(m_knobValue));
+    PushEvent(0, new Msg(m_knobValue, _msg));
 }
 
 void axKnob::OnMouseLeftUp(const axPoint& pos)
@@ -394,7 +401,7 @@ void axKnob::OnMouseLeftUp(const axPoint& pos)
         UnGrabMouse();
         Update();
 
-        PushEvent(0, new_ Msg(m_knobValue));
+        PushEvent(0, new Msg(m_knobValue, _msg));
     }
 }
 
@@ -414,14 +421,14 @@ void  axKnob::OnMouseLeftDragging(const axPoint& position)
     _zeroToOneValue = axClamp<double>(_zeroToOneValue, 0.0, 1.0);
     m_knobValue = _range.GetValueFromZeroToOne(_zeroToOneValue);
 
-    m_nCurrentImg = m_knobValue * (GetInfo()->n_knob - 1);
+    m_nCurrentImg = m_knobValue * ( static_cast<Info*>(_info)->n_knob - 1 ) ;
     
     if( m_nCurrentImg != cur_img )
     {
         Update();
     }
 
-    PushEvent(0, new_ Msg(m_knobValue));
+    PushEvent(0, new Msg(m_knobValue, _msg));
 }
 
 void axKnob::SetValue(const axFloat& value, bool callValueChangeEvent)
@@ -429,7 +436,7 @@ void axKnob::SetValue(const axFloat& value, bool callValueChangeEvent)
 	int cur_img = m_nCurrentImg;
 	_zeroToOneValue = axClamp<double>(value, 0.0, 1.0);
     m_knobValue = _zeroToOneValue;
-	m_nCurrentImg = m_knobValue * (GetInfo()->n_knob - 1);
+	m_nCurrentImg = m_knobValue * (static_cast<Info*>(_info)->n_knob - 1);
 
 	if (m_nCurrentImg != cur_img)
 	{
@@ -438,7 +445,7 @@ void axKnob::SetValue(const axFloat& value, bool callValueChangeEvent)
 
     if(callValueChangeEvent)
     {
-        PushEvent(0, new_ Msg(m_knobValue));
+        PushEvent(0, new Msg(m_knobValue, _msg));
     }
 }
 
@@ -453,8 +460,8 @@ void axKnob::OnPaint()
     gc->DrawRectangle(rect0);
 
     gc->DrawPartOfImage(m_knobImg,
-                        axPoint( m_nCurrentImg * GetInfo()->knob_size.x, 0),
-						GetInfo()->knob_size,
+                        axPoint( m_nCurrentImg * static_cast<Info*>(_info)->knob_size.x, 0),
+                        static_cast<Info*>(_info)->knob_size,
                         axPoint(0, 0));
 }
 
@@ -481,7 +488,7 @@ _value("0.00")
     axPoint knobPos((rect.size.x - info.knob_size.x) * 0.5,
                     20 + (rect.size.y - 40 - info.knob_size.y) * 0.5);
 
-    _knob = new_ axKnob(this, axRect(knobPos, info.knob_size),
+    _knob = new axKnob(this, axRect(knobPos, info.knob_size),
                        evts, info, flags, value);
     
     if(events.value_change)

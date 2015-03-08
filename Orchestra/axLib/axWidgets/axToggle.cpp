@@ -71,7 +71,7 @@ string axToggle::Msg::GetMsg() const
 
 axMsg* axToggle::Msg::GetCopy()
 {
-    return new_ Msg(*this);
+    return new Msg(*this);
 }
 
 /*******************************************************************************
@@ -300,7 +300,7 @@ axToggle* axToggle::Builder::Create(axVectorPairString attributes)
         }
     }
     
-    axToggle* tog = new_ axToggle(_parent, axRect(pos, _size),
+    axToggle* tog = new axToggle(_parent, axRect(pos, _size),
                                  evts,
                                  _info, _img, _label, _flags, msg);
     
@@ -321,7 +321,7 @@ axToggle::axToggle(axWindow* parent,
                    axFlag flags,
                    std::string msg) :
 // Heritage.
-axWidget(parent, rect, new_ axToggle::Info(info)),
+axWidget(parent, rect, new axToggle::Info(info)),
 // Members.
 _events(events),
 _label(label),
@@ -332,11 +332,12 @@ test(1.0, 1.0, 0.0),
 _msg(msg),
 _font(nullptr)
 {
-    _currentColor = &GetInfo()->normal;
-//    _bgImg = new_ axImage(img_path);
-	_bgImg = toUnique(new_ axImage(GetInfo()->img));
+    _currentColor = &static_cast<Info*>(_info)->normal;
+//    _bgImg = new axImage(img_path);
+    _bgImg = new axImage(static_cast<Info*>(_info)->img);
     
-    _font = toUnique(new_ axFont(0));
+    _font = new axFont(0);
+    _font->SetFontSize(static_cast<Info*>(_info)->font_size);
     
     if(_events.button_click)
     {
@@ -358,19 +359,18 @@ void axToggle::SetSelected(const bool& selected)
 		if (_selected == true)
 		{
             _nCurrentImg = axTOG_SEL_NORMAL;
-			// Cause probleme when selecting toggle in toggle event.
-			//if (_currentColor == &static_cast<Info*>(_info)->normal)
+			if (_currentColor == &static_cast<Info*>(_info)->normal)
 			{
-				_currentColor = &GetInfo()->selected;
+				_currentColor = &static_cast<Info*>(_info)->selected;
 				Update();
 			}
 		}
 		else
 		{
             _nCurrentImg = axTOG_NORMAL;
-			if (_currentColor == &GetInfo()->selected)
+			if (_currentColor == &static_cast<Info*>(_info)->selected)
 			{
-				_currentColor = &GetInfo()->normal;
+				_currentColor = &static_cast<Info*>(_info)->normal;
 				Update();
 			}
 		}
@@ -393,12 +393,12 @@ void axToggle::OnMouseLeftDown(const axPoint& pos)
         
         if(_selected)
         {
-            _currentColor = &GetInfo()->selected_clicking;
+            _currentColor = &static_cast<Info*>(_info)->selected_clicking;
             _nCurrentImg = axTOG_SEL_CLICK;
         }
         else
         {
-            _currentColor = &GetInfo()->clicking;
+            _currentColor = &static_cast<Info*>(_info)->clicking;
             _nCurrentImg = axTOG_CLICK;
         }
         
@@ -406,7 +406,7 @@ void axToggle::OnMouseLeftDown(const axPoint& pos)
         
         if (IsFlag(Flags::CLICK_ON_LEFT_DOWN, _flags))
         {
-            PushEvent(Events::BUTTON_CLICK, new_ Msg(this, _selected, _msg));
+            PushEvent(Events::BUTTON_CLICK, new Msg(this, _selected, _msg));
         }
         Update();
     }
@@ -429,31 +429,33 @@ void axToggle::OnMouseLeftUp(const axPoint& pos)
             
             if (_selected)
             {
-                _currentColor = &GetInfo()->selected_hover;
+                _currentColor = &static_cast<Info*>(_info)->selected_hover;
                 _nCurrentImg = axTOG_SEL_HOVER;
             }
             else
             {
-                _currentColor = &GetInfo()->hover;
+                _currentColor = &static_cast<Info*>(_info)->hover;
                 _nCurrentImg = axTOG_HOVER;
             }
 			
+			
+            
             // If toggle on left up.
             if (!IsFlag(Flags::CLICK_ON_LEFT_DOWN, _flags))
             {
-                PushEvent(Events::BUTTON_CLICK, new_ Msg(this, _selected, _msg));
+                PushEvent(Events::BUTTON_CLICK, new Msg(this, _selected, _msg));
             }
 		}
 		else
 		{
 			if (_selected)
 			{
-				_currentColor = &GetInfo()->selected;
+				_currentColor = &static_cast<Info*>(_info)->selected;
 				_nCurrentImg = axTOG_SEL_NORMAL;
 			}
 			else
 			{
-				_currentColor = &GetInfo()->normal;
+				_currentColor = &static_cast<Info*>(_info)->normal;
 				_nCurrentImg = axTOG_NORMAL;
 			}
 		}
@@ -468,12 +470,12 @@ void axToggle::OnMouseEnter()
 	{
         if(_selected)
         {
-            _currentColor = &GetInfo()->selected_hover;
+            _currentColor = &static_cast<Info*>(_info)->selected_hover;
             _nCurrentImg = axTOG_SEL_HOVER;
         }
         else
         {
-            _currentColor = &GetInfo()->hover;
+            _currentColor = &static_cast<Info*>(_info)->hover;
             _nCurrentImg = axTOG_HOVER;
         }
 		
@@ -488,12 +490,12 @@ void axToggle::OnMouseLeave()
 	{
 		if (_selected)
 		{
-			_currentColor = &GetInfo()->selected;
+			_currentColor = &static_cast<Info*>(_info)->selected;
 			_nCurrentImg = axTOG_SEL_NORMAL;
 		}
 		else
 		{
-			_currentColor = &GetInfo()->normal;
+			_currentColor = &static_cast<Info*>(_info)->normal;
 			_nCurrentImg = axTOG_NORMAL;
 		}
 	}
@@ -505,36 +507,42 @@ void axToggle::OnPaint()
 {
 	axGC* gc = GetGC();
 	axRect rect(GetRect());
-	axRect rect0(axPoint(0, 0), rect.size);
+	axRect rect0(GetDrawingRect());
 
 	gc->SetColor(*_currentColor);
 	gc->DrawRectangle(rect0);
 
 	if (_bgImg->IsImageReady())
 	{
-        if (GetInfo()->single_img)
+        if (static_cast<Info*>(_info)->single_img)
 		{
-			//std::cout << "Toggle draw image" << std::endl;
-			gc->DrawImageResize(_bgImg.get(), axPoint(0, 0), rect.size);
-			//gc->DrawImage(_bgImg, axPoint(0, 0));
+			gc->DrawImageResize(_bgImg, axPoint(0, 0), rect.size, 1.0);
 		}
 		else
 		{
             axPoint pos(0, _nCurrentImg * _bgImg->GetSize().y / 6);
             axSize size(_bgImg->GetSize().x, _bgImg->GetSize().y / 6);
-            gc->DrawPartOfImageResize(_bgImg.get(), pos, size,
+            gc->DrawPartOfImageResize(_bgImg, pos, size,
                                       axRect(axPoint(0, 0), GetRect().size));
 		}
 	}
 
 	if_not_empty(_label)
 	{
-		gc->SetColor(GetInfo()->font_color, 1.0);
+        if(_selected)
+        {
+            gc->SetColor(static_cast<Info*>(_info)->selected_font_color);
+        }
+        else
+        {
+            gc->SetColor(static_cast<Info*>(_info)->font_color);
+        }
+		
 		gc->DrawStringAlignedCenter(*_font, _label, rect0);
 	}
 
-	gc->SetColor(GetInfo()->contour);
-	gc->DrawRectangleContour(axRect(axPoint(0, 0), rect.size));
+	gc->SetColor(static_cast<Info*>(_info)->contour);
+	gc->DrawRectangleContour(rect0);
 }
 
 

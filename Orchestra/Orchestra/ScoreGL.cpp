@@ -1,5 +1,6 @@
 #include "ScoreGL.h"
 
+#define toUnique(x)  
 //*****************************************************************************
 // ScorePlayer
 //*****************************************************************************
@@ -224,7 +225,8 @@ bool ScoreGL::loadInfo(const std::string& data_path,
 		// Load all images in memory.
 		for (auto& path : list)
 		{
-			_images.push_back(toUnique(new_ axImage(path)));
+			//_images.push_back(toUnique(new_ axImage(path)));
+			_images.push_back(std::unique_ptr<axImage>(new_ axImage(path)));
 		}
 
 		std::cout << "IMG index" << std::endl;
@@ -255,6 +257,7 @@ bool ScoreGL::changeTime(const double& timeMs)
 
 void ScoreGL::OnMouseLeftDoubleClick(const axPoint& pos)
 {
+	(pos);
 	//axPoint pt = pos - GetAbsoluteRect().position;
 
 	////int i = _player.findFirstMarkerOfImage();
@@ -312,10 +315,10 @@ void ScoreGL::OnMouseMotion(const axPoint& pos)
 		{
 			const  ScoreMarkerInfo& marker = markerInfo[i];
 
-			axRect rect(marker.point.x * _resizeRatio_x,
-				marker.size.x * _resizeRatio_x,
-				marker.point.y * _resizeRatio_y,
-				marker.size.y * _resizeRatio_y);
+			axRect rect(int(marker.point.x * _resizeRatio_x),
+						int(marker.size.x * _resizeRatio_x),
+						int(marker.point.y * _resizeRatio_y),
+						int(marker.size.y * _resizeRatio_y));
 
 			rect.position += axPoint(BORDER, BORDER);
 
@@ -358,6 +361,10 @@ void ScoreGL::OnPaint()
 		gc->DrawImageResize(_images[img_index].get(),
 							axPoint(10, 10),
 							axSize(rect.size.x - 35, rect.size.y - 40));
+		//gc->DrawImageResize(_images[img_index].get(),
+		//	axPoint(10, 10),
+		//	axSize(300, 400));
+		//axPrint("Score size : ", rect.size.x, rect.size.y);
 	}
 
 
@@ -369,8 +376,10 @@ void ScoreGL::OnPaint()
 		t_size s = selectedMarker.size;
 		gc->SetColor(axColor(0.6, 0.6, 1.0, 0.5));
 		gc->DrawRectangle(axRect(50, 50));
-		gc->DrawRectangle(axRect(10 + pt.x * _resizeRatio_x, 10 + pt.y * _resizeRatio_y,
-						  s.x * _resizeRatio_x, s.y * _resizeRatio_y));
+		gc->DrawRectangle(axRect(int(10 + pt.x * _resizeRatio_x), 
+								 int(10 + pt.y * _resizeRatio_y),
+								 int(s.x * _resizeRatio_x), 
+								 int(s.y * _resizeRatio_y)));
 	}
 
 	// Current playing bar.
@@ -381,8 +390,10 @@ void ScoreGL::OnPaint()
 		t_size s = playingMarker.size;
 		gc->SetColor(axColor(0.6, 0.6, 0.6, 0.5));
 		gc->DrawRectangle(axRect(50, 50));
-		gc->DrawRectangle(axRect(10 + pt.x * _resizeRatio_x, 10 + pt.y * _resizeRatio_y,
-								 s.x * _resizeRatio_x, s.y * _resizeRatio_y));
+		gc->DrawRectangle(axRect(int(10 + pt.x * _resizeRatio_x), 
+								 int(10 + pt.y * _resizeRatio_y),
+								 int(s.x * _resizeRatio_x), 
+								 int(s.y * _resizeRatio_y)));
 	}
 
 }

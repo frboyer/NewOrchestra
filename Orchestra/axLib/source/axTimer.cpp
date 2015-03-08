@@ -90,7 +90,7 @@ void axTimer::timer_thread_no_end(axTimer& timer, int interval_ms)
     
     while (timer.IsRunning())
     {
-        timer.PushEvent(0, new_ axTimerMsg(count_ms));
+        timer.PushEvent(0, new axTimerMsg(count_ms));
         count_ms += interval_ms;
         std::this_thread::sleep_for(std::chrono::milliseconds(interval_ms));
     }
@@ -102,7 +102,7 @@ void axTimer::timer_thread(axTimer& timer, int interval_ms, int length_ms)
     
     while (count_ms < length_ms)
     {
-        timer.PushEvent(0, new_ axTimerMsg(count_ms));
+        timer.PushEvent(0, new axTimerMsg(count_ms));
         count_ms += interval_ms;
         std::this_thread::sleep_for(std::chrono::milliseconds(interval_ms));
     }

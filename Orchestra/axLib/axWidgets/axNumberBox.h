@@ -165,23 +165,16 @@ public:
                 std::string label = "");
 
     double GetValue();
+
+	void SetValue(const double& value);
     
-	void SetValue(const double& value)
-	{
-		_value = value;
-		_zeroToOneValue = _range.GetZeroToOneValue(_value);
-		Update();
-	}
-
     virtual void SetInfo(const axVectorPairString& attributes);
-
-	Info* GetInfo() { return static_cast<Info*>(_info.get()); }
     
 private:
     axNumberBox::Events _events;
     axFlag _flags;
-    std::unique_ptr<axImage> _bgImg;
-    std::unique_ptr<axFont> _font;
+    axImage* _bgImg;
+    axFont* _font;
 
     axControlType _type;
     axControlUnit _unit;

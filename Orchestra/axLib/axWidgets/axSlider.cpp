@@ -138,7 +138,7 @@ void axSlider::OnMouseLeftDown(const axPoint& mousePos)
 //			_events.slider_value_change(axSliderMsg(_sliderValue));
 //		}
         PushEvent(axSliderEvents::VALUE_CHANGE,
-                  new_ axSliderMsg(_sliderValue));
+                  new axSliderMsg(_sliderValue));
 		Update();
 	}
 	// Click on boutton to move.
@@ -172,7 +172,7 @@ void axSlider::OnMouseLeftDown(const axPoint& mousePos)
 //				_events.slider_value_change(axSliderMsg(_sliderValue));
 //			}
             PushEvent(axSliderEvents::VALUE_CHANGE,
-                      new_ axSliderMsg(_sliderValue));
+                      new axSliderMsg(_sliderValue));
 			Update();
 		}
 	}
@@ -208,7 +208,7 @@ void axSlider::OnMouseLeftDragging(const axPoint& p)
 //	}
     
     PushEvent(axSliderEvents::VALUE_CHANGE,
-              new_ axSliderMsg(_sliderValue));
+              new axSliderMsg(_sliderValue));
 	
 	Update();
 }
@@ -404,10 +404,22 @@ void axSlider::OnPaint()
 	axGC* gc = GetGC();
 	axSize size = GetSize();
 //	axRect rect0(0, 0, size.x, size.y);
+    
+    int radius = _info.contour_round_radius;
     axRect rect0(GetDrawingRect());
 
-	gc->SetColor(_currentBgColor);
-	gc->DrawRectangle(rect0);
+    
+    if(radius > 1)
+    {
+        gc->SetColor(_currentBgColor);
+        gc->DrawRoundedRectangle(rect0, radius);
+    }
+    else
+    {
+        gc->SetColor(_currentBgColor);
+        gc->DrawRectangle(rect0);
+    }
+
 
 	// VERTICAL SLIDER.
 	if (IsFlag(axSLIDER_FLAG_VERTICAL, _flags))
@@ -452,16 +464,39 @@ void axSlider::OnPaint()
 					_sliderPosition + half_btn_size,
 					_info.slider_width);
 			}
-			gc->SetColor(_currentSliderColor);
-			gc->DrawRectangle(slider_rect);
+            
+            
+            
+            if(radius > 1)
+            {
+                gc->SetColor(_currentSliderColor);
+                gc->DrawRoundedRectangle(slider_rect, radius);
+                
+                gc->SetColor(_info.sliderContourColor);
+                gc->DrawRoundedRectangleContour(slider_rect, radius);
+            }
+            else
+            {
+                gc->SetColor(_currentSliderColor);
+                gc->DrawRectangle(slider_rect);
+                
+                gc->SetColor(_info.sliderContourColor);
+                gc->DrawRectangleContour(slider_rect);
+            }
 
-			gc->SetColor(_info.sliderContourColor);
-			gc->DrawRectangleContour(slider_rect);
 		}
 
+        if(radius > 1)
+        {
+            gc->SetColor(_info.contourColor);
+            gc->DrawRoundedRectangleContour(rect0, radius);
+        }
+        else
+        {
+            gc->SetColor(_info.contourColor);
+            gc->DrawRectangleContour(rect0);
+        }
 
-		gc->SetColor(_info.contourColor);
-		gc->DrawRectangleContour(rect0);
 
 		if (_btnImg.IsImageReady())
 		{
