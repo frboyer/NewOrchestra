@@ -91,6 +91,7 @@ protected:
 		return fingerBones_[int(side)][finger][phalanx];
 	}
 	std::vector<MotionFilePacket> m_motion;
+	void updateCamera();
 
 	double theta;
 	wxPoint clickPt;
