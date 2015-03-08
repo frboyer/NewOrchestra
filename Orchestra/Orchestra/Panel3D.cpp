@@ -165,10 +165,15 @@ void testRecursiveSetOrientation(irr_Bone* bone, const VCNQuat& parentOrientatio
 	}
 }
 
-static irr_Vector3D cameraPosition(double distance, double horizontalAngle, double verticalAngle)
+struct vector2d { double x, y; };
+static inline vector2d polarToCartesian(double radius, double angle)
 {
-	double cosVerticalAngle = cos(verticalAngle);
-	return irr_Vector3D(sin(horizontalAngle) * cosVerticalAngle, sin(verticalAngle), -cos(horizontalAngle) * cosVerticalAngle) * distance;
+	return { cos(angle)*radius, sin(angle)*radius };
+}
+static irr_Vector3D sphericalToCartesian(double radius, double azimuth, double elevation)
+{
+	auto vAzimuth = polarToCartesian(1.0, azimuth), vElevation = polarToCartesian(radius, elevation);
+	return irr_Vector3D(vAzimuth.y * vElevation.x, vElevation.y, -vAzimuth.x * vElevation.x);
 }
 
 static void tests();
@@ -196,13 +201,9 @@ Device3D::Device3D(wxWindow* win, const wxWindowID& id,
 	irrDevice_->setResizable(bResizeable);
 
 	// Set the camera.
-	//irr_Vector3D cameraPosition(0.0, 20.0, -24.0);
-	irr_Vector3D cameraLookAt  (0.0, 18.0,   0.0);
-	cameraDistance_ = 24.0;
-	cameraHorizontalAngle_ = 0.0;
-	cameraVerticalAngle_ = toRadians(5.0f);
-	camera_ = addCamera(0, cameraLookAt + cameraPosition(cameraDistance_, cameraHorizontalAngle_, cameraVerticalAngle_), cameraLookAt);
-	camera_->setFOV(toRadians(27.0f)); // Vertical field of view of a 50mm lens on 35mm film.
+	camera_ = nullptr;
+	cameraDistance_ = 23.0;
+	SetFrontAlign();
 
 	// Set lighting.
 	irrSceneManager_->addLightSceneNode(0, irr_Vector3D(20, 20, -50), irr_Color(255, 200, 200, 200));
@@ -304,7 +305,7 @@ Device3D::Device3D(wxWindow* win, const wxWindowID& id,
 	//TODO: Should load on demand when selecting menu item.
 	{
 		static const std::string baseDir = "Ressources/";
-		static const std::string fileName = baseDir + "Stravinsky Sacre 1avant142 a 149_export.mtn"; // "exampleFile_export.mtn"; // 
+		static const std::string fileName = baseDir + "Varese Arcana.mtn"; // "Stravinsky Sacre 1avant142 a 149_export.mtn"; // "exampleFile_export.mtn"; // 
 		std::ifstream f(fileName, std::ios::binary);
 		readVector(f, m_motion, getFileSize(f) / sizeof(MotionFilePacket));
 	}
@@ -339,7 +340,10 @@ void Device3D::OnSize(wxSizeEvent& event)
 {
 	wxSize size(event.GetSize());
 	SetSize(size);
-	camera_->setAspectRatio(irr::f32(size.x) / size.y);  // This will keep vertical FOV fixed but change horizontal FOV to keep correct pixel apect ratio.
+	static const double minimumRatio = 1.2;
+	double rectRatio = double(size.x) / size.y;
+	camera_->setAspectRatio(irr::f32(rectRatio));  // This will keep vertical FOV fixed but change horizontal FOV to keep correct pixel apect ratio.
+	cameraDistance_ = 23.0 * std::max(1.0, minimumRatio/rectRatio);
 
 	//scaleImage(_markerData[_selectedMarker].numImg);
 	//_currentMarkerImg = createSelectedMarkerImage(_selectedMarker,
@@ -348,7 +352,7 @@ void Device3D::OnSize(wxSizeEvent& event)
 
 	irrVideoDriver_->OnResize(irr::core::dimension2d<irr::u32>(size.x, size.y));
 	//SetSize(newSize);
-	Refresh();
+	updateCamera();
 }
 
 void Device3D::mSize(const wxSize& newSize)
@@ -386,7 +390,7 @@ void Device3D::OnMouseMotion(wxMouseEvent& event)
 		static const double pixelToAngleFactor = 0.01;
 		cameraHorizontalAngle_ -= (x - lastX) * pixelToAngleFactor;  cameraHorizontalAngle_ = moduloAngle(cameraHorizontalAngle_);
 		cameraVerticalAngle_ += (y - lastY) * pixelToAngleFactor;  clamp(cameraVerticalAngle_, -M_PI / 2 * .9, M_PI / 2 * .99); //NOTE: Don't allow pi/2 or there will be a problem with the up vector.
-		camera_->setPosition(camera_->getTarget() + cameraPosition(cameraDistance_, cameraHorizontalAngle_, cameraVerticalAngle_));
+		updateCamera();
 		lastX = x; lastY = y;
 
 		Refresh();
@@ -544,7 +548,7 @@ void Device3D::timerEvent(double ms)
 			VCNQuat orientation = motionFileToModelArmOrientation(partOrientationsInMotionFileReference[i]);
 			if (i == 0) { // Do some inverse kinematics for shoulders.
 				static const double shoulderFrontBackMotionFactor = 0.3;
-				static const double shoulderUpMotionFactor = 1.0;
+				static const double shoulderUpMotionFactor = 0.5;
 				auto shoulder = getBone(side, BoneNumber::SHOULDER);
 				auto upperArmDirection = limbDirection(orientation);
 				double armHeading = (side == BoneSide::LEFT) ? atan2(-upperArmDirection.z, upperArmDirection.x) : atan2(upperArmDirection.z, -upperArmDirection.x);
@@ -739,33 +743,34 @@ static void tests() {
 	irr_quaternion irrMult = toIrrQuat(x) * toIrrQuat(y); // Irrlicht multiply in reverse order of "standard".
 }
 
+void Device3D::updateCamera()
+{
+	static const irr_Vector3D cameraLookAt(0.0, 18.2, -1.0);
+	irr_Vector3D cameraPosition = cameraLookAt + sphericalToCartesian(cameraDistance_, cameraHorizontalAngle_, cameraVerticalAngle_);
+	if (camera_ == nullptr) {
+		camera_ = addCamera(0, cameraPosition, cameraLookAt);
+		camera_->setFOV(toRadians(27.0f)); // Vertical field of view of a 50mm lens on 35mm film.
+	}
+	else
+		camera_->setPosition(cameraPosition);
+	Refresh();
+}
+
 void Device3D::SetLeftAlign()
 {
-	irr_Vector3D camPos(camera_->getPosition());
-
-	float r = 24.0;
-
-	camPos = irr_Vector3D(r * sin(M_PI * 0.5), camPos.Y, r * cos(M_PI * 0.5));
-	camera_->setPosition(camPos);
-	Refresh();
+	cameraHorizontalAngle_ = toRadians(90.0);
+	cameraVerticalAngle_ = toRadians(5.0f);
+	updateCamera();
 }
 void Device3D::SetFrontAlign()
 {
-	irr_Vector3D camPos(camera_->getPosition());
-
-	float r = 24.0;
-
-	camPos = irr_Vector3D(r * sin(M_PI), camPos.Y, r * cos(M_PI));
-	camera_->setPosition(camPos);
-	Refresh();
+	cameraHorizontalAngle_ = toRadians(0.0);
+	cameraVerticalAngle_ = toRadians(5.0f);
+	updateCamera();
 }
 void Device3D::SetRightAlign()
 {
-	irr_Vector3D camPos(camera_->getPosition());
-
-	float r = 24.0;
-
-	camPos = irr_Vector3D(r * sin(M_PI * -0.5), camPos.Y, r * cos(M_PI * -0.5));
-	camera_->setPosition(camPos);
-	Refresh();
+	cameraHorizontalAngle_ = toRadians(-90.0);
+	cameraVerticalAngle_ = toRadians(5.0f);
+	updateCamera();
 }
