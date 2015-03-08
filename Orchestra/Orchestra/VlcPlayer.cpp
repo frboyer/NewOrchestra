@@ -88,7 +88,8 @@ void VlcVideoPlayer::navigate(double pos)
 bool VlcVideoPlayer::loadVideo(const char* path)
 {
 //TOCHANGE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	char t[] = /*"Ressources\\Lesson1\\die.wav";*/ "Ressources\\test.mp4";
+	char t[] = /*"Ressources\\Lesson1\\die.wav";*/ /*"Ressources\\test.mp4"*/ "Ressources\\Stravinsky Sacre 1avant142 a 149.mp3";
+	//NOTE: VLC import of an Audition .mp4 export (using FAAC) has a very perceptible delay (audio is too late); .ogg audio seems a bit too soon; .mp3 seems ok.  Delay is probably constant, so we could compensate.
 	
 	if ((_vlcMedia = libvlc_media_new_path(_vlcInstance, t)) != nullptr)
 	{
