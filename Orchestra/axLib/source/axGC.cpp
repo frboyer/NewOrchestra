@@ -170,51 +170,51 @@ void axGC::DrawTexture(GLuint texture, const axRect& rect, axColor color)
 	glDisable(GL_TEXTURE_2D);
 }
 
-void axGC::DrawWindowBuffer()
-{
-    glEnable(GL_TEXTURE_2D);
-    //glEnable(GL_BLEND);
-    
-    // Destionation funciton.
-    //glBlendFunc(GL_DST_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glBlendFuncSeparate(GL_DST_ALPHA, GL_ONE_MINUS_SRC_ALPHA,
-		GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-    
-    ///!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    axFloatRect rect(RectToFloatRect(_win->GetShownRect()));
-    axFloatPoint pos(0.0, 0.0);
-    axFloatSize size = rect.size;
-
-    glBindTexture(GL_TEXTURE_2D, _win->GetWindowBufferTexture());
-
-	std::cout << "Draw back buffer texture quad : " << _win->GetId() << std::endl;
-	glColor4d(1.0, 1.0, 1.0, 1.0);
-    glBegin(GL_QUADS);
-    
-    // Bottom left.
-    glTexCoord2d(0.0, 0.0);
-    glVertex2d(pos.x, pos.y);
-    
-    // Top left.
-    glTexCoord2d(0.0, 1.0);
-    glVertex2d(pos.x, pos.y + size.y);
-    
-    // Top right.
-    glTexCoord2d(1.0, 1.0);
-    glVertex2d(pos.x + size.x, pos.y + size.y);
-    
-    // Buttom right.
-    glTexCoord2d(1.0, 0.0);
-    glVertex2d(pos.x + size.x, pos.y);
-    
-    glEnd();
-    
-    //	glDisable(GL_BLEND);
-    glDisable(GL_TEXTURE_2D);
-    
-
-    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-}
+//void axGC::DrawWindowBuffer()
+//{
+//    glEnable(GL_TEXTURE_2D);
+//    //glEnable(GL_BLEND);
+//    
+//    // Destionation funciton.
+//    //glBlendFunc(GL_DST_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//	glBlendFuncSeparate(GL_DST_ALPHA, GL_ONE_MINUS_SRC_ALPHA,
+//		GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+//    
+//    ///!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//    axFloatRect rect(RectToFloatRect(_win->GetShownRect()));
+//    axFloatPoint pos(0.0, 0.0);
+//    axFloatSize size = rect.size;
+//
+//    glBindTexture(GL_TEXTURE_2D, _win->GetWindowBufferTexture());
+//
+//	std::cout << "Draw back buffer texture quad : " << _win->GetId() << std::endl;
+//	glColor4d(1.0, 1.0, 1.0, 1.0);
+//    glBegin(GL_QUADS);
+//    
+//    // Bottom left.
+//    glTexCoord2d(0.0, 0.0);
+//    glVertex2d(pos.x, pos.y);
+//    
+//    // Top left.
+//    glTexCoord2d(0.0, 1.0);
+//    glVertex2d(pos.x, pos.y + size.y);
+//    
+//    // Top right.
+//    glTexCoord2d(1.0, 1.0);
+//    glVertex2d(pos.x + size.x, pos.y + size.y);
+//    
+//    // Buttom right.
+//    glTexCoord2d(1.0, 0.0);
+//    glVertex2d(pos.x + size.x, pos.y);
+//    
+//    glEnd();
+//    
+//    //	glDisable(GL_BLEND);
+//    glDisable(GL_TEXTURE_2D);
+//    
+//
+//    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//}
 
 //glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
 

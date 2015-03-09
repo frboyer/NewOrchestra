@@ -101,6 +101,7 @@
     <ClCompile Include="..\axLib\source\axEvent.cpp" />
     <ClCompile Include="..\axLib\source\axEventManager.cpp" />
     <ClCompile Include="..\axLib\source\axFont.cpp" />
+    <ClCompile Include="..\axLib\source\axFrameBuffer.cpp" />
     <ClCompile Include="..\axLib\source\axGC.cpp" />
     <ClCompile Include="..\axLib\source\axImage.cpp" />
     <ClCompile Include="..\axLib\source\axKeyboardManager.cpp" />
@@ -154,6 +155,7 @@
     <ClInclude Include="..\axLib\include\axEvent.h" />
     <ClInclude Include="..\axLib\include\axEventManager.h" />
     <ClInclude Include="..\axLib\include\axFont.h" />
+    <ClInclude Include="..\axLib\include\axFrameBuffer.h" />
     <ClInclude Include="..\axLib\include\axGC.h" />
     <ClInclude Include="..\axLib\include\axImage.h" />
     <ClInclude Include="..\axLib\include\axKeyboardManager.h" />
