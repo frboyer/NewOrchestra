@@ -119,7 +119,11 @@ static inline VCNQuat MatrixToQuaternion_internal(
 VCNQuat MatrixToQuaternion(const VCNMatrix& mScaled)
 {
 	VCNVector scale = GetMatrixPreScale(mScaled);
-	VCNMatrix m = mScaled; scaleMatrix(m, 1 / scale);
+	VCNMatrix m = mScaled; 
+	//-----------------------------------------------------------------------------------------------------------------
+	//scaleMatrix(m, VCNFloat(1.0) / scale);
+	//-----------------------------------------------------------------------------------------------------------------
+
 
 	// Based on J.M.P. van Waveren, From Quaternion to Matrix and Back, Id Software Inc, 2005, http://software.intel.com/sites/default/files/m/d/4/1/d/8/293748.pdf .  But without code repetition, keeping optimized code.
 	if ( m._11 + m._22 + m._33 > 0.0f )
