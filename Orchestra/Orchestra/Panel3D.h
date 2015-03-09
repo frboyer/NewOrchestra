@@ -4,7 +4,9 @@
 //#include "axLib.h"
 #include "irrlicht.h"
 #include "wx/wx.h" 
+#include "Motion\MotionFile.h"
 #include <list>
+#include <vector>
 
 typedef irr::SIrrlichtCreationParameters	irr_CreateParam;
 typedef irr::video::E_DRIVER_TYPE			irr_DriverType;
@@ -71,12 +73,25 @@ protected:
 	irr::video::IVideoDriver* irrVideoDriver_;
 	irr_SceneManager* irrSceneManager_;
 	irr_Camera* camera_;
+	double cameraDistance_, cameraHorizontalAngle_, cameraVerticalAngle_;
 	irr_SceneMesh* m_node;
 	irr_Bone* bones_[int(BoneSide::_LAST) + 1][int(BoneNumber::_LAST) + 1];
+	irr_Bone* fingerBones_[int(BoneSide::_LAST) + 1][5][4];
+	irr_Bone* eyeRigs_[int(BoneSide::_LAST) + 1];
+	irr_Bone* eyeModels_[int(BoneSide::_LAST) + 1];
+	irr_Bone* head_;
+	VCNQuat shoulderRestOrientations_[int(BoneSide::_LAST) + 1];
+	VCNQuat ribsOrientation_;
 	irr_Bone*& Device3D::getBone(BoneSide side, BoneNumber bone)
 	{
 		return bones_[int(side)][int(bone)];
 	}
+	irr_Bone*& Device3D::getFingerBone(BoneSide side, int finger, int phalanx)
+	{
+		return fingerBones_[int(side)][finger][phalanx];
+	}
+	std::vector<MotionFilePacket> m_motion;
+	void updateCamera();
 
 	double theta;
 	wxPoint clickPt;

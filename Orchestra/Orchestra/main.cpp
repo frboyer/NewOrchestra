@@ -57,7 +57,7 @@ MainFrame::MainFrame(wxFrame *frame,
 {
 	_menuActive = false;
 
-	_panel = new wxPanel(this, -1, wxPoint(0, 0), GetSize() );
+	_panel = new wxPanel(this, -1, wxPoint(0, 0), GetSize());
 	
 	wxSize psize = _panel->GetSize();
 
@@ -73,7 +73,7 @@ MainFrame::MainFrame(wxFrame *frame,
 	int args[] = { WX_GL_RGBA, WX_GL_DOUBLEBUFFER, WX_GL_DEPTH_SIZE, 16, 0 }; 
 	
 	// Instance wxOpenGL window and axLib wraper.
-	_axWrapper = new BasicGLPane(_panel, wxPoint(150, 0), wxSize(size.x - 150, psize.y), args);
+	_axWrapper = new BasicGLPane(_panel, wxPoint(0, 0), wxSize(psize.x, psize.y), args);
 		 
 //	//------------------------------------------------------------------------------------
 //	// axLib code.
@@ -89,7 +89,7 @@ MainFrame::MainFrame(wxFrame *frame,
 	img_list.push_back("Ressources/Lesson1/test004.png");
 	img_list.push_back("Ressources/Lesson1/test005.png");
 
-	_axMainPanel = new axPanel(nullptr, axRect(0, 0, size.x, size.y));
+	_axMainPanel = new axPanel(nullptr, axRect(0, 0, psize.x, psize.y));
 	//std::cout << "axLib : TOP PARENT PANEL ID : " << _axMainPanel->GetId() << std::endl;
 	_axMainPanel->SetWindowColor(axColor(0.6));
 
@@ -169,6 +169,7 @@ void MainFrame::Resize()
 	_axWrapper->SetPosition(wxPoint(0, 0));
 	_axWrapper->SetSize(wxSize(psize.x, psize.y));
 	_axMainPanel->SetSize(axSize(psize.x, psize.y));
+
 	_playerBar->SetRect(axRect(0, h, psize.x, PLAYER_BAR_HEIGHT));
 	_menu->Resize(axSize(200 - 5,h));
 
@@ -180,6 +181,8 @@ void MainFrame::Resize()
 	int left_pos_x = 0;
 	int middle_pos_x = w;
 
+
+	//axPrint("Middle position", middle_pos_x);
 	if (_menuActive)
 	{
 		w = (psize.x - menu_width) * 0.5;
@@ -235,7 +238,9 @@ void MainFrame::Resize()
 		_device3D->SetSize(wxSize(psize.x, h));
 	}
 
+	_axWrapper->Refresh();
 	_score->Update();
+	_axMainPanel->Update();
 }
 
 void MainFrame::OnSize(wxSizeEvent& event)
