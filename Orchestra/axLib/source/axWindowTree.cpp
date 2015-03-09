@@ -37,6 +37,7 @@ axWindowNode::axWindowNode()
 
 axWindowNode::~axWindowNode()
 {
+    _childNodes.clear();
     for(axWindowNode* node : _childNodes)
     {
         delete node;
@@ -48,7 +49,7 @@ axWindowNode::~axWindowNode()
 
 void axWindowNode::DeleteWindow(axWindow* win)
 {
-	(win);
+    
 }
 
 axWindow* axWindowNode::GetWindow()
@@ -63,7 +64,7 @@ void axWindowNode::SetWindow(axWindow* win)
 
 void axWindowNode::AddWindow(axWindow* win)
 {
-	_childNodes.push_back(new_ axWindowNode(win));
+	_childNodes.push_back(new axWindowNode(win));
 }
 
 axWindowNode* axWindowNode::Get(axWindow* win)
@@ -94,18 +95,19 @@ void BeforeDrawing(axWindow* win)
         axRect abs_rect = win->GetAbsoluteRect();
         axRect shown_rect = win->GetShownRect();
         
-        //double delta_size_x = shown_rect.size.x - abs_rect.size.x;
+        double delta_size_x = shown_rect.size.x - abs_rect.size.x;
         double delta_size_y = shown_rect.size.y - abs_rect.size.y;
         
         double globalY = axApp::GetInstance()->GetCore()->GetGlobalSize().y;
         double sumY = (abs_rect.position.y + shown_rect.position.y +
                        abs_rect.size.y + delta_size_y);
         
-        glScissor(int(abs_rect.position.x + shown_rect.position.x - 1),
-                  int(globalY - sumY),
-                  int(shown_rect.size.x + 1),
-                  int(shown_rect.size.y + 1));
-
+        glScissor(abs_rect.position.x + shown_rect.position.x - 1,
+                  globalY - sumY,
+                  //abs_rect.size.x + delta_size_x + 1,
+                  shown_rect.size.x + 1,
+                  shown_rect.size.y + 1);
+//                  abs_rect.size.y + delta_size_y + 1);
         
         
 //        std::cout << "SHOUWN  " << shown_rect.size.x << std::endl;
@@ -145,13 +147,11 @@ void axWindowNode::DrawNode()
         {
             axMatrix4 mview_before(GL_MODELVIEW_MATRIX);
             
-
             BeforeDrawing(window);
             DrawWindow(window);
-
-
+            
             for(axWindowNode* it : _childNodes)
-			{
+{
                 if(it->window != nullptr)            
                 {
                     if(it->window->IsShown())
@@ -200,14 +200,6 @@ void axWindowNode::DrawNode()
  ******************************************************************************/
 axWindowTree::axWindowTree()
 {
-}
-
-axWindowTree::~axWindowTree()
-{
-	for (auto& node : _nodes)
-	{
-		delete node;
-	}
 }
 
 std::deque<axWindow*> axWindowTree::GetWindowParents(axWindow* win)
@@ -263,29 +255,32 @@ axWindowNode* axWindowTree::FindWinNode(axWindow* win)
 
 void axWindowTree::AddWindow(axWindow* win)
 {
-	deque<axWindow*> windows = GetWindowParents(win);
-
-	// If there's no node in the nodes vector 
-	// then it must be the first one to be added
-	// with nullptr parent.
-	if (_nodes.size() == 0 && windows.size() == 0)
-	{
-        // First top level window.
-		_nodes.push_back(new_ axWindowNode(win));
-	}
-	else if (windows.size() == 0)
-	{
-        // Second or more top level windows.
-		_nodes.push_back(new_ axWindowNode(win));
-	}
-	else
-	{
-		axWindowNode* node = FindWinNode(win->GetParent());
-		if_not_null(node)
-		{
-			node->AddWindow(win);
-		}
-	}
+    if(win != nullptr)
+    {
+        deque<axWindow*> windows = GetWindowParents(win);
+        
+        // If there's no node in the nodes vector
+        // then it must be the first one to be added
+        // with nullptr parent.
+        if (_nodes.size() == 0 && windows.size() == 0)
+        {
+            // First top level window.
+            _nodes.push_back(new axWindowNode(win));
+        }
+        else if (windows.size() == 0)
+        {
+            // Second or more top level windows.
+            _nodes.push_back(new axWindowNode(win));
+        }
+        else
+        {
+            axWindowNode* node = FindWinNode(win->GetParent());
+            if_not_null(node)
+            {
+                node->AddWindow(win);
+            }
+        }
+    }
 }
 
 void axWindowTree::DeleteWindow(axWindow* win)
@@ -299,7 +294,7 @@ void axWindowTree::DeleteWindow(axWindow* win)
         std::vector<axWindowNode*> childs = parent->GetChild();
 
         int child_index = -1;
-        for (unsigned int i = 0; i < childs.size(); i++)
+        for (int i = 0; i < childs.size(); i++)
         {
             if(childs[i]->window == node->window)
             {
@@ -354,7 +349,7 @@ axWindow* axWindowTree::FindMousePosition(const axPoint& pos)
 
 	axWindowNode* n = node;
     
-//    axWindowNode* tmpNode = nullptr;
+    axWindowNode* tmpNode = nullptr;
 	if_not_null(n)
 	{
 		do

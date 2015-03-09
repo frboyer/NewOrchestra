@@ -29,6 +29,7 @@
 #include "axC++.h"
 #include "axGC.h"
 #include "axResourceManager.h"
+#include "axFrameBuffer.h"
 #include "axConfig.h"
 
 class axApp;
@@ -145,13 +146,14 @@ public:
     
     void SetContourColor(const axColor& color);
     
-    GLuint GetWindowBufferTexture() const
-    {
-        return _frameBufferTexture;
-    }
+    //GLuint GetWindowBufferTexture() const
+    //{
+    //    return _frameBufferTexture;
+    //}
     
     void RenderWindow();
-    
+
+  
     axRect GetDrawingRect() const
     {
         return axRect(0, 0, _rect.size.x - 1, _rect.size.y - 1);
@@ -160,7 +162,8 @@ public:
 protected:
 	bool _isPopup;
     bool _needUpdate;
-    GLuint _frameBuffer, _frameBufferTexture, _depthBuffer;
+    //GLuint _frameBuffer, _frameBufferTexture, _depthBuffer;
+	axFrameBuffer _frameBufferObj;
 
 private:
 	axWindow* _parent;
@@ -181,7 +184,7 @@ private:
 //    std::map<std::string, axEventFunction> _evtMap;
     axResourceManager _resourceManager;
     
-    void InitGLWindowBackBufferDrawing();
+    //void InitGLWindowBackBufferDrawing();
 };
 
 /// @}

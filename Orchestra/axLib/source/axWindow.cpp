@@ -35,7 +35,8 @@ _shownRect(axPoint(0, 0), rect.size),
 _isSelectable(true),
 _windowColor(0.0, 0.0, 0.0, 0.0),
 _contourColor(0.0, 0.0, 0.0, 0.0),
-_needUpdate(true)
+_needUpdate(true),
+_frameBufferObj(rect.size)
 {
 //#ifdef _axDebugEditor_
     _isEditingWidget = false;
@@ -53,7 +54,7 @@ _needUpdate(true)
     
 	_gc = toUnique(new_ axGC(this));
     
-    InitGLWindowBackBufferDrawing();
+    //InitGLWindowBackBufferDrawing();
 }
 
 axWindow::~axWindow()
@@ -150,6 +151,9 @@ void axWindow::SetRect(const axRect& rect)
 {
 	SetPosition(rect.position);
 	SetSize(rect.size);
+
+	_frameBufferObj.Resize(rect.size);
+
 }
 
 axPoint axWindow::GetBottomLeftPosition() const
@@ -218,7 +222,8 @@ void axWindow::SetSize(const axSize& size)
 	_rect.size = size;
     _shownRect.size = size;
 
-    InitGLWindowBackBufferDrawing();
+    //InitGLWindowBackBufferDrawing();
+	_frameBufferObj.Resize(size);
     Update();
 }
 
@@ -292,73 +297,73 @@ void axWindow::OnPaint()
 }
 
 // https://www.opengl.org/wiki/Framebuffer_Object_Examples
-void axWindow::InitGLWindowBackBufferDrawing()
-{
-#if _axBackBufferWindow_ == 1
-
-    // Create framebuffer object (FBO).
-    glGenFramebuffers(1, &_frameBuffer);
-    glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
-    
-    // Create texture.
-    glGenTextures(1, &_frameBufferTexture);
-    glBindTexture(GL_TEXTURE_2D, _frameBufferTexture);
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    
-    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-    
-    // NULL means reserve texture memory, but texels are undefined.
-    glTexImage2D(GL_TEXTURE_2D,
-                 0,
-                 GL_RGBA8,
-                 _rect.size.x,
-                 _rect.size.y,
-                 0,
-                 GL_RGBA,
-                 GL_UNSIGNED_BYTE,
-                 NULL);
-    
-    // Attach 2D texture to this FBO.
-    glFramebufferTexture2D(GL_FRAMEBUFFER,
-                           GL_COLOR_ATTACHMENT0,
-                           GL_TEXTURE_2D,
-                           _frameBufferTexture,
-                           0);
-    
-    
-//    glGenRenderbuffers(1, &_depthBuffer);
-//    glBindRenderbuffer(GL_RENDERBUFFER, _depthBuffer);
-//    glRenderbufferStorage(GL_RENDERBUFFER,
-//                          GL_DEPTH_COMPONENT32,
-//                          _rect.size.x,
-//                          _rect.size.y);
-
-    // Does the GPU support current FBO configuration.
-    GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER_EXT);
-
-	//std::cout << "Status : " << status << std::endl;
-
-    switch(status)
-    {
-        case GL_FRAMEBUFFER_COMPLETE_EXT: 
-			break;
-        default:
-            std::cerr << "ERROR GEN FRAME BUFFER : " << status << std::endl;
-    }
-    
-	GLenum error = glGetError();
-	if (error != GL_NO_ERROR)
-	{
-		std::cerr << "Init Back buffer Error : " << gluErrorString(error) << std::endl;
-	}
-
-    glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-#endif // _axBackBufferWindow_
-}
+//void axWindow::InitGLWindowBackBufferDrawing()
+//{
+//#if _axBackBufferWindow_ == 1
+//
+//    // Create framebuffer object (FBO).
+//    glGenFramebuffers(1, &_frameBuffer);
+//    glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
+//    
+//    // Create texture.
+//    glGenTextures(1, &_frameBufferTexture);
+//    glBindTexture(GL_TEXTURE_2D, _frameBufferTexture);
+////    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+////    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+//    
+//    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+//    
+//    // NULL means reserve texture memory, but texels are undefined.
+//    glTexImage2D(GL_TEXTURE_2D,
+//                 0,
+//                 GL_RGBA8,
+//                 _rect.size.x,
+//                 _rect.size.y,
+//                 0,
+//                 GL_RGBA,
+//                 GL_UNSIGNED_BYTE,
+//                 NULL);
+//    
+//    // Attach 2D texture to this FBO.
+//    glFramebufferTexture2D(GL_FRAMEBUFFER,
+//                           GL_COLOR_ATTACHMENT0,
+//                           GL_TEXTURE_2D,
+//                           _frameBufferTexture,
+//                           0);
+//    
+//    
+////    glGenRenderbuffers(1, &_depthBuffer);
+////    glBindRenderbuffer(GL_RENDERBUFFER, _depthBuffer);
+////    glRenderbufferStorage(GL_RENDERBUFFER,
+////                          GL_DEPTH_COMPONENT32,
+////                          _rect.size.x,
+////                          _rect.size.y);
+//
+//    // Does the GPU support current FBO configuration.
+//    GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER_EXT);
+//
+//	//std::cout << "Status : " << status << std::endl;
+//
+//    switch(status)
+//    {
+//        case GL_FRAMEBUFFER_COMPLETE_EXT: 
+//			break;
+//        default:
+//            std::cerr << "ERROR GEN FRAME BUFFER : " << status << std::endl;
+//    }
+//    
+//	GLenum error = glGetError();
+//	if (error != GL_NO_ERROR)
+//	{
+//		std::cerr << "Init Back buffer Error : " << gluErrorString(error) << std::endl;
+//	}
+//
+//    glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
+//    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+//#endif // _axBackBufferWindow_
+//}
 
 
 //void WinEndDrawing(axWindow* win)
@@ -397,108 +402,126 @@ void axWindow::InitGLWindowBackBufferDrawing()
 //    }
 //}
 
+//void axWindow::RenderWindow()
+//{
+//
+//    if(_needUpdate)
+//    {
+//        #if _axBackBufferWindow_ == 1
+//	
+//        bool need_to_reactive_clip_test = false;
+//        if(glIsEnabled(GL_SCISSOR_TEST))
+//        {
+//            glDisable(GL_SCISSOR_TEST);
+//            need_to_reactive_clip_test = true;
+//        }
+//
+//
+//
+//            // Save modelView matrix.
+//            glMatrixMode(GL_MODELVIEW);
+//			axMatrix4 modelView(GL_MODELVIEW_MATRIX);
+//                
+//            
+//			//Check for error
+//			GLenum error = glGetError();
+//			if (error != GL_NO_ERROR)
+//			{
+//				std::cerr << "Error :  Line : " << __LINE__ << " " << gluErrorString(error) << std::endl;
+//			}
+//		
+//
+//			glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
+//
+//            glPushAttrib(GL_DEPTH_BUFFER_BIT);
+//            glClearColor(0.0, 0.0, 1.0, 0.0);
+//            glClearDepth(1.0f);
+//            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//        
+//            glViewport(0, 0, GetRect().size.x, GetRect().size.y);
+//        
+//            glMatrixMode(GL_PROJECTION);
+//            axMatrix4 proj;
+////        axOrtho2D(proj.Identity().GetData(), GetRect().size);
+//        
+//            glLoadIdentity();
+//            glOrtho(0.0, GetRect().size.x,
+//                    0.0, GetRect().size.y,
+//                    0.0, 1.0);
+//        
+//            glMatrixMode(GL_MODELVIEW);
+//            axMatrix4 mv_matrix;
+//            mv_matrix.Identity().Load();
+//            glTranslated(1.0, 1.0, 0.0);
+//
+//
+//			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA,
+//				GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+//        #endif // _axBackBufferWindow_
+//        
+//        OnPaint();
+//        
+//        #if _axBackBufferWindow_ == 1
+//            _needUpdate = false;
+//
+//		//	// Unbind buffer.
+//  //          glBindFramebuffer(GL_FRAMEBUFFER, 0);
+//  //      
+//  //          axSize gSize(axApp::GetInstance()->GetCore()->GetGlobalSize());
+//  //          glViewport(0, 0, gSize.x, gSize.y);
+//  //          axOrtho2D(proj.Identity().GetData(), gSize);
+//  //      
+//  //          glMatrixMode(GL_MODELVIEW);
+//  //          modelView.Load();
+//  //          glPopAttrib();
+//  //      
+//
+//		//if (need_to_reactive_clip_test)
+//		//{
+//		//	glEnable(GL_SCISSOR_TEST);
+//		//}
+//		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+//
+//		axSize gSize(axApp::GetInstance()->GetCore()->GetGlobalSize());
+//		glViewport(0, 0, gSize.x, gSize.y);
+//		axOrtho2D(proj.Identity().GetData(), gSize);
+//
+//		glMatrixMode(GL_MODELVIEW);
+//		modelView.Load();
+//		glPopAttrib();
+//
+//		if (need_to_reactive_clip_test)
+//		{
+//			glEnable(GL_SCISSOR_TEST);
+//		}
+//            
+//        
+//		axGC* gc = GetGC();
+//		gc->DrawWindowBuffer();
+//
+//        #endif // _axBackBufferWindow_
+//        
+//    }
+//    
+//    
+//
+//
+//}
+
 void axWindow::RenderWindow()
 {
+#if _axBackBufferWindow_ == 1
+	if (_needUpdate)
+	{
+		std::function<void()> draw([this](){ OnPaint(); });
 
-    if(_needUpdate)
-    {
-        #if _axBackBufferWindow_ == 1
-	
-        bool need_to_reactive_clip_test = false;
-        if(glIsEnabled(GL_SCISSOR_TEST))
-        {
-            glDisable(GL_SCISSOR_TEST);
-            need_to_reactive_clip_test = true;
-        }
+		_frameBufferObj.DrawOnFrameBuffer(draw, GetRect().size);
+		_needUpdate = false;
+	}
 
+	_frameBufferObj.DrawFrameBuffer(GetShownRect().size);
 
-
-            // Save modelView matrix.
-            glMatrixMode(GL_MODELVIEW);
-			axMatrix4 modelView(GL_MODELVIEW_MATRIX);
-                
-            
-			//Check for error
-			GLenum error = glGetError();
-			if (error != GL_NO_ERROR)
-			{
-				std::cerr << "Error :  Line : " << __LINE__ << " " << gluErrorString(error) << std::endl;
-			}
-		
-
-			glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
-
-            glPushAttrib(GL_DEPTH_BUFFER_BIT);
-            glClearColor(0.0, 0.0, 1.0, 0.0);
-            glClearDepth(1.0f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        
-            glViewport(0, 0, GetRect().size.x, GetRect().size.y);
-        
-            glMatrixMode(GL_PROJECTION);
-            axMatrix4 proj;
-//        axOrtho2D(proj.Identity().GetData(), GetRect().size);
-        
-            glLoadIdentity();
-            glOrtho(0.0, GetRect().size.x,
-                    0.0, GetRect().size.y,
-                    0.0, 1.0);
-        
-            glMatrixMode(GL_MODELVIEW);
-            axMatrix4 mv_matrix;
-            mv_matrix.Identity().Load();
-            glTranslated(1.0, 1.0, 0.0);
-
-
-			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA,
-				GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-        #endif // _axBackBufferWindow_
-        
-        OnPaint();
-        
-        #if _axBackBufferWindow_ == 1
-            _needUpdate = false;
-
-		//	// Unbind buffer.
-  //          glBindFramebuffer(GL_FRAMEBUFFER, 0);
-  //      
-  //          axSize gSize(axApp::GetInstance()->GetCore()->GetGlobalSize());
-  //          glViewport(0, 0, gSize.x, gSize.y);
-  //          axOrtho2D(proj.Identity().GetData(), gSize);
-  //      
-  //          glMatrixMode(GL_MODELVIEW);
-  //          modelView.Load();
-  //          glPopAttrib();
-  //      
-
-		//if (need_to_reactive_clip_test)
-		//{
-		//	glEnable(GL_SCISSOR_TEST);
-		//}
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-		axSize gSize(axApp::GetInstance()->GetCore()->GetGlobalSize());
-		glViewport(0, 0, gSize.x, gSize.y);
-		axOrtho2D(proj.Identity().GetData(), gSize);
-
-		glMatrixMode(GL_MODELVIEW);
-		modelView.Load();
-		glPopAttrib();
-
-		if (need_to_reactive_clip_test)
-		{
-			glEnable(GL_SCISSOR_TEST);
-		}
-            
-        
-		axGC* gc = GetGC();
-		gc->DrawWindowBuffer();
-
-        #endif // _axBackBufferWindow_
-        
-    }
-    
-    
-
-
+#else
+	OnPaint();
+#endif //_axBackBufferWindow_
 }

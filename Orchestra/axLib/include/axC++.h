@@ -121,6 +121,31 @@ typedef uint16_t axFlag;
 
 typedef unsigned char axByte;
 
+
+// Since variadic templates are recursive, must have a base case.
+void axPrint();
+
+template <typename T, typename ...P>
+void axPrint(T t, P ...p)
+{
+	std::cout << t << ' ';
+	{
+		axPrint(p...);
+	}
+}
+
+// Since variadic templates are recursive, must have a base case.
+void axError();
+
+template <typename T, typename ...P>
+void axError(T t, P ...p)
+{
+	std::cerr << "Error : " << t << ' ';
+	{
+		axError(p...);
+	}
+}
+
 //[[deprecated]]
 bool axFlag_exist(const axFlag& FLAG, axFlag flags);
 

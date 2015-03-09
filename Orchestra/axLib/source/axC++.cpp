@@ -30,3 +30,12 @@ bool IsFlag(const axFlag& FLAG, axFlag flags)
 {
     return((flags & FLAG) != 0);
 }
+void axPrint()
+{
+	std::cout << std::endl;
+}
+
+void axError()
+{
+	std::cout << std::endl;
+}

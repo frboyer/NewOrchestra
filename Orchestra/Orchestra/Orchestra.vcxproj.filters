@@ -120,9 +120,6 @@
     <ClCompile Include="..\axLib\source\axWindow.cpp">
       <Filter>axLib\source</Filter>
     </ClCompile>
-    <ClCompile Include="..\axLib\source\axWindowTree.cpp">
-      <Filter>axLib\source</Filter>
-    </ClCompile>
     <ClCompile Include="..\axLib\axWidgets\axAnimatedButton.cpp">
       <Filter>axLib\Widgets</Filter>
     </ClCompile>
@@ -182,6 +179,12 @@
     </ClCompile>
     <ClCompile Include="Menu.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\axLib\source\axFrameBuffer.cpp">
+      <Filter>axLib\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\axLib\source\axWindowTree.cpp">
+      <Filter>axLib\source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -281,9 +284,6 @@
     <ClInclude Include="..\axLib\include\axWindow.h">
       <Filter>axLib\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\axLib\include\axWindowTree.h">
-      <Filter>axLib\include</Filter>
-    </ClInclude>
     <ClInclude Include="..\axLib\include\rapidxml.hpp">
       <Filter>axLib\include</Filter>
     </ClInclude>
@@ -346,6 +346,12 @@
     </ClInclude>
     <ClInclude Include="Menu.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\axLib\include\axFrameBuffer.h">
+      <Filter>axLib\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\axLib\include\axWindowTree.h">
+      <Filter>axLib\include</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
