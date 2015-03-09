@@ -403,6 +403,7 @@ void MainFrame::OnToggleScore(const axToggle::Msg& msg)
 
 void MainFrame::OnLeftButton(const axButton::Msg& msg)
 {
+	(msg);
 	_device3D->SetLeftAlign();
 }
 
@@ -410,12 +411,14 @@ void MainFrame::OnLeftButton(const axButton::Msg& msg)
 
 void MainFrame::OnFrontButton(const axButton::Msg& msg)
 {
+	(msg);
 	_device3D->SetFrontAlign();
 }
 
 
 void MainFrame::OnRightButton(const axButton::Msg& msg)
 {
+	(msg);
 	_device3D->SetRightAlign();
 }
 

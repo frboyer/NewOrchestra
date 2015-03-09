@@ -4,6 +4,8 @@
 #include "VCNQuat.h"
 #include "VCNVector.h"
 #include <algorithm>
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 template <class T>
 struct NormalizationFactor {
