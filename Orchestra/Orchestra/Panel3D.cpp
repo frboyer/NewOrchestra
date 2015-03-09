@@ -745,7 +745,11 @@ static void tests() {
 
 void Device3D::updateCamera()
 {
+<<<<<<< HEAD
 	static const irr_Vector3D cameraLookAt(irr::f32(0.0), irr::f32(18.2), irr::f32 (- 1.0));
+=======
+	static const irr_Vector3D cameraLookAt(0.0, 18.2, -1.0);
+>>>>>>> d02eaa7ea9173b0b8b3cf013213142d8f06f22fb
 	irr_Vector3D cameraPosition = cameraLookAt + sphericalToCartesian(cameraDistance_, cameraHorizontalAngle_, cameraVerticalAngle_);
 	if (camera_ == nullptr) {
 		camera_ = addCamera(0, cameraPosition, cameraLookAt);
