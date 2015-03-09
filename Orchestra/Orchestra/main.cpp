@@ -157,6 +157,11 @@ MainFrame::MainFrame(wxFrame *frame,
 	Maximize(true);
 }
 
+MainFrame::~MainFrame()
+{
+
+}
+
 void MainFrame::Resize()
 {
 	wxSize psize = GetSize();

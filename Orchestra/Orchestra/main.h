@@ -30,6 +30,7 @@ class MainFrame : public wxFrame
 public:
 	MainFrame(wxFrame *frame, const wxString& title, const wxPoint& pos, const wxSize& size);
 
+	~MainFrame();
 
 private:
 	wxPanel* _panel;
