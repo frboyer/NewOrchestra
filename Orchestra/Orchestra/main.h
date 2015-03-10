@@ -26,6 +26,24 @@ enum MainFrameEventID
 	EVENT_ANIMATION_TIMER_ID = 9001,
 };
 
+struct VideosPath
+{
+	VideosPath()
+	{
+
+	}
+
+	VideosPath(const std::string& f, 
+		const std::string& l, 
+		const std::string& r) :
+		front(f), left(l), right(r)
+	{
+
+	}
+
+	std::string front = "", left = "", right = "";
+};
+
 class MainFrame : public wxFrame
 {
 public:
@@ -37,6 +55,8 @@ private:
 	wxPanel* _panel;
 	//BasicGLPane* _axWrapper;
 	axWxPanel* _axWrapper;
+
+	VideosPath _videoPath;
 
 	VlcVideoPlayer* _videoPlayer;
 	Device3D* _device3D;
@@ -52,6 +72,8 @@ private:
 	//--------------------
 	wxTimer* _partitionTimer;
 	wxTimer* _animationTimer;
+
+	void ChangeVideoAngle(const std::string& path);
 
 	void OnSize(wxSizeEvent& event);
 	void OnCloseWindow(wxCloseEvent& event);

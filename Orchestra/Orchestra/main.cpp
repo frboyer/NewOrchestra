@@ -66,10 +66,14 @@ MainFrame::MainFrame(wxFrame *frame,
 	wxRect videoRect = rectAtBottom(remainingRect, remainingRect.height / 2);
 	_videoPlayer = new VlcVideoPlayer(_panel, wxID_ANY, videoRect.GetPosition(), videoRect.GetSize());
 	_device3D = new Device3D(_panel, wxID_ANY, remainingRect.GetPosition(), remainingRect.GetSize());
-
-	//char* videoPath = "C:/Users/Alexandre Arsenault/Desktop/rien.mp4";//"Ressources/rien.mp4";
-	char* videoPath = "Ressources/rien.mp4";
-	_videoPlayer->loadVideo(videoPath);
+	
+	_videoPath.front = "C:\\Users\\Alexandre Arsenault\\Desktop\\rien.mp4";
+	_videoPath.left = "C:\\Users\\Alexandre Arsenault\\Desktop\\Varese Arcana Gauche.mp4";
+	_videoPath.right = "C:\\Users\\Alexandre Arsenault\\Desktop\\Varese Arcana Droite.mp4";
+	
+	//char* videoPath = "C:\\Users\\Alexandre Arsenault\\Desktop\\rien.mp4";//"Ressources/rien.mp4";
+	//char* videoPath = "Ressources/rien.mp4";
+	_videoPlayer->loadVideo(_videoPath.front.c_str());
 
 	// Arguments for wxGLCanvas.
 	int args[] = { WX_GL_RGBA, WX_GL_DOUBLEBUFFER, WX_GL_DEPTH_SIZE, 16, 0 }; 
@@ -435,11 +439,34 @@ void MainFrame::OnToggleScore(const axToggle::Msg& msg)
 	}
 }
 
+void  MainFrame::ChangeVideoAngle(const std::string& path)
+{
+	bool isPlaying = _videoPlayer->isPlaying();
+	long long time = _videoPlayer->getPlaybackTime();
+	_videoPlayer->loadVideo(path.c_str());
+
+	if (isPlaying)
+	{
+		_videoPlayer->play();
+
+		axPrint("is video playing right after play call : ", _videoPlayer->isPlaying());
+		axPrint("!!! POSIBLE INFINITE LOOP !!! : ", __LINE__, " in main.cpp");
+		while (_videoPlayer->isPlaying() == false)
+		{
+		}
+
+		// From VLC doc, this is not supported for every formats.
+		// And this has no effect if the media is not playing.
+		_videoPlayer->setPlaybackTime(time);
+		_videoPlayer->unMute();
+	}
+}
 
 void MainFrame::OnLeftButton(const axButton::Msg& msg)
 {
 	(msg);
 	_device3D->SetLeftAlign();
+	ChangeVideoAngle(_videoPath.left);
 }
 
 
@@ -447,7 +474,10 @@ void MainFrame::OnLeftButton(const axButton::Msg& msg)
 void MainFrame::OnFrontButton(const axButton::Msg& msg)
 {
 	(msg);
+	
 	_device3D->SetFrontAlign();
+	ChangeVideoAngle(_videoPath.front);
+	
 }
 
 
@@ -455,6 +485,7 @@ void MainFrame::OnRightButton(const axButton::Msg& msg)
 {
 	(msg);
 	_device3D->SetRightAlign();
+	ChangeVideoAngle(_videoPath.right);
 }
 
 void MainFrame::OnMenuToggle(const axToggle::Msg& msg)
