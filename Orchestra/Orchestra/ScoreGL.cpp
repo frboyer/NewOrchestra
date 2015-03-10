@@ -226,7 +226,8 @@ bool ScoreGL::loadInfo(const std::string& data_path,
 		for (auto& path : list)
 		{
 			//_images.push_back(toUnique(new_ axImage(path)));
-			_images.push_back(std::unique_ptr<axImage>(new_ axImage(path)));
+			/*_images.push_back(std::unique_ptr<axImage>(new_ axImage(path)));*/
+			_images.push_back(std::unique_ptr<axBigImage>(new_ axBigImage(path)));
 		}
 
 		std::cout << "IMG index" << std::endl;
@@ -303,8 +304,10 @@ void ScoreGL::OnMouseMotion(const axPoint& pos)
 		const ScoreMarkerInfo* markerInfo = _player.getMarkerData();
 
 		int x = GetSize().x - 35, y = GetSize().y - 40;
-		_resizeRatio_x = x / double(_images[img_index]->GetWidth());
-		_resizeRatio_y = y / double(_images[img_index]->GetHeight());
+		//_resizeRatio_x = x / double(_images[img_index]->GetWidth());
+		//_resizeRatio_y = y / double(_images[img_index]->GetHeight());
+		_resizeRatio_x = x / double(_images[img_index]->GetImageSize().x);
+		_resizeRatio_y = y / double(_images[img_index]->GetImageSize().y);
 
 		bool mouseHover = false;
 
@@ -355,12 +358,18 @@ void ScoreGL::OnPaint()
 	gc->DrawRectangle(rect);
 
 	int img_index = _player.getCurrentImageIndex();
+	
 	if (img_index != -1 &&
 		_images[img_index]->IsImageReady())
 	{
-		gc->DrawImageResize(_images[img_index].get(),
-							axPoint(10, 10),
-							axSize(rect.size.x - 35, rect.size.y - 40));
+		gc->DrawBigImageResize(_images[img_index].get(),
+			axPoint(10, 10),
+			axSize(rect.size.x - 35, rect.size.y - 40));
+
+		//gc->DrawImageResize(_images[img_index].get(),
+		//					axPoint(10, 10),
+		//					axSize(rect.size.x - 35, rect.size.y - 40));
+
 		//gc->DrawImageResize(_images[img_index].get(),
 		//	axPoint(10, 10),
 		//	axSize(300, 400));

@@ -67,6 +67,7 @@ MainFrame::MainFrame(wxFrame *frame,
 	_videoPlayer = new VlcVideoPlayer(_panel, wxID_ANY, videoRect.GetPosition(), videoRect.GetSize());
 	_device3D = new Device3D(_panel, wxID_ANY, remainingRect.GetPosition(), remainingRect.GetSize());
 
+	//char* videoPath = "C:/Users/Alexandre Arsenault/Desktop/rien.mp4";//"Ressources/rien.mp4";
 	char* videoPath = "Ressources/rien.mp4";
 	_videoPlayer->loadVideo(videoPath);
 
@@ -283,8 +284,14 @@ void MainFrame::OnPartitionTimer(wxTimerEvent& event)
 
 	double ms = _videoPlayer->getPlaybackTime() / 1000.0;
 
+	// Change score time.
+	_score->changeTime(ms);
+
+	// Change playbar time.
 	_playerBar->SetScrollSliderValue(_videoPlayer->getPosition(), ms);
-									 
+								
+	// This is there only because it doesn't seem to work when the 
+	// video is not playing. It should be call only once.
 	if (_playerBar->GetHasVideoLength() == false)
 	{
 		_playerBar->SetVideoLength(_videoPlayer->getMovieLength() / 1000.0);

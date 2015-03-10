@@ -118,7 +118,8 @@ public:
 
 private:
 	ScorePlayer _player;
-	std::vector<std::unique_ptr<axImage> > _images;
+	//std::vector<std::unique_ptr<axImage> > _images;
+	std::vector<std::unique_ptr<axBigImage>> _images;
 	int _currentImageIndex;
 	bool _isPlaying, _mouseHover;
 	int _mouseHoverMarker;
