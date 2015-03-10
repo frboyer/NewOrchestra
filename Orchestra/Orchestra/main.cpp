@@ -283,9 +283,8 @@ void MainFrame::OnPartitionTimer(wxTimerEvent& event)
 
 	double ms = _videoPlayer->getPlaybackTime() / 1000.0;
 
-	_playerBar->SetScrollSliderValue(_videoPlayer->getPosition(), 
-									 ms);
-	
+	_playerBar->SetScrollSliderValue(_videoPlayer->getPosition(), ms);
+									 
 	if (_playerBar->GetHasVideoLength() == false)
 	{
 		_playerBar->SetVideoLength(_videoPlayer->getMovieLength() / 1000.0);
