@@ -40,6 +40,7 @@ BEGIN_EVENT_TABLE(MainFrame, wxFrame)
 	EVT_MENU(wxID_EXIT, MainFrame::OnExit)
 	EVT_SIZE(MainFrame::OnSize)
 	EVT_TIMER(EVENT_PARTITION_TIMER_ID, MainFrame::OnPartitionTimer)
+	EVT_TIMER(EVENT_ANIMATION_TIMER_ID, MainFrame::OnAnimationTimer)
 END_EVENT_TABLE()
 
 static wxRect rectAtBottom(wxRect& rect, int bottomRectHeight)
@@ -66,14 +67,14 @@ MainFrame::MainFrame(wxFrame *frame,
 	_videoPlayer = new VlcVideoPlayer(_panel, wxID_ANY, videoRect.GetPosition(), videoRect.GetSize());
 	_device3D = new Device3D(_panel, wxID_ANY, remainingRect.GetPosition(), remainingRect.GetSize());
 
-	char* videoPath = "Resources/rien.mp4";
+	char* videoPath = "Ressources/rien.mp4";
 	_videoPlayer->loadVideo(videoPath);
 
 	// Arguments for wxGLCanvas.
 	int args[] = { WX_GL_RGBA, WX_GL_DOUBLEBUFFER, WX_GL_DEPTH_SIZE, 16, 0 }; 
 	
 	// Instance wxOpenGL window and axLib wraper.
-	_axWrapper = new BasicGLPane(_panel, wxPoint(0, 0), wxSize(psize.x, psize.y), args);
+	_axWrapper = new axWxPanel(_panel, wxPoint(0, 0), wxSize(psize.x, psize.y), args);
 		 
 //	//------------------------------------------------------------------------------------
 //	// axLib code.
@@ -153,7 +154,8 @@ MainFrame::MainFrame(wxFrame *frame,
 //	//-----------------------------------------------------------------------------------
 //
 	_partitionTimer = new wxTimer(this, EVENT_PARTITION_TIMER_ID);
-//	
+	_animationTimer = new wxTimer(this, EVENT_ANIMATION_TIMER_ID);
+
 	Maximize(true);
 }
 
@@ -270,6 +272,7 @@ void MainFrame::OnCloseWindow(wxCloseEvent& WXUNUSED(event))
 	}
 	
 	delete _partitionTimer; _partitionTimer = nullptr;
+	delete _animationTimer; _animationTimer = nullptr;
 	Destroy();
 	destroyed = true;
 }
@@ -279,8 +282,6 @@ void MainFrame::OnPartitionTimer(wxTimerEvent& event)
 	UNREFERENCED_PARAMETER(event);
 
 	double ms = _videoPlayer->getPlaybackTime() / 1000.0;
-	_score->changeTime(ms);
-	_device3D->timerEvent(ms);
 
 	_playerBar->SetScrollSliderValue(_videoPlayer->getPosition(), 
 									 ms);
@@ -289,6 +290,14 @@ void MainFrame::OnPartitionTimer(wxTimerEvent& event)
 	{
 		_playerBar->SetVideoLength(_videoPlayer->getMovieLength() / 1000.0);
 	}
+}
+
+void MainFrame::OnAnimationTimer(wxTimerEvent& event)
+{
+	UNREFERENCED_PARAMETER(event);
+
+	double ms = _videoPlayer->getPlaybackTime() / 1000.0;
+	_device3D->timerEvent(ms);
 }
 
 void MainFrame::OnBackwardButton(const axButton::Msg& msg)
@@ -315,8 +324,13 @@ void MainFrame::OnPlayPauseButton(const axToggle::Msg& msg)
 
 		if (!_partitionTimer->IsRunning())
 		{
-			_partitionTimer->Start(16);
+			_partitionTimer->Start(250);
 			_score->setPlaying(true);
+		}
+
+		if (!_animationTimer->IsRunning())
+		{
+			_animationTimer->Start(16);
 		}
 	}
 	else
@@ -327,6 +341,11 @@ void MainFrame::OnPlayPauseButton(const axToggle::Msg& msg)
 		{
 			_partitionTimer->Stop();
 			_score->setPlaying(false);
+		}
+
+		if (_animationTimer->IsRunning())
+		{
+			_animationTimer->Stop();
 		}
 	}
 }
@@ -340,6 +359,11 @@ void MainFrame::OnStopButton(const axButton::Msg& msg)
 	{
 		_partitionTimer->Stop();
 		_score->setPlaying(false);
+	}
+
+	if (_animationTimer->IsRunning())
+	{
+		_animationTimer->Stop();
 	}
 }
 

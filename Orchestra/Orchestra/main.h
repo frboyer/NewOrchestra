@@ -23,6 +23,7 @@ using namespace std;
 enum MainFrameEventID
 {
 	EVENT_PARTITION_TIMER_ID = 9000,
+	EVENT_ANIMATION_TIMER_ID = 9001,
 };
 
 class MainFrame : public wxFrame
@@ -34,8 +35,8 @@ public:
 
 private:
 	wxPanel* _panel;
-	BasicGLPane* _axWrapper;
-	//axWxPanel* _axWrapper;
+	//BasicGLPane* _axWrapper;
+	axWxPanel* _axWrapper;
 
 	VlcVideoPlayer* _videoPlayer;
 	Device3D* _device3D;
@@ -50,11 +51,13 @@ private:
 	bool _menuActive;
 	//--------------------
 	wxTimer* _partitionTimer;
+	wxTimer* _animationTimer;
 
 	void OnSize(wxSizeEvent& event);
 	void OnCloseWindow(wxCloseEvent& event);
 	void OnExit(wxCommandEvent& event);
 	void OnPartitionTimer(wxTimerEvent& event);
+	void OnAnimationTimer(wxTimerEvent& event);
 
 	void Resize();
 
