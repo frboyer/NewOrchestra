@@ -439,6 +439,8 @@ void MainFrame::OnToggleScore(const axToggle::Msg& msg)
 	}
 }
 
+
+/// @todo Make sure the video's different before reload.
 void  MainFrame::ChangeVideoAngle(const std::string& path)
 {
 	bool isPlaying = _videoPlayer->isPlaying();
