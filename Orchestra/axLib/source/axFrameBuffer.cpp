@@ -50,11 +50,16 @@ void axFrameBuffer::Init(const axSize& size)
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
     
     // NULL means reserve texture memory, but texels are undefined.
+
+	// Power of 2 texture.
+	int n_x = pow(2.0, ceil(log2(size.x)));
+	int n_y = pow(2.0, ceil(log2(size.y)));
+
     glTexImage2D(GL_TEXTURE_2D,
                  0,
                  GL_RGBA8,
-                 size.x,
-                 size.y,
+                 n_x,//size.x,
+                 n_y,//size.y,
                  0,
                  GL_RGBA,
                  GL_UNSIGNED_BYTE,
