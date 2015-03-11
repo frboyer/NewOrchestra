@@ -40,6 +40,7 @@ BEGIN_EVENT_TABLE(MainFrame, wxFrame)
 	EVT_MENU(wxID_EXIT, MainFrame::OnExit)
 	EVT_SIZE(MainFrame::OnSize)
 	EVT_TIMER(EVENT_PARTITION_TIMER_ID, MainFrame::OnPartitionTimer)
+	EVT_TIMER(EVENT_ANIMATION_TIMER_ID, MainFrame::OnAnimationTimer)
 END_EVENT_TABLE()
 
 static wxRect rectAtBottom(wxRect& rect, int bottomRectHeight)
@@ -65,15 +66,20 @@ MainFrame::MainFrame(wxFrame *frame,
 	wxRect videoRect = rectAtBottom(remainingRect, remainingRect.height / 2);
 	_videoPlayer = new VlcVideoPlayer(_panel, wxID_ANY, videoRect.GetPosition(), videoRect.GetSize());
 	_device3D = new Device3D(_panel, wxID_ANY, remainingRect.GetPosition(), remainingRect.GetSize());
-
-	char* videoPath = "Resources/rien.mp4";
-	_videoPlayer->loadVideo(videoPath);
+	
+	_videoPath.front = "C:\\Users\\Alexandre Arsenault\\Desktop\\rien.mp4";
+	_videoPath.left = "C:\\Users\\Alexandre Arsenault\\Desktop\\Varese Arcana Gauche.mp4";
+	_videoPath.right = "C:\\Users\\Alexandre Arsenault\\Desktop\\Varese Arcana Droite.mp4";
+	
+	//char* videoPath = "C:\\Users\\Alexandre Arsenault\\Desktop\\rien.mp4";//"Ressources/rien.mp4";
+	//char* videoPath = "Ressources/rien.mp4";
+	_videoPlayer->loadVideo(_videoPath.front.c_str());
 
 	// Arguments for wxGLCanvas.
 	int args[] = { WX_GL_RGBA, WX_GL_DOUBLEBUFFER, WX_GL_DEPTH_SIZE, 16, 0 }; 
 	
 	// Instance wxOpenGL window and axLib wraper.
-	_axWrapper = new BasicGLPane(_panel, wxPoint(0, 0), wxSize(psize.x, psize.y), args);
+	_axWrapper = new axWxPanel(_panel, wxPoint(0, 0), wxSize(psize.x, psize.y), args);
 		 
 //	//------------------------------------------------------------------------------------
 //	// axLib code.
@@ -153,7 +159,8 @@ MainFrame::MainFrame(wxFrame *frame,
 //	//-----------------------------------------------------------------------------------
 //
 	_partitionTimer = new wxTimer(this, EVENT_PARTITION_TIMER_ID);
-//	
+	_animationTimer = new wxTimer(this, EVENT_ANIMATION_TIMER_ID);
+
 	Maximize(true);
 }
 
@@ -270,6 +277,7 @@ void MainFrame::OnCloseWindow(wxCloseEvent& WXUNUSED(event))
 	}
 	
 	delete _partitionTimer; _partitionTimer = nullptr;
+	delete _animationTimer; _animationTimer = nullptr;
 	Destroy();
 	destroyed = true;
 }
@@ -279,16 +287,27 @@ void MainFrame::OnPartitionTimer(wxTimerEvent& event)
 	UNREFERENCED_PARAMETER(event);
 
 	double ms = _videoPlayer->getPlaybackTime() / 1000.0;
-	_score->changeTime(ms);
-	_device3D->timerEvent(ms);
 
-	_playerBar->SetScrollSliderValue(_videoPlayer->getPosition(), 
-									 ms);
-	
+	// Change score time.
+	_score->changeTime(ms);
+
+	// Change playbar time.
+	_playerBar->SetScrollSliderValue(_videoPlayer->getPosition(), ms);
+								
+	// This is there only because it doesn't seem to work when the 
+	// video is not playing. It should be call only once.
 	if (_playerBar->GetHasVideoLength() == false)
 	{
 		_playerBar->SetVideoLength(_videoPlayer->getMovieLength() / 1000.0);
 	}
+}
+
+void MainFrame::OnAnimationTimer(wxTimerEvent& event)
+{
+	UNREFERENCED_PARAMETER(event);
+
+	double ms = _videoPlayer->getPlaybackTime() / 1000.0;
+	_device3D->timerEvent(ms);
 }
 
 void MainFrame::OnBackwardButton(const axButton::Msg& msg)
@@ -315,8 +334,13 @@ void MainFrame::OnPlayPauseButton(const axToggle::Msg& msg)
 
 		if (!_partitionTimer->IsRunning())
 		{
-			_partitionTimer->Start(16);
+			_partitionTimer->Start(250);
 			_score->setPlaying(true);
+		}
+
+		if (!_animationTimer->IsRunning())
+		{
+			_animationTimer->Start(16);
 		}
 	}
 	else
@@ -327,6 +351,11 @@ void MainFrame::OnPlayPauseButton(const axToggle::Msg& msg)
 		{
 			_partitionTimer->Stop();
 			_score->setPlaying(false);
+		}
+
+		if (_animationTimer->IsRunning())
+		{
+			_animationTimer->Stop();
 		}
 	}
 }
@@ -340,6 +369,11 @@ void MainFrame::OnStopButton(const axButton::Msg& msg)
 	{
 		_partitionTimer->Stop();
 		_score->setPlaying(false);
+	}
+
+	if (_animationTimer->IsRunning())
+	{
+		_animationTimer->Stop();
 	}
 }
 
@@ -406,10 +440,35 @@ void MainFrame::OnToggleScore(const axToggle::Msg& msg)
 }
 
 
+/// @todo Make sure the video's different before reload.
+void  MainFrame::ChangeVideoAngle(const std::string& path)
+{
+	bool isPlaying = _videoPlayer->isPlaying();
+	long long time = _videoPlayer->getPlaybackTime();
+	_videoPlayer->loadVideo(path.c_str());
+
+	if (isPlaying)
+	{
+		_videoPlayer->play();
+
+		axPrint("is video playing right after play call : ", _videoPlayer->isPlaying());
+		axPrint("!!! POSIBLE INFINITE LOOP !!! : ", __LINE__, " in main.cpp");
+		while (_videoPlayer->isPlaying() == false)
+		{
+		}
+
+		// From VLC doc, this is not supported for every formats.
+		// And this has no effect if the media is not playing.
+		_videoPlayer->setPlaybackTime(time);
+		_videoPlayer->unMute();
+	}
+}
+
 void MainFrame::OnLeftButton(const axButton::Msg& msg)
 {
 	(msg);
 	_device3D->SetLeftAlign();
+	ChangeVideoAngle(_videoPath.left);
 }
 
 
@@ -417,7 +476,10 @@ void MainFrame::OnLeftButton(const axButton::Msg& msg)
 void MainFrame::OnFrontButton(const axButton::Msg& msg)
 {
 	(msg);
+	
 	_device3D->SetFrontAlign();
+	ChangeVideoAngle(_videoPath.front);
+	
 }
 
 
@@ -425,6 +487,7 @@ void MainFrame::OnRightButton(const axButton::Msg& msg)
 {
 	(msg);
 	_device3D->SetRightAlign();
+	ChangeVideoAngle(_videoPath.right);
 }
 
 void MainFrame::OnMenuToggle(const axToggle::Msg& msg)
