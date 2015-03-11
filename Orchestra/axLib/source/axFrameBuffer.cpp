@@ -54,6 +54,7 @@ void axFrameBuffer::Init(const axSize& size)
 	// Power of 2 texture.
 	int n_x = pow(2.0, ceil(log2(size.x)));
 	int n_y = pow(2.0, ceil(log2(size.y)));
+	_pow2Delta = axSize(n_x, n_y);
 
     glTexImage2D(GL_TEXTURE_2D,
                  0,
@@ -116,7 +117,8 @@ void axFrameBuffer::DrawOnFrameBuffer(const std::function<void()>& fct,
 
     DrawingOnFrameBufferBlendFunction();
     
-    glViewport(0, 0, size.x, size.y);
+
+	glViewport(0, 0, size.x, size.y);
     
     glMatrixMode(GL_PROJECTION);
     
@@ -167,6 +169,9 @@ void axFrameBuffer::DrawFrameBuffer(const axSize& shownSize)
     
     glBindTexture(GL_TEXTURE_2D, _frameBufferTexture);
     
+	axFloatPoint tex_pos(0.0, 0.0);
+	axFloatPoint tex_size(shownSize.x / double(_pow2Delta.x), 
+		shownSize.y / double(_pow2Delta.y));
     glBegin(GL_QUADS);
     
     // Bottom left.
@@ -174,15 +179,18 @@ void axFrameBuffer::DrawFrameBuffer(const axSize& shownSize)
     glVertex2d(pos.x, pos.y);
     
     // Top left.
-    glTexCoord2d(0.0, 1.0);
+    //glTexCoord2d(0.0, 1.0);
+	glTexCoord2d(0.0, tex_size.y);
     glVertex2d(pos.x, pos.y + size.y);
     
     // Top right.
-    glTexCoord2d(1.0, 1.0);
+    //glTexCoord2d(1.0, 1.0);
+	glTexCoord2d(tex_size.x, tex_size.y);
     glVertex2d(pos.x + size.x, pos.y + size.y);
     
     // Buttom right.
-    glTexCoord2d(1.0, 0.0);
+    //glTexCoord2d(1.0, 0.0);
+	glTexCoord2d(tex_size.x, 0.0);
     glVertex2d(pos.x + size.x, pos.y);
     
     glEnd();

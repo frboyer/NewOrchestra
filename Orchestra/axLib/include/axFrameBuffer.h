@@ -51,6 +51,8 @@ public:
     
 private:
     GLuint _frameBuffer, _frameBufferTexture, _depthBuffer;
+
+	axSize _pow2Delta;
     
 //    cairo_surface_t *surface;
 //    cairo_t *context;
