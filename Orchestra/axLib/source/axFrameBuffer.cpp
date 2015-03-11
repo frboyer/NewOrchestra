@@ -51,20 +51,32 @@ void axFrameBuffer::Init(const axSize& size)
     
     // NULL means reserve texture memory, but texels are undefined.
 
+	#if _axPowerOfTwoBackBuffer_ == 1
 	// Power of 2 texture.
 	int n_x = pow(2.0, ceil(log2(size.x)));
 	int n_y = pow(2.0, ceil(log2(size.y)));
-	_pow2Delta = axSize(n_x, n_y);
-
-    glTexImage2D(GL_TEXTURE_2D,
-                 0,
-                 GL_RGBA8,
-                 n_x,//size.x,
-                 n_y,//size.y,
-                 0,
-                 GL_RGBA,
-                 GL_UNSIGNED_BYTE,
-                 NULL);
+	_pow2Size = axSize(n_x, n_y);
+	
+	glTexImage2D(GL_TEXTURE_2D,
+		0,
+		GL_RGBA8,
+		n_x,//size.x,
+		n_y,//size.y,
+		0,
+		GL_RGBA,
+		GL_UNSIGNED_BYTE,
+		NULL);
+	#else
+	glTexImage2D(GL_TEXTURE_2D,
+		0,
+		GL_RGBA8,
+		size.x,
+		size.y,
+		0,
+		GL_RGBA,
+		GL_UNSIGNED_BYTE,
+		NULL);
+	#endif // _axPowerOfTwoBackBuffer_
     
     // Attach 2D texture to this FBO.
     glFramebufferTexture2D(GL_FRAMEBUFFER,
@@ -169,9 +181,10 @@ void axFrameBuffer::DrawFrameBuffer(const axSize& shownSize)
     
     glBindTexture(GL_TEXTURE_2D, _frameBufferTexture);
     
+#if _axPowerOfTwoBackBuffer_ == 1
 	axFloatPoint tex_pos(0.0, 0.0);
-	axFloatPoint tex_size(shownSize.x / double(_pow2Delta.x), 
-		shownSize.y / double(_pow2Delta.y));
+	axFloatPoint tex_size(shownSize.x / double(_pow2Size.x), 
+		shownSize.y / double(_pow2Size.y));
     glBegin(GL_QUADS);
     
     // Bottom left.
@@ -194,6 +207,27 @@ void axFrameBuffer::DrawFrameBuffer(const axSize& shownSize)
     glVertex2d(pos.x + size.x, pos.y);
     
     glEnd();
+#else
+	glBegin(GL_QUADS);
+
+	// Bottom left.
+	glTexCoord2d(0.0, 0.0);
+	glVertex2d(pos.x, pos.y);
+
+	// Top left.
+	glTexCoord2d(0.0, 1.0);
+	glVertex2d(pos.x, pos.y + size.y);
+
+	// Top right.
+	glTexCoord2d(1.0, 1.0);
+	glVertex2d(pos.x + size.x, pos.y + size.y);
+
+	// Buttom right.
+	glTexCoord2d(1.0, 0.0);
+	glVertex2d(pos.x + size.x, pos.y);
+
+	glEnd();
+#endif // _axPowerOfTwoBackBuffer_
     
     //	glDisable(GL_BLEND);
     glDisable(GL_TEXTURE_2D);

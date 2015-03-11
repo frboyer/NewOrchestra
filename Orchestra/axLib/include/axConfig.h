@@ -36,6 +36,7 @@
 #define _axDebugEditor_ (0)
 #define _axBackBufferWindow_ (1)
 #define _axWxWidgetsCore_ (1)
+#define _axPowerOfTwoBackBuffer_ (1)
 
 
 /// @}

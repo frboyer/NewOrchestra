@@ -33,6 +33,7 @@
 /// @{
 
 #include "axC++.h"
+#include "axConfig.h"
 //#include "cairo/cairo.h"
 
 class axFrameBuffer
@@ -52,7 +53,9 @@ public:
 private:
     GLuint _frameBuffer, _frameBufferTexture, _depthBuffer;
 
-	axSize _pow2Delta;
+	#if _axPowerOfTwoBackBuffer_ == 1
+	axSize _pow2Size;
+	#endif //_axPowerOfTwoBackBuffer_
     
 //    cairo_surface_t *surface;
 //    cairo_t *context;
