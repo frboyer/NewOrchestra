@@ -93,7 +93,7 @@ MainFrame::MainFrame(wxFrame *frame,
 	img_list.push_back("Ressources/Lesson1/test002.png");
 	img_list.push_back("Ressources/Lesson1/test003.png");
 	img_list.push_back("Ressources/Lesson1/test004.png");
-	img_list.push_back("Ressources/Lesson1/test005.png");
+	//img_list.push_back("Ressources/Lesson1/test005.png");
 
 	_axMainPanel = new axPanel(nullptr, axRect(0, 0, psize.x, psize.y));
 	//std::cout << "axLib : TOP PARENT PANEL ID : " << _axMainPanel->GetId() << std::endl;

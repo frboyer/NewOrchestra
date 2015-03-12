@@ -13,7 +13,7 @@ struct ScoreMarkerInfo
 	t_point point;
 	t_size size;
 	short numImg;
-	double time;
+	float time;
 };
 
 class ScorePlayer

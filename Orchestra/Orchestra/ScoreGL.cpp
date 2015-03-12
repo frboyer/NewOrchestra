@@ -53,11 +53,15 @@ bool ScorePlayer::loadMarkerInfo(std::string path)
 		// Number of Marker in file.
 		data.seekg(0);
 		data.read((char*)&_nMarker, sizeof(int));
+
+		axPrint("Marker buffer of size : ", _nMarker);
 		_markerData = new_ ScoreMarkerInfo[_nMarker];
 
 		// Read all markers data in one big chunk.
 		data.read((char*)_markerData, sizeof(ScoreMarkerInfo)* _nMarker);
 		data.close();
+
+		axPrint("Total numbers of markers = ", _nMarker);
 
 		_selectedMarker = -1;
 		_currentImageIndex = 0;
@@ -250,6 +254,15 @@ bool ScoreGL::changeTime(const double& timeMs)
 	{
 		axObject::PushEvent(Events::BAR_CHANGE, 
 			new_ Msg(_player.getCurrentImageIndex() + 1, _player.getSelectedMarker()));
+
+		int img_index = _player.getCurrentImageIndex();
+
+		int x = GetSize().x - 35, y = GetSize().y - 40;
+			//_resizeRatio_x = x / double(_images[img_index]->GetWidth());
+			//_resizeRatio_y = y / double(_images[img_index]->GetHeight());
+		_resizeRatio_x = x / double(_images[img_index]->GetImageSize().x);
+		_resizeRatio_y = y / double(_images[img_index]->GetImageSize().y);
+
 		Update();
 	}
 
@@ -378,18 +391,18 @@ void ScoreGL::OnPaint()
 
 
 	// Selected bar.
-	if (_mouseHover)
-	{
-		const ScoreMarkerInfo& selectedMarker = _player.getMarkerData()[_mouseHoverMarker];
-		t_point pt = selectedMarker.point;
-		t_size s = selectedMarker.size;
-		gc->SetColor(axColor(0.6, 0.6, 1.0, 0.5));
-		gc->DrawRectangle(axRect(50, 50));
-		gc->DrawRectangle(axRect(int(10 + pt.x * _resizeRatio_x), 
-								 int(10 + pt.y * _resizeRatio_y),
-								 int(s.x * _resizeRatio_x), 
-								 int(s.y * _resizeRatio_y)));
-	}
+	//if (_mouseHover)
+	//{
+	//	const ScoreMarkerInfo& selectedMarker = _player.getMarkerData()[_mouseHoverMarker];
+	//	t_point pt = selectedMarker.point;
+	//	t_size s = selectedMarker.size;
+	//	gc->SetColor(axColor(0.6, 0.6, 1.0, 0.5));
+	//	gc->DrawRectangle(axRect(50, 50));
+	//	gc->DrawRectangle(axRect(int(10 + pt.x * _resizeRatio_x), 
+	//							 int(10 + pt.y * _resizeRatio_y),
+	//							 int(s.x * _resizeRatio_x), 
+	//							 int(s.y * _resizeRatio_y)));
+	//}
 
 	// Current playing bar.
 	if (_player.getSelectedMarker() != -1)
