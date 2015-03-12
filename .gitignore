@@ -15,6 +15,9 @@
 *.tlog
 *.lastbuildstate
 *.pch
+*.ipch
+*.bsc
+*.sbr
 
 # VisualStudio user options
 *.suo

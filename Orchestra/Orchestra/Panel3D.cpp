@@ -308,6 +308,8 @@ Device3D::Device3D(wxWindow* win, const wxWindowID& id,
 		static const std::string fileName = baseDir + "Varese Arcana.mtn"; // "Stravinsky Sacre 1avant142 a 149_export.mtn"; // "exampleFile_export.mtn"; // 
 		std::ifstream f(fileName, std::ios::binary);
 		readVector(f, m_motion, getFileSize(f) / sizeof(MotionFilePacket));
+		std::ifstream fconfig(fileName + ".cfg");
+		timeOffsetMs_ = 0; fconfig >> timeOffsetMs_;
 	}
 
 	//Compute(hand_, (irr_Bone*) upper_arm_L->getParent(), hand_->getPosition());
@@ -533,7 +535,7 @@ void Device3D::timerEvent(double ms)
 	//setAbsoluteOrientation(getFingerBone(BoneSide::LEFT, 1, 1), motionFileToModelArmOrientation(VCNQuat()));
 
 	static const double motionFileFrameRate = 60.0;
-	auto& frame = m_motion[irr::core::clamp(unsigned(ms * (motionFileFrameRate / 1000.0) + .5), 0U, m_motion.size() - 1)];
+	auto& frame = m_motion[irr::core::clamp(unsigned((ms - timeOffsetMs_) * (motionFileFrameRate / 1000.0) + .5), 0U, m_motion.size() - 1)];
 
 	static const BoneNumber bonesOrder[] = { BoneNumber::UPPER_ARM, BoneNumber::FOREARM, BoneNumber::HAND };
 	static const BoneSide sidesOrder[] = { BoneSide::RIGHT, BoneSide::LEFT };

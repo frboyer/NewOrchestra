@@ -90,6 +90,7 @@ protected:
 	{
 		return fingerBones_[int(side)][finger][phalanx];
 	}
+	double timeOffsetMs_;
 	std::vector<MotionFilePacket> m_motion;
 	void updateCamera();
 
