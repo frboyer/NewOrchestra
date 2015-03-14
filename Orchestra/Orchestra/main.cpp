@@ -87,12 +87,29 @@ MainFrame::MainFrame(wxFrame *frame,
 //	
 	///bool loadInfo(const wxString& data_path, const vector<wxString>& list);
 	std::string data_path("Ressources/Lesson1/output.data");
+
 	axStringVector img_list;
-	img_list.push_back("Ressources/Lesson1/test000.png");
-	img_list.push_back("Ressources/Lesson1/test001.png");
-	img_list.push_back("Ressources/Lesson1/test002.png");
-	img_list.push_back("Ressources/Lesson1/test003.png");
-	img_list.push_back("Ressources/Lesson1/test004.png");
+	std::string folder("Ressources/Lesson1/");
+	std::string file_name("test");
+	for (int i = 0; i < 70; i++)
+	{
+		std::string num = to_string(i);
+		if (i < 10)
+		{
+			num = std::string("00") + num;
+		}
+		else if (i < 100)
+		{
+			num = std::string("0") + num;
+		}
+
+		img_list.push_back(folder + file_name + num + ".png");
+	}
+	
+	//img_list.push_back("Ressources/Lesson1/test001.png");
+	//img_list.push_back("Ressources/Lesson1/test002.png");
+	//img_list.push_back("Ressources/Lesson1/test003.png");
+	//img_list.push_back("Ressources/Lesson1/test004.png");
 	//img_list.push_back("Ressources/Lesson1/test005.png");
 
 	_axMainPanel = new axPanel(nullptr, axRect(0, 0, psize.x, psize.y));
